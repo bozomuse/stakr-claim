@@ -421,8 +421,6 @@ async function init() {
   }
   renderEpochTable();
   await renderClaims();
-  document.getElementById('connectBtn').addEventListener('click', connect);
-  document.getElementById('connectBtn2').addEventListener('click', connect);
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accs) => {
       account = accs[0] || null;
@@ -432,4 +430,8 @@ async function init() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
