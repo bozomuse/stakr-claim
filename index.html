@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--
+  STAKR & STAKR — claim site.
+  design contract:
+  1. point of view: the weekly payout window at a roadside burger joint.
+     you're here to pick up what the grill owes you.
+  2. physical scene: late-night diner counter — cream formica, ketchup red,
+     mustard, diner teal, charcoal ink. every color is in the scene.
+  3. type: Alfa Slab One (diner poster) / Inter (body) / Space Mono (receipt figures).
+  4. tokens: --paper #FAF3E7, --ink #1E1A16, --ketchup #C8342A, --mustard #E8A020,
+     --teal #1F6E6B, --muted #6B5F52, --line #E3D5BE. nothing else on the page.
+  5. motion: calm with a playful wink — receipt slides, PAID stamp.
+     transform/opacity only, one easing, reduced-motion respected.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>stakr &amp; stakr — hold stakr, earn bnkr</title>
+<meta name="description" content="famous for stakeburgers. $STAKR is paired with $BNKR — every trade pays the holders. hold stakr, earn bnkr. no staking, no lockups.">
+<meta property="og:title" content="stakr & stakr — hold stakr, earn bnkr">
+<meta property="og:description" content="famous for stakeburgers. 100% of $STAKR creator fees are served to holders weekly in $BNKR.">
+<meta property="og:image" content="assets/stakeburger.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C8342A'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-weight='bold' font-size='36' fill='%23FAF3E7' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="demo-banner" id="demoBanner" hidden>
+  <p><strong>demo mode</strong> — $stakr hasn't launched yet. every number on this page is made up.</p>
+</div>
+
+<header class="topbar">
+  <a class="wordmark" href="#top" aria-label="stakr and stakr — home">
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#C8342A"/><text x="32" y="44" font-family="Georgia,serif" font-weight="bold" font-size="36" fill="#FAF3E7" text-anchor="middle">S</text></svg>
+    <span>stakr <em>&amp;</em> stakr</span>
+  </a>
+  <button class="btn btn-small" id="connectBtn" type="button">connect wallet</button>
+</header>
+
+<main id="top">
+
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="hero-copy">
+      <p class="eyebrow">the weekly payout window</p>
+      <h1 id="heroTitle">hold stakr.<br>earn bnkr.</h1>
+      <p class="lede">famous for stakeburgers. $stakr is paired with $bnkr, and every trade pays the holders — 100% of creator fees are collected in $bnkr and served weekly. no staking, no lockups, just hold and earn.</p>
+      <div class="cta-row">
+        <a class="btn btn-ketchup" href="#claim">check my rewards</a>
+        <a class="textlink" href="#how">how the grill works</a>
+      </div>
+    </div>
+    <figure class="hero-art">
+      <img src="assets/stakeburger.webp" alt="the stakeburger — winged burger badge of stakr and stakr" width="1024" height="1024" fetchpriority="high">
+      <figcaption>today's special: the stakeburger</figcaption>
+    </figure>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-inner" id="tickerInner"></div>
+  </div>
+
+  <section class="how" id="how" aria-labelledby="howTitle">
+    <div class="how-head">
+      <p class="eyebrow">the process</p>
+      <h2 id="howTitle">how the grill works</h2>
+      <p class="how-sub">three steps. no fine print that matters more than the big print.</p>
+    </div>
+    <ol class="ledger">
+      <li>
+        <span class="n" aria-hidden="true">01</span>
+        <div>
+          <h3>every trade pays</h3>
+          <p>$stakr trades against $bnkr on base. every swap pays a fee, and the creator's cut of it belongs to the holders — not a treasury, not a team.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n" aria-hidden="true">02</span>
+        <div>
+          <h3>fees come home as $bnkr</h3>
+          <p>the pool runs in quote-only mode, so the whole creator cut lands as $bnkr. a keeper sweeps it into the payout contract every week.</p>
+        </div>
+      </li>
+      <li>
+        <span class="n" aria-hidden="true">03</span>
+        <div>
+          <h3>served weekly, pro-rata</h3>
+          <p>holders are weighed by time-weighted average balance across the week — a one-block flash loan counts for about one fifty-thousandth of a week. hold $5+ of stakr, claim your $bnkr. that's the whole menu.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="claim" id="claim" aria-labelledby="claimTitle">
+    <div class="claim-head">
+      <p class="eyebrow">order window</p>
+      <h2 id="claimTitle">pick up your bnkr</h2>
+    </div>
+    <div class="receipt" role="region" aria-label="claim receipt">
+      <div class="receipt-head">
+        <span>stakr &amp; stakr</span>
+        <span class="mono" id="receiptNo">order #000</span>
+      </div>
+      <div class="wallet-line" id="walletLine">
+        <p class="muted">connect a wallet to see what's on your tray.</p>
+        <button class="btn btn-ketchup" id="connectBtn2" type="button">connect wallet</button>
+      </div>
+      <ul class="epoch-rows" id="epochRows" hidden></ul>
+      <div class="receipt-total" id="receiptTotal" hidden>
+        <span>total claimable</span>
+        <strong class="mono" id="totalClaimable">0.00 bnkr</strong>
+      </div>
+      <button class="btn btn-ketchup btn-wide" id="claimAllBtn" type="button" hidden disabled>claim all</button>
+      <p class="receipt-note" id="receiptNote" hidden></p>
+      <div class="tear" aria-hidden="true"></div>
+    </div>
+    <p class="fineprint">claims are permissionless and gas is on you — only claim when it's worth the trip. each epoch stays open 4 weeks, then unclaimed $bnkr rolls into the next serving.</p>
+  </section>
+
+  <section class="epochs" id="epochs" aria-labelledby="epochsTitle">
+    <div class="epochs-head">
+      <p class="eyebrow">the ledger</p>
+      <h2 id="epochsTitle">past servings</h2>
+    </div>
+    <div class="table-wrap">
+      <table id="epochTable">
+        <thead>
+          <tr><th scope="col">epoch</th><th scope="col">served</th><th scope="col">holders</th><th scope="col">payout root</th></tr>
+        </thead>
+        <tbody id="epochBody">
+          <tr><td colspan="4" class="muted">the grill hasn't served its first epoch yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faqTitle">
+    <p class="eyebrow">fine print, big type</p>
+    <h2 id="faqTitle">questions from the counter</h2>
+    <details>
+      <summary>do i need to stake anything?</summary>
+      <p>no. that's the point. hold $stakr in your wallet and you're in the payout list. no lockups, no staking contracts, no unstaking queues.</p>
+    </details>
+    <details>
+      <summary>what's the $5 minimum?</summary>
+      <p>if your average $stakr balance across the week is worth less than $5, you're skipped — the gas to claim would cost more than the $bnkr. your share just boosts everyone else a little.</p>
+    </details>
+    <details>
+      <summary>can someone game it with a flash loan?</summary>
+      <p>no. payouts are weighted by average balance over the whole week, not a single snapshot block. borrow a mountain for one block and it counts for about one fifty-thousandth of a week.</p>
+    </details>
+    <details>
+      <summary>is this live?</summary>
+      <p id="liveAnswer">not yet. the contracts are written and tested, the keeper is built — but $stakr hasn't launched. don't send money to anything claiming otherwise.</p>
+    </details>
+  </section>
+
+</main>
+
+<footer>
+  <p class="foot-word">stakr <em>&amp;</em> stakr</p>
+  <p class="foot-tag">the grill never closes. stake &amp; stake.</p>
+  <p class="foot-fine muted">experimental. not financial advice. verify every contract address before you sign anything.</p>
+</footer>
+
+<dialog id="txDialog" aria-labelledby="txDialogTitle">
+  <h2 id="txDialogTitle">your order slip</h2>
+  <p class="muted" id="txDialogSub">this is what your wallet would sign:</p>
+  <dl class="tx-fields">
+    <div><dt>to</dt><dd class="mono" id="txTo">—</dd></div>
+    <div><dt>function</dt><dd class="mono">claim(epochId, amount, proof)</dd></div>
+    <div><dt>you receive</dt><dd class="mono" id="txAmount">—</dd></div>
+  </dl>
+  <p class="muted" id="txDemoNote" hidden>demo mode — signing is disabled until launch.</p>
+  <form method="dialog"><button class="btn" type="submit">close</button></form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>
