@@ -412,6 +412,13 @@ function buildTicker() {
 }
 
 async function init() {
+  // wire buttons FIRST — never let later failures break them
+  try {
+    const cb1 = document.getElementById('connectBtn');
+    const cb2 = document.getElementById('connectBtn2');
+    if (cb1) cb1.addEventListener('click', connect);
+    if (cb2) cb2.addEventListener('click', connect);
+  } catch (e) { console.error('button wiring failed', e); }
   buildTicker();
   document.getElementById('demoBanner').hidden = !CONFIG.demo;
   try {
