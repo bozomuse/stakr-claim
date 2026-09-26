@@ -160,6 +160,52 @@
     </details>
   </section>
 
+  <section class="faq" aria-labelledby="recipeTitle">
+    <p class="eyebrow">the full recipe</p>
+    <h2 id="recipeTitle">due diligence</h2>
+    <p class="muted">everything you'd want to verify before aping. all contracts on base.</p>
+    <details>
+      <summary>the token</summary>
+      <p><strong>$stakr</strong> — stakr&stakr. 100b fixed supply, 100% went straight into the pool at launch (no vesting, no team allocation). launched via bankr on base, paired with $bnkr.</p>
+      <p>token: <code class="mono">0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3</code><br>
+      launch tx: <code class="mono">0xf576d6300bc668d1eff2edfea8adcc1f1b0c7b27ed467afea550d3ce5fc1f541</code><br>
+      pool id: <code class="mono">0x3059a617cfd2c3b49c7ddab7b4ff947bef76846494e648fc9b9130621439f515</code><br>
+      <a href="https://bankr.bot/terminal/trade?out=0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3&chain=base">trade on bankr</a></p>
+    </details>
+    <details>
+      <summary>the distributor</summary>
+      <p>pays out weekly $bnkr to holders via merkle proofs. claims open 24h after each root is published, stay open 4 weeks, unclaimed rolls forward.</p>
+      <p>distributor: <code class="mono">0x7b896a892C052C5243Dde20b54a4654e51A3A952</code><br>
+      fee hook: <code class="mono">0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544</code><br>
+      pool manager: <code class="mono">0x498581fF718922c3f8e6A244956aF099B2652b2b</code></p>
+    </details>
+    <details>
+      <summary>the money flow</summary>
+      <p>100% of $stakr's creator fees are collected in $bnkr and served to holders weekly. sells also accrue a $stakr fee leg that sits in the distributor — the keeper sweeps it, converts to $bnkr, and rolls it into a later epoch (keep+convert).</p>
+      <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>
+      $bnkr: <code class="mono">0x22af33fe49fd1fa80c7149773dde5890d3c76f3b</code></p>
+    </details>
+    <details>
+      <summary>eligibility</summary>
+      <p>hold $stakr in your wallet — that's it. no staking, no lockups. payouts are weighted by your average balance across the week (time-weighted, flash-loan resistant). minimum $5 average to qualify; sub-$5 weight redistributes pro-rata to everyone eligible. team wallet plays by the same rules.</p>
+    </details>
+    <details>
+      <summary>admin &amp; control</summary>
+      <p>admin is a single hot wallet (no multisig — operator's call). the keeper can publish roots but a 24h delay gives the admin a veto window via pause. a compromise watcher monitors the distributor and alerts on unexpected root publications, beneficiary changes, pauses, or token recovery.</p>
+      <p>admin: <code class="mono">0x891691Ce817db5d09fC5BbBea6Ae012CFe829AEf</code></p>
+    </details>
+    <details>
+      <summary>audits &amp; review</summary>
+      <p>no professional audit. the contracts went through adversarial first-party review: slither clean, 31/31 forge tests green (27 unit + 4 fork tests against the live pool). residual risk: the keeper could publish an unfair root — the 24h veto window is the backstop.</p>
+    </details>
+    <details>
+      <summary>launch receipts</summary>
+      <p>dev buy: 0.0074 weth → 187,991,877 $stakr (<code class="mono">0x7b2a30c7c90f4687f72faedff6189f2594c23fcff3c6abc2aea719347a3f7031</code>)<br>
+      bootstrap: 0.00325 weth → 80,434,114 $stakr (<code class="mono">0x2c13e5dc346ab1d1d31ee92839ae104c48854ebb308a40c5161c18e15d73da4c</code>)<br>
+      funded by trimming cbbtc — no presale, no team allocation.</p>
+    </details>
+  </section>
+
 </main>
 
 <footer>
