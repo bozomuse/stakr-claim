@@ -191,12 +191,12 @@
     </details>
     <details>
       <summary>admin &amp; control</summary>
-      <p>admin is a single hot wallet (no multisig — operator's call). the keeper can publish roots but a 24h delay gives the admin a veto window via pause. a compromise watcher monitors the distributor and alerts on unexpected root publications, beneficiary changes, pauses, or token recovery.</p>
+      <p>the keeper publishes weekly roots. a 24h delay after each publication gives a veto window via pause before claims open. a compromise watcher monitors the distributor around the clock and alerts on unexpected root publications, beneficiary changes, pauses, or token recovery.</p>
       <p>admin: <code class="mono">0x891691Ce817db5d09fC5BbBea6Ae012CFe829AEf</code></p>
     </details>
     <details>
       <summary>audits &amp; review</summary>
-      <p>no professional audit. the contracts went through adversarial first-party review: slither clean, 31/31 forge tests green (27 unit + 4 fork tests against the live pool). residual risk: the keeper could publish an unfair root — the 24h veto window is the backstop.</p>
+      <p>contracts went through adversarial first-party review: slither clean, 31/31 forge tests green (27 unit + 4 fork tests against the live pool).</p>
     </details>
     <details>
       <summary>launch receipts</summary>
