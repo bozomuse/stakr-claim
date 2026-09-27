@@ -771,6 +771,10 @@ async function init() {
   try { initKicker(); } catch (e) { console.error('kicker failed', e); }
   try { initContractPill(); } catch (e) { console.error('contract pill failed', e); }
   try {
+    const upd = document.getElementById('skillUpdateBtn');
+    if (upd) upd.addEventListener('click', () => copyText(upd.dataset.copy, upd));
+  } catch (e) { console.error('skill update button failed', e); }
+  try {
     epochsData = await loadProofs();
   } catch {
     epochsData = [];
