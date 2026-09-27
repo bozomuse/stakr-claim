@@ -56,14 +56,13 @@
         <span class="pill-copy" id="pillCopy">copy</span>
       </div>
     </div>
+  </section>
+
+  <section class="grill" id="grill" aria-label="bozo on the grill">
     <figure class="hero-art">
       <div class="grill-wrap">
-        <img id="grillImg" src="assets/bozo-grill.webp" alt="bozo at the grill with a cold one — did you burn the stakr?" width="1920" height="1280" fetchpriority="high">
+        <img id="grillImg" src="assets/bozo-grill.webp" alt="bozo at the grill with a cold one — did you burn the stakr?" width="1920" height="1280" loading="lazy">
         <canvas id="smokeCanvas" aria-hidden="true"></canvas>
-        <div class="kick-bubble" id="kickBubble" role="status" aria-live="polite">
-          <span id="kickMsg">the grill is open — burn a little $stakr, get your words up here.</span>
-          <span class="kick-meta" id="kickMeta">no kicks yet · min 1M $stakr</span>
-        </div>
       </div>
       <figcaption>bozo on the grill — the higher the $stakr price, the thicker the smoke. how done is the steak? the burn kicks in at $75k market cap.</figcaption>
       <p class="grill-heat">grill heat: <span id="stakrPrice">firing up…</span></p>
@@ -74,7 +73,11 @@
     <div class="kick-head">
       <p class="kicker">say it with fire</p>
       <h2 id="kickTitle">kick the grill</h2>
-      <p>burn at least <b>1M $stakr</b> through the kicker and your message goes up in the bubble above bozo's head, rotating with the latest kicks. funny only — the grill has standards (links and slurs get bounced).</p>
+      <p>burn at least <b>1M $stakr</b> through the kicker and your message goes up on the grill feed, rotating with the latest kicks. funny only — the grill has standards (links and slurs get bounced).</p>
+      <div class="kick-bubble" id="kickBubble" role="status" aria-live="polite">
+        <span id="kickMsg">the grill is open — burn a little $stakr, get your words up here.</span>
+        <span class="kick-meta" id="kickMeta">no kicks yet · min 1M $stakr</span>
+      </div>
     </div>
     <div class="kick-form">
       <label for="kickMessage">your message <span class="muted">(140 chars max)</span></label>

@@ -111,7 +111,8 @@ h1, h2, h3 { font-family: "Alfa Slab One", Georgia, serif; font-weight: 400; lin
   align-items: center;
 }
 @media (min-width: 800px) {
-  .hero { grid-template-columns: 7fr 5fr; gap: 3rem; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-copy { max-width: 62ch; }
 }
 .hero h1 {
   font-size: clamp(3rem, 1.5rem + 6.5vw, 6.5rem);
@@ -126,6 +127,15 @@ h1, h2, h3 { font-family: "Alfa Slab One", Georgia, serif; font-weight: 400; lin
   transition: transform 400ms var(--ease);
 }
 .hero-art:hover { transform: rotate(0deg) scale(1.01); }
+
+/* ---------- the grill (its own section) ---------- */
+.grill {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem) clamp(2rem, 5vw, 4rem);
+}
+.grill .hero-art { transform: none; }
+.grill .hero-art:hover { transform: scale(1.005); }
 .hero-art img {
   width: 100%;
   height: auto;
@@ -407,22 +417,18 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 
 /* ---------- kick the grill ---------- */
 .kick-bubble {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  max-width: 44%;
+  position: relative;
+  max-width: 44rem;
+  margin: 1.5rem 0 0;
   background: #fffdf5;
   color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: 14px;
-  padding: 0.55rem 1rem;
-  font-size: 0.95rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
-  text-align: center;
-  z-index: 3;
   box-shadow: 3px 3px 0 rgba(0,0,0,.35);
   transition: opacity 400ms var(--ease);
-  pointer-events: none;
 }
 .kick-bubble::after {
   content: '';
