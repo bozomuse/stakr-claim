@@ -56,10 +56,35 @@
       <div class="grill-wrap">
         <img id="grillImg" src="assets/bozo-grill.webp" alt="bozo grilling stakeburgers on a charcoal grill" width="1920" height="1280" fetchpriority="high">
         <canvas id="smokeCanvas" aria-hidden="true"></canvas>
+        <div class="kick-bubble" id="kickBubble" role="status" aria-live="polite">
+          <span id="kickMsg">the grill is open — burn a little $stakr, get your words up here.</span>
+          <span class="kick-meta" id="kickMeta">no kicks yet · min 1M $stakr</span>
+        </div>
       </div>
       <figcaption>bozo on the grill — the higher the $stakr price, the thicker the smoke. how done is the steak? the burn kicks in at $75k market cap.</figcaption>
       <p class="grill-heat">grill heat: <span id="stakrPrice">firing up…</span></p>
     </figure>
+  </section>
+
+  <section class="kick" id="kick" aria-labelledby="kickTitle">
+    <div class="kick-head">
+      <p class="kicker">say it with fire</p>
+      <h2 id="kickTitle">kick the grill</h2>
+      <p>burn at least <b>1M $stakr</b> through the kicker and your message goes up in the bubble above bozo's head, rotating with the latest kicks. funny only — the grill has standards (links and slurs get bounced).</p>
+    </div>
+    <div class="kick-form">
+      <label for="kickMessage">your message <span class="muted">(140 chars max)</span></label>
+      <input id="kickMessage" maxlength="140" placeholder="say something funny…" autocomplete="off">
+      <label for="kickAmount">burn amount <span class="muted">(min 1,000,000 $stakr)</span></label>
+      <input id="kickAmount" type="number" min="1000000" step="1000000" value="1000000">
+      <div class="kick-actions">
+        <button class="btn btn-small" id="kickConnect">connect wallet</button>
+        <button class="btn btn-small" id="kickApprove">1 · approve $stakr</button>
+        <button class="btn btn-small btn-ketchup" id="kickSend">2 · kick it</button>
+      </div>
+      <p class="kick-status" id="kickStatus" role="status"></p>
+    </div>
+    <p class="muted kick-fine">kicker contract <code>0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b</code> — burns straight to dead, no custody, no take-backs.</p>
   </section>
 
   <div class="ticker" aria-hidden="true">

@@ -404,3 +404,80 @@ dialog h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
 .tx-fields dt { color: var(--muted); }
 .tx-fields dd { margin: 0; overflow-wrap: anywhere; }
 dialog form { margin-top: 1.25rem; text-align: right; }
+
+/* ---------- kick the grill ---------- */
+.kick-bubble {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 80%;
+  background: #fffdf5;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 0.55rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  z-index: 3;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.35);
+  transition: opacity 400ms var(--ease);
+  pointer-events: none;
+}
+.kick-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  margin-left: -9px;
+  border: 9px solid transparent;
+  border-top-color: var(--ink);
+}
+.kick-bubble .kick-meta {
+  display: block;
+  font-family: "Space Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  opacity: 0.6;
+  margin-top: 0.25rem;
+}
+.kick {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem) clamp(2rem, 5vw, 4rem);
+}
+.kick-head .kicker {
+  font-family: "Space Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  color: var(--ketchup);
+  margin-bottom: 0.25rem;
+}
+.kick-head h2 { margin: 0 0 0.5rem; }
+.kick-form {
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 1.25rem;
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.6rem;
+  max-width: 36rem;
+}
+.kick-form label { font-weight: 600; font-size: 0.9rem; }
+.kick-form input {
+  font: 1rem "Inter", sans-serif;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+  width: 100%;
+  box-sizing: border-box;
+}
+.kick-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem; }
+.kick-status { font-family: "Space Mono", monospace; font-size: 0.85rem; min-height: 1.2em; margin: 0.2rem 0 0; }
+.kick-fine code { font-size: 0.75rem; word-break: break-all; }

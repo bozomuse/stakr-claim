@@ -6,6 +6,9 @@ const CONFIG = {
   distributor: '0x7b896a892C052C5243Dde20b54a4654e51A3A952', // placeholder until launch
   bnkr: '0x22af33fe49fd1fa80c7149773dde5890d3c76f3b',
   bnkrDecimals: 18,
+  stakr: '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3',
+  kicker: '0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b',
+  kickDeployBlock: 51849243,
   proofsBase: './proofs/',
   demo: false, // flip to false at launch; enables tx preview instead of signing
 };
@@ -567,6 +570,194 @@ function buildTicker() {
   document.getElementById('tickerInner').innerHTML = phrase.repeat(8);
 }
 
+
+/* ---------------- kick the grill ----------------
+   Burn >= 1M $STAKR through the kicker contract with a message; the site
+   reads Kick events and shows them in the speech bubble above bozo's head. */
+const KICK_TOPIC = '0x43fe7ae845cc4c446c011530cec63504d3d3c08d2ddc95df79ba025293ac756e';
+const KICK_RPC = 'https://mainnet.base.org';
+const KICK_MIN = 1000000n * 10n ** 18n;
+const SEL_APPROVE = '0x095ea7b3';
+const SEL_KICK = '0xaa53276b'; // kick(uint256,string)
+const HIDDEN_KICKS = []; // tx hashes (lowercase) bounced from the bubble
+const KICK_DENY = [
+  'http://', 'https://', 'www.', '.xyz/', '.io/', '.com/',
+  'nigger', 'nigga', 'faggot', 'retard', 'kike', 'chink', 'spic',
+];
+
+let kicks = [];
+let kickIdx = 0;
+
+function decodeKick(log) {
+  try {
+    const kicker = '0x' + log.topics[1].slice(-40);
+    const data = log.data.slice(2);
+    const amount = BigInt('0x' + data.slice(0, 64));
+    const msgOff = parseInt(data.slice(64, 128), 16) * 2;
+    const msgLen = parseInt(data.slice(msgOff, msgOff + 64), 16);
+    const msgHex = data.slice(msgOff + 64, msgOff + 64 + msgLen * 2);
+    const bytes = new Uint8Array(msgHex.match(/../g).map((h) => parseInt(h, 16)));
+    const message = new TextDecoder().decode(bytes);
+    return { kicker, amount, message, tx: (log.transactionHash || '').toLowerCase() };
+  } catch {
+    return null;
+  }
+}
+
+function kickAllowed(k) {
+  if (!k || !k.message.trim()) return false;
+  if (HIDDEN_KICKS.includes(k.tx)) return false;
+  const low = k.message.toLowerCase();
+  return !KICK_DENY.some((d) => low.includes(d));
+}
+
+async function fetchKicks() {
+  try {
+    const res = await fetch(KICK_RPC, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0', id: 1, method: 'eth_getLogs',
+        params: [{
+          address: CONFIG.kicker,
+          fromBlock: '0x' + CONFIG.kickDeployBlock.toString(16),
+          toBlock: 'latest',
+          topics: [KICK_TOPIC],
+        }],
+      }),
+    });
+    const j = await res.json();
+    return (j.result || []).map(decodeKick).filter(kickAllowed).slice(-25);
+  } catch {
+    return [];
+  }
+}
+
+function fmtKickAmount(wei) {
+  const n = Number(wei) / 1e18;
+  if (n >= 1e6) {
+    const m = n / 1e6;
+    return (m >= 100 ? Math.round(m) : m.toFixed(1).replace(/\.0$/, '')) + 'M';
+  }
+  return Math.round(n).toLocaleString('en-US');
+}
+
+function shortKickAddr(a) {
+  return a.slice(0, 6) + '…' + a.slice(-4);
+}
+
+function renderKick() {
+  const bubble = document.getElementById('kickBubble');
+  const msg = document.getElementById('kickMsg');
+  const meta = document.getElementById('kickMeta');
+  if (!bubble || !msg || !meta) return;
+  if (!kicks.length) {
+    msg.textContent = 'the grill is open — burn a little $stakr, get your words up here.';
+    meta.textContent = 'no kicks yet · min 1M $stakr';
+    return;
+  }
+  const k = kicks[kickIdx % kicks.length];
+  bubble.style.opacity = '0';
+  setTimeout(() => {
+    msg.textContent = '\u201c' + k.message + '\u201d';
+    meta.textContent = shortKickAddr(k.kicker) + ' · burned ' + fmtKickAmount(k.amount) + ' $stakr';
+    bubble.style.opacity = '1';
+  }, 400);
+}
+
+function encString(s) {
+  const bytes = new TextEncoder().encode(s);
+  const len = u256(bytes.length);
+  let hex = '';
+  bytes.forEach((b) => { hex += b.toString(16).padStart(2, '0'); });
+  return len + hex.padEnd(Math.ceil(hex.length / 64) * 64, '0');
+}
+
+function setKickStatus(t) {
+  const el = document.getElementById('kickStatus');
+  if (el) el.textContent = t;
+}
+
+async function kickAllowance(holder) {
+  // allowance(address,address): 0xdd62ed3e
+  const data = '0xdd62ed3e' + encAddr(holder) + encAddr(CONFIG.kicker);
+  const res = await ethCall(CONFIG.stakr, data);
+  return BigInt(res);
+}
+
+async function initKicker() {
+  kicks = await fetchKicks();
+  renderKick();
+  setInterval(async () => {
+    const fresh = await fetchKicks();
+    if (fresh.length !== kicks.length ||
+        (fresh.length && fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
+      kicks = fresh;
+    }
+    if (kicks.length > 1) {
+      kickIdx = (kickIdx + 1) % kicks.length;
+      renderKick();
+    }
+  }, 7000);
+  setInterval(async () => {
+    const fresh = await fetchKicks();
+    if (fresh.length && (!kicks.length || fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
+      kicks = fresh;
+      renderKick();
+    }
+  }, 60000);
+
+  const btnC = document.getElementById('kickConnect');
+  const btnA = document.getElementById('kickApprove');
+  const btnK = document.getElementById('kickSend');
+  if (btnC) btnC.addEventListener('click', async () => {
+    await connect();
+    setKickStatus(account ? 'wallet connected: ' + shortKickAddr(account) : 'connection refused.');
+  });
+  if (btnA) btnA.addEventListener('click', async () => {
+    if (!account) { setKickStatus('connect your wallet first.'); return; }
+    const amtRaw = document.getElementById('kickAmount').value;
+    const amount = BigInt(Math.floor(Number(amtRaw) || 0)) * 10n ** 18n;
+    if (amount < KICK_MIN) { setKickStatus('minimum kick is 1,000,000 $stakr.'); return; }
+    try {
+      setKickStatus('sending approval…');
+      const data = SEL_APPROVE + encAddr(CONFIG.kicker) + u256(amount);
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: account, to: CONFIG.stakr, data }],
+      });
+      setKickStatus('approved in ' + txHash.slice(0, 10) + '… now hit "kick it".');
+    } catch (err) {
+      setKickStatus('approval rejected. the grill understands.');
+    }
+  });
+  if (btnK) btnK.addEventListener('click', async () => {
+    if (!account) { setKickStatus('connect your wallet first.'); return; }
+    const message = document.getElementById('kickMessage').value.trim();
+    const amtRaw = document.getElementById('kickAmount').value;
+    const amount = BigInt(Math.floor(Number(amtRaw) || 0)) * 10n ** 18n;
+    if (!message) { setKickStatus('give the grill something to say.'); return; }
+    if (message.length > 140) { setKickStatus('140 characters max — keep it punchy.'); return; }
+    if (amount < KICK_MIN) { setKickStatus('minimum kick is 1,000,000 $stakr.'); return; }
+    if (!kickAllowed({ message, tx: '' })) { setKickStatus('the grill has standards — try different words.'); return; }
+    try {
+      const ok = await kickAllowance(account);
+      if (ok < amount) { setKickStatus('approve $stakr first (button 1), then kick.'); return; }
+      setKickStatus('kicking… burn it down.');
+      const data = SEL_KICK + u256(amount) + u256(64) + encString(message);
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: account, to: CONFIG.kicker, data }],
+      });
+      setKickStatus('kicked! ' + txHash.slice(0, 10) + '… your words will hit the bubble shortly.');
+      document.getElementById('kickMessage').value = '';
+    } catch (err) {
+      setKickStatus('kick rejected. the steak remains unjudged.');
+    }
+  });
+}
+
+
 async function init() {
   // wire buttons FIRST — never let later failures break them
   try {
@@ -577,6 +768,7 @@ async function init() {
   } catch (e) { console.error('button wiring failed', e); }
   buildTicker();
   try { initGrill(); } catch (e) { console.error('grill failed', e); }
+  try { initKicker(); } catch (e) { console.error('kicker failed', e); }
   try { initContractPill(); } catch (e) { console.error('contract pill failed', e); }
   try {
     epochsData = await loadProofs();
