@@ -151,8 +151,41 @@ h1, h2, h3 { font-family: "Alfa Slab One", Georgia, serif; font-weight: 400; lin
   margin-top: 0.75rem;
   text-align: center;
 }
-.grill-wrap { position: relative; }
+.grill-wrap { position: relative; container-type: inline-size; }
 .grill-wrap img { display: block; }
+/* live speech bubble over the grill art — sits where the painted bubble is,
+   shows the grill master's latest kick message (default matches the art) */
+.grill-bubble {
+  position: absolute;
+  z-index: 2;
+  left: 1.5%;
+  top: 2.5%;
+  width: 31%;
+  min-height: 27%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fffdf5;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 1.1em;
+  padding: 0.45em 0.6em;
+  text-align: center;
+  font-weight: 800;
+  line-height: 1.25;
+  font-size: clamp(0.7rem, 0.55rem + 2.2vw, 1.8rem);
+  font-size: 3.4cqw;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.35);
+  overflow-wrap: break-word;
+}
+.grill-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -0.95em;
+  right: 14%;
+  border: 0.55em solid transparent;
+  border-top-color: var(--ink);
+}
 #smokeCanvas {
   position: absolute;
   inset: 0;

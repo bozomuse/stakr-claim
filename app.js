@@ -740,13 +740,16 @@ function renderKick() {
   lastMasterSig = sig;
   bubble.style.opacity = '0';
   setTimeout(() => {
+    const grillMsg = document.getElementById('grillBubbleMsg');
     if (!master) {
       msg.textContent = 'Tell a mfer how you want your steak cooked?';
       meta.textContent = 'no kicks yet · min 1M $stakr';
+      if (grillMsg) grillMsg.textContent = 'did you burn the stakr?';
     } else {
       msg.textContent = '\u201c' + master.latest.message + '\u201d';
       meta.textContent = '\uD83D\uDC51 grill master · ' + shortKickAddr(master.addr) +
         ' · burned ' + fmtKickAmount(master.total) + ' $stakr total';
+      if (grillMsg) grillMsg.textContent = master.latest.message;
     }
     bubble.style.opacity = '1';
   }, 400);
