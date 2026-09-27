@@ -157,6 +157,49 @@ h1, h2, h3 { font-family: "Alfa Slab One", Georgia, serif; font-weight: 400; lin
   margin-top: 0.5rem;
   text-align: center;
 }
+.contract-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+  padding: 0.55rem 0.6rem 0.55rem 0.9rem;
+  background: var(--surface);
+  border: 2px dashed var(--ketchup);
+  border-radius: 999px;
+  cursor: pointer;
+  max-width: 100%;
+  font-family: "Space Mono", monospace;
+  transition: transform 0.15s var(--ease);
+}
+.contract-pill:hover { transform: translateY(-1px); }
+.contract-pill:active { transform: translateY(1px); }
+.pill-ticker {
+  font-weight: 700;
+  color: var(--ketchup);
+  white-space: nowrap;
+}
+.pill-addr {
+  font-size: 0.78rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 36ch;
+  user-select: all;
+}
+.pill-copy {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  white-space: nowrap;
+}
+@media (max-width: 520px) {
+  .pill-addr { max-width: 15ch; }
+}
 
 /* ---------- ticker ---------- */
 .ticker {

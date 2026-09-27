@@ -521,6 +521,35 @@ function initGrill() {
   window.addEventListener('resize', sizeCanvas);
 }
 
+/* ---------------- copy contract pill ---------------- */
+const STAKR_ADDR = '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3';
+
+function initContractPill() {
+  const pill = document.getElementById('contractPill');
+  if (!pill) return;
+  const copyEl = document.getElementById('pillCopy');
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(STAKR_ADDR);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = STAKR_ADDR;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch { /* give up gracefully */ }
+      ta.remove();
+    }
+    if (copyEl) {
+      copyEl.textContent = 'copied ✓';
+      setTimeout(() => { copyEl.textContent = 'copy'; }, 1600);
+    }
+  }
+  pill.addEventListener('click', copy);
+  pill.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copy(); }
+  });
+}
+
 /* ---------------- init ---------------- */
 function buildTicker() {
   const phrase = 'hold stakr <b>•</b> earn bnkr <b>•</b> stake bnkr <b>•</b> mfer <b>•</b> ';
@@ -537,6 +566,7 @@ async function init() {
   } catch (e) { console.error('button wiring failed', e); }
   buildTicker();
   try { initGrill(); } catch (e) { console.error('grill failed', e); }
+  try { initContractPill(); } catch (e) { console.error('contract pill failed', e); }
   try {
     epochsData = await loadProofs();
   } catch {
