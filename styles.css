@@ -52,16 +52,6 @@ h1, h2, h3 { font-family: "Alfa Slab One", Georgia, serif; font-weight: 400; lin
   margin: 0 0 0.75rem;
 }
 
-/* ---------- demo banner ---------- */
-.demo-banner {
-  background: var(--mustard);
-  color: var(--ink);
-  text-align: center;
-  padding: 0.6rem 1rem;
-  font-size: 0.85rem;
-}
-.demo-banner p { margin: 0; }
-
 /* ---------- top bar ---------- */
 .topbar {
   display: flex;

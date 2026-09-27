@@ -400,7 +400,6 @@ function waitForReceipt(txHash) {
 function openPreview(to, amount, data) {
   document.getElementById('txTo').textContent = to;
   document.getElementById('txAmount').textContent = fmtBnkr(amount.toString()) + ' bnkr';
-  document.getElementById('txDemoNote').hidden = !CONFIG.demo;
   const dlg = document.getElementById('txDialog');
   if (typeof dlg.showModal === 'function') dlg.showModal();
 }
@@ -420,7 +419,6 @@ async function init() {
     if (cb2) cb2.addEventListener('click', connect);
   } catch (e) { console.error('button wiring failed', e); }
   buildTicker();
-  document.getElementById('demoBanner').hidden = !CONFIG.demo;
   try {
     epochsData = await loadProofs();
   } catch {
