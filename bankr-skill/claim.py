@@ -206,9 +206,11 @@ def main():
         try:
             result = api_post("/wallet/submit", {
                 "chain": CHAIN,
-                "to": DISTRIBUTOR,
-                "data": calldata,
-                "value": "0"
+                "transaction": {
+                    "to": DISTRIBUTOR,
+                    "data": calldata,
+                    "value": "0"
+                }
             })
             print(f"  Submitted: {json.dumps(result)[:200]}")
         except Exception as e:

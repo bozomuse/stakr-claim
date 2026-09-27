@@ -577,6 +577,9 @@ function buildTicker() {
 const KICK_TOPIC = '0x43fe7ae845cc4c446c011530cec63504d3d3c08d2ddc95df79ba025293ac756e';
 const KICK_RPC = 'https://mainnet.base.org';
 const KICK_MIN = 1000000n * 10n ** 18n;
+// public RPC caps eth_getLogs at 2,000 blocks per call — chunk below that
+const KICK_LOG_CHUNK = 1800;
+const KICK_CACHE_KEY = 'stakr-kicks-v1';
 const SEL_APPROVE = '0x095ea7b3';
 const SEL_KICK = '0xaa53276b'; // kick(uint256,string)
 const HIDDEN_KICKS = []; // tx hashes (lowercase) bounced from the bubble
@@ -610,25 +613,62 @@ function kickAllowed(k) {
   return !KICK_DENY.some((d) => low.includes(d));
 }
 
+async function rpcCall(method, params) {
+  const res = await fetch(KICK_RPC, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+  });
+  const j = await res.json();
+  if (j.error) throw new Error((j.error && j.error.message) || method + ' failed');
+  return j.result;
+}
+
+async function fetchKickLogs(from, to) {
+  return (await rpcCall('eth_getLogs', [{
+    address: CONFIG.kicker,
+    fromBlock: '0x' + from.toString(16),
+    toBlock: '0x' + to.toString(16),
+    topics: [KICK_TOPIC],
+  }])) || [];
+}
+
+function loadKickCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(KICK_CACHE_KEY) || 'null');
+    if (c && Array.isArray(c.logs) && Number.isFinite(c.lastBlock)) return c;
+  } catch { /* corrupted cache — rescan */ }
+  return null;
+}
+
+function saveKickCache(logs, lastBlock) {
+  try {
+    localStorage.setItem(KICK_CACHE_KEY, JSON.stringify({ logs, lastBlock }));
+  } catch { /* storage full/blocked — feed still works, just rescans */ }
+}
+
 async function fetchKicks() {
   try {
-    const res = await fetch(KICK_RPC, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0', id: 1, method: 'eth_getLogs',
-        params: [{
-          address: CONFIG.kicker,
-          fromBlock: '0x' + CONFIG.kickDeployBlock.toString(16),
-          toBlock: 'latest',
-          topics: [KICK_TOPIC],
-        }],
-      }),
-    });
-    const j = await res.json();
-    return (j.result || []).map(decodeKick).filter(kickAllowed);
+    const latest = parseInt(await rpcCall('eth_blockNumber', []), 16);
+    const cache = loadKickCache();
+    let logs, from;
+    if (cache && cache.lastBlock >= CONFIG.kickDeployBlock) {
+      logs = cache.logs;
+      from = cache.lastBlock + 1;
+    } else {
+      logs = [];
+      from = CONFIG.kickDeployBlock;
+    }
+    if (from <= latest) {
+      for (let s = from; s <= latest; s += KICK_LOG_CHUNK) {
+        const e = Math.min(s + KICK_LOG_CHUNK - 1, latest);
+        logs.push(...await fetchKickLogs(s, e));
+      }
+      saveKickCache(logs, latest);
+    }
+    return logs.map(decodeKick).filter(kickAllowed);
   } catch {
-    return [];
+    return null; // failure signal — caller keeps the last good feed
   }
 }
 
@@ -733,11 +773,12 @@ async function kickAllowance(holder) {
 }
 
 async function initKicker() {
-  kicks = await fetchKicks();
+  kicks = (await fetchKicks()) || [];
   renderKick();
   setInterval(async () => {
     // refetch every minute — the crown moves when someone out-burns the master
     const fresh = await fetchKicks();
+    if (!fresh) return; // rpc hiccup — keep the last good feed
     if (fresh.length !== kicks.length ||
         (fresh.length && fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
       kicks = fresh;
@@ -809,9 +850,10 @@ async function init() {
   try { initKicker(); } catch (e) { console.error('kicker failed', e); }
   try { initContractPill(); } catch (e) { console.error('contract pill failed', e); }
   try {
-    const upd = document.getElementById('skillUpdateBtn');
-    if (upd) upd.addEventListener('click', () => copyText(upd.dataset.copy, upd));
-  } catch (e) { console.error('skill update button failed', e); }
+    document.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', () => copyText(btn.dataset.copy, btn));
+    });
+  } catch (e) { console.error('copy buttons failed', e); }
   try {
     epochsData = await loadProofs();
   } catch {

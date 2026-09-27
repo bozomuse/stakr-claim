@@ -391,6 +391,26 @@ td.mono { font-size: 0.82rem; }
   flex-wrap: wrap;
   padding-top: 0.25rem;
 }
+.prompt-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 1.25rem 0.25rem;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.prompt-box code {
+  flex: 1 1 16rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
 
 /* ---------- footer ---------- */
 footer {

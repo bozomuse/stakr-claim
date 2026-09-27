@@ -25,6 +25,7 @@ import os
 import re
 import sys
 import urllib.request
+from decimal import Decimal
 
 BANKR_API = "https://api.bankr.bot"
 CHAIN = "base"
@@ -75,20 +76,42 @@ def get_wallet_address():
     raise Exception(f"Could not find wallet address in: {me}")
 
 
+def submit_tx(to, data, label):
+    # /wallet/submit expects the tx nested under "transaction" (flat fields 400).
+    return api_post(
+        "/wallet/submit",
+        {"chain": CHAIN, "transaction": {"to": to, "data": data, "value": "0"}},
+    )
+
+
 def eth_call(to, data):
-    rpc = "https://mainnet.base.org"
+    # mainnet.base.org 403s from this egress; prefer the keeper's archive RPC.
+    try:
+        kcfg = json.load(open("/home/hatch/workspace/stakr/keeper/keeper_config.json"))
+        rpcs = [kcfg.get("rpc_url") or kcfg.get("alchemy_url") or kcfg.get("rpc")]
+    except Exception:
+        rpcs = []
+    rpcs.append("https://mainnet.base.org")
     payload = {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "eth_call",
         "params": [{"to": to, "data": data}, "latest"],
     }
-    req = urllib.request.Request(
-        rpc, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"}
-    )
-    with urllib.request.urlopen(req) as r:
-        res = json.load(r)
-    return res.get("result", "0x")
+    last = None
+    for rpc in rpcs:
+        if not rpc:
+            continue
+        try:
+            req = urllib.request.Request(
+                rpc, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"}
+            )
+            with urllib.request.urlopen(req, timeout=30) as r:
+                res = json.load(r)
+            return res.get("result", "0x")
+        except Exception as e:
+            last = e
+    raise Exception(f"eth_call failed on all RPCs: {last}")
 
 
 def u256(n):
@@ -170,7 +193,7 @@ def main():
     message = None
     for i, a in enumerate(args):
         if a == "--amount" and i + 1 < len(args):
-            amount = int(float(args[i + 1]) * 10**18)
+            amount = int(Decimal(args[i + 1]) * 10**18)
         elif a == "--message" and i + 1 < len(args):
             message = args[i + 1]
 
@@ -232,10 +255,7 @@ def main():
     # 1. approve the kicker
     print("\n1/2 approving kicker...")
     try:
-        res = api_post(
-            "/wallet/submit",
-            {"chain": CHAIN, "to": STAKR, "data": "0x" + encode_approve(KICKER, amount), "value": "0"},
-        )
+        res = submit_tx(STAKR, "0x" + encode_approve(KICKER, amount), "approve")
         print(f"  approve submitted: {json.dumps(res)[:200]}")
     except Exception as e:
         print(f"  approve failed: {e}")
@@ -244,10 +264,7 @@ def main():
     # 2. kick
     print("2/2 kicking...")
     try:
-        res = api_post(
-            "/wallet/submit",
-            {"chain": CHAIN, "to": KICKER, "data": encode_kick(amount, message), "value": "0"},
-        )
+        res = submit_tx(KICKER, encode_kick(amount, message), "kick")
         print(f"  kick submitted: {json.dumps(res)[:200]}")
     except Exception as e:
         print(f"  kick failed: {e}")
