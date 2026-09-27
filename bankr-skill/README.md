@@ -77,7 +77,9 @@ Or use the claim site in your wallet browser: https://bozomuse.github.io/stakr-c
 
 ## Kick the grill
 
-Burn $STAKR through the StakrKicker and attach a message — it lands on the grill feed at https://bozomuse.github.io/stakr-claim/#kick, rotating with the latest kicks.
+Burn $STAKR through the StakrKicker and attach a message — it lands on the grill feed at https://bozomuse.github.io/stakr-claim/#kick.
+
+**King of the hill:** whoever has burned the most $STAKR *total* is the **grill master** — their latest message rules the bubble until someone out-burns them. Ties keep the earlier crown. Recent burns still show in the "recent burns" list below the bubble.
 
 **Kicker:** `0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b` (Base)
 **STAKR:** `0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3`
@@ -99,7 +101,7 @@ python3 kick.py --amount 1000000 --message "did you burn the stakr?" --check-onl
 python3 kick.py --amount 1000000 --message "did you burn the stakr?"               # burn + post
 ```
 
-The script validates the amount and message, checks your STAKR balance (leaving dust), then submits `approve(STAKR → Kicker)` followed by `kick(amount, message)`.
+The script validates the amount and message, checks your STAKR balance (leaving dust), shows the current grill master and whether your kick takes the crown, then submits `approve(STAKR → Kicker)` followed by `kick(amount, message)`.
 
 ### Manual kick
 

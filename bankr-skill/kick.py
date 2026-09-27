@@ -3,6 +3,10 @@
 STAKR kick-the-grill via Bankr - burn STAKR through the StakrKicker
 and attach a message that shows up on the grill feed.
 
+King of the hill: whoever has burned the most STAKR total is the grill
+master, and their latest message rules the bubble on the claim site
+until someone out-burns them.
+
 Usage:
   export BANKR_API_KEY="bk_..."
   python3 kick.py --amount 1000000 --message "did you burn the stakr?"
@@ -12,7 +16,8 @@ The script:
 1. Validates amount (>= 1M STAKR) and message (1-140 bytes, no links)
 2. Checks your STAKR balance, leaving at least 1 STAKR dust
    (STAKR reverts full-balance transfers)
-3. Submits approve(STAKR -> Kicker) then kick(amount, message) via Bankr
+3. Shows the current grill master and whether your kick takes the crown
+4. Submits approve(STAKR -> Kicker) then kick(amount, message) via Bankr
 """
 
 import json
@@ -34,6 +39,9 @@ MAX_MSG = 140                   # bytes
 SEL_APPROVE = "0x095ea7b3"
 SEL_KICK = "0xaa53276b"
 SEL_BALANCE_OF = "0x70a08231"
+
+KICK_TOPIC = "0x43fe7ae845cc4c446c011530cec63504d3d3c08d2ddc95df79ba025293ac756e"
+KICK_DEPLOY_BLOCK = 51849243
 
 
 def api_get(path):
@@ -112,6 +120,43 @@ def stakr_balance(holder):
     return int(eth_call(STAKR, data), 16)
 
 
+def kick_totals():
+    # per-address total STAKR burned through the kicker: {address: wei}
+    rpc = "https://mainnet.base.org"
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "eth_getLogs",
+        "params": [{
+            "address": KICKER,
+            "fromBlock": hex(KICK_DEPLOY_BLOCK),
+            "toBlock": "latest",
+            "topics": [KICK_TOPIC],
+        }],
+    }
+    req = urllib.request.Request(
+        rpc, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"}
+    )
+    with urllib.request.urlopen(req) as r:
+        logs = json.load(r).get("result", [])
+    totals = {}
+    for log in logs:
+        try:
+            kicker = "0x" + log["topics"][1][-40:].lower()
+            amount = int(log["data"][2:66], 16)
+        except (IndexError, ValueError):
+            continue
+        totals[kicker] = totals.get(kicker, 0) + amount
+    return totals
+
+
+def grill_master(totals):
+    # biggest total burner wins; ties keep the earlier crown (dict is chronological)
+    if not totals:
+        return None, 0
+    return max(totals.items(), key=lambda kv: kv[1])
+
+
 def main():
     if "BANKR_API_KEY" not in os.environ:
         print("Error: Set BANKR_API_KEY environment variable")
@@ -162,6 +207,23 @@ def main():
 
     print(f"\nBurn:    {amount / 10**18:,.0f} STAKR -> dead")
     print(f'Message: "{message}"')
+
+    # king of the hill: who holds the crown, and does this kick take it?
+    totals = kick_totals()
+    maddr, mtotal = grill_master(totals)
+    mine = totals.get(wallet.lower(), 0)
+    new_total = mine + amount
+    if maddr is None:
+        print("No kicks yet — this burn makes you the first grill master 👑")
+    else:
+        print(f"Current grill master: {maddr} ({mtotal / 10**18:,.0f} STAKR burned)")
+        if maddr == wallet.lower():
+            print("  that's you — this kick extends your reign 👑")
+        elif new_total > mtotal:
+            print("  this kick takes the crown 👑")
+        else:
+            short = mtotal + 1 - new_total
+            print(f"  burn {short / 10**18:,.0f} more STAKR total to dethrone them")
 
     if check_only:
         print("\n--check-only: not submitting.")

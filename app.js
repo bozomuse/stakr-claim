@@ -586,7 +586,6 @@ const KICK_DENY = [
 ];
 
 let kicks = [];
-let kickIdx = 0;
 
 function decodeKick(log) {
   try {
@@ -627,7 +626,7 @@ async function fetchKicks() {
       }),
     });
     const j = await res.json();
-    return (j.result || []).map(decodeKick).filter(kickAllowed).slice(-25);
+    return (j.result || []).map(decodeKick).filter(kickAllowed);
   } catch {
     return [];
   }
@@ -646,21 +645,69 @@ function shortKickAddr(a) {
   return a.slice(0, 6) + '…' + a.slice(-4);
 }
 
+function grillMaster() {
+  if (!kicks.length) return null;
+  const totals = new Map(); // kicker -> { total, latest }
+  for (const k of kicks) {
+    const e = totals.get(k.kicker) || { total: 0n, latest: null };
+    e.total += k.amount;
+    e.latest = k; // kicks arrive oldest-first, so this ends as their newest
+    totals.set(k.kicker, e);
+  }
+  let master = null;
+  for (const [addr, e] of totals) {
+    // strict > : on a tie the earlier burner keeps the crown
+    if (!master || e.total > master.total) master = { addr, total: e.total, latest: e.latest };
+  }
+  return master;
+}
+
+let lastMasterSig = '';
+
+function renderRecentKicks() {
+  const el = document.getElementById('recentKicks');
+  if (!el) return;
+  const recent = kicks.slice(-5).reverse();
+  el.innerHTML = '';
+  if (!recent.length) return;
+  const title = document.createElement('div');
+  title.className = 'recent-kicks-title';
+  title.textContent = 'recent burns';
+  el.appendChild(title);
+  for (const k of recent) {
+    const row = document.createElement('div');
+    row.innerHTML = '';
+    const q = document.createElement('span');
+    q.textContent = '\u201c' + k.message + '\u201d';
+    const m = document.createElement('span');
+    m.className = 'muted';
+    m.textContent = ' — ' + shortKickAddr(k.kicker) + ' · ' + fmtKickAmount(k.amount);
+    row.appendChild(q);
+    row.appendChild(m);
+    el.appendChild(row);
+  }
+}
+
 function renderKick() {
   const bubble = document.getElementById('kickBubble');
   const msg = document.getElementById('kickMsg');
   const meta = document.getElementById('kickMeta');
   if (!bubble || !msg || !meta) return;
-  if (!kicks.length) {
-    msg.textContent = 'Tell a mfer how you want your steak cooked?';
-    meta.textContent = 'no kicks yet · min 1M $stakr';
-    return;
-  }
-  const k = kicks[kickIdx % kicks.length];
+  const master = grillMaster();
+  const sig = master ? master.addr + ':' + master.latest.tx : 'none';
+  renderRecentKicks();
+  if (sig === lastMasterSig) return; // crown hasn't moved — leave the bubble alone
+  lastMasterSig = sig;
   bubble.style.opacity = '0';
   setTimeout(() => {
-    msg.textContent = '\u201c' + k.message + '\u201d';
-    meta.textContent = shortKickAddr(k.kicker) + ' · burned ' + fmtKickAmount(k.amount) + ' $stakr';
+    if (!master) {
+      msg.textContent = 'Tell a mfer how you want your steak cooked?';
+      meta.textContent = 'no kicks yet · min 1M $stakr';
+    } else {
+      msg.textContent = '\u201c' + master.latest.message + '\u201d';
+      meta.textContent = '\uD83D\uDC51 grill master · ' + shortKickAddr(master.addr) +
+        ' · burned ' + fmtKickAmount(master.total) + ' $stakr total';
+    }
     bubble.style.opacity = '1';
   }, 400);
 }
@@ -689,22 +736,13 @@ async function initKicker() {
   kicks = await fetchKicks();
   renderKick();
   setInterval(async () => {
+    // refetch every minute — the crown moves when someone out-burns the master
     const fresh = await fetchKicks();
     if (fresh.length !== kicks.length ||
         (fresh.length && fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
       kicks = fresh;
     }
-    if (kicks.length > 1) {
-      kickIdx = (kickIdx + 1) % kicks.length;
-      renderKick();
-    }
-  }, 7000);
-  setInterval(async () => {
-    const fresh = await fetchKicks();
-    if (fresh.length && (!kicks.length || fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
-      kicks = fresh;
-      renderKick();
-    }
+    renderKick();
   }, 60000);
 
   const btnC = document.getElementById('kickConnect');
@@ -749,7 +787,7 @@ async function initKicker() {
         method: 'eth_sendTransaction',
         params: [{ from: account, to: CONFIG.kicker, data }],
       });
-      setKickStatus('kicked! ' + txHash.slice(0, 10) + '… your words will hit the bubble shortly.');
+      setKickStatus('kicked! ' + txHash.slice(0, 10) + '… your words are on the grill — out-burn the master to take the crown.');
       document.getElementById('kickMessage').value = '';
     } catch (err) {
       setKickStatus('kick rejected. the steak remains unjudged.');

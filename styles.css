@@ -446,6 +446,20 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   border: 9px solid transparent;
   border-top-color: var(--ink);
 }
+.recent-kicks {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.3rem;
+  max-width: 44rem;
+  font-size: 0.85rem;
+}
+.recent-kicks-title {
+  font-family: "Space Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+  color: var(--ketchup);
+}
 .kick-bubble .kick-meta {
   display: block;
   font-family: "Space Mono", monospace;
