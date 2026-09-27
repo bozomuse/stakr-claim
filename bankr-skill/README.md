@@ -1,6 +1,6 @@
 ---
 name: stakr-claim
-description: Claim STAKR weekly BNKR rewards via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions. Use when a holder wants to claim their STAKR rewards through Bankr instead of the web claim site.
+description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Use when a holder wants to claim their STAKR rewards or kick the grill through Bankr instead of the web claim site.
 metadata:
   requires:
     bins: ["bankr"]
@@ -74,3 +74,44 @@ Or use the claim site in your wallet browser: https://bozomuse.github.io/stakr-c
 - Unclaimed BNKR rolls forward to future epochs
 - Minimum eligibility: $5 time-weighted average STAKR during the epoch
 - Gas is paid in ETH on Base from your Bankr wallet
+
+## Kick the grill
+
+Burn $STAKR through the StakrKicker and attach a message — it lands on the grill feed at https://bozomuse.github.io/stakr-claim/#kick, rotating with the latest kicks.
+
+**Kicker:** `0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b` (Base)
+**STAKR:** `0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3`
+
+Rules, enforced onchain:
+- Minimum burn: **1,000,000 STAKR** (`MIN_KICK = 1_000_000 * 1e18`)
+- Message: **1–140 bytes**, non-empty
+- Burned STAKR goes straight to the dead address (`0x000000000000000000000000000000000000dEaD`) — no custody, no take-backs
+
+Quirks and feed rules:
+- STAKR **reverts full-balance transfers** — always leave at least **1 STAKR** dust in the wallet
+- Links and slurs get bounced from the grill feed — keep it funny and clean
+
+### Quick kick (recommended)
+
+```bash
+export BANKR_API_KEY="bk_..."
+python3 kick.py --amount 1000000 --message "did you burn the stakr?" --check-only  # preview
+python3 kick.py --amount 1000000 --message "did you burn the stakr?"               # burn + post
+```
+
+The script validates the amount and message, checks your STAKR balance (leaving dust), then submits `approve(STAKR → Kicker)` followed by `kick(amount, message)`.
+
+### Manual kick
+
+Two transactions, in order:
+
+1. **Approve** — `approve(address,uint256)` on STAKR, spender = kicker, amount = burn amount
+   - Selector: `0x095ea7b3`
+2. **Kick** — `kick(uint256 amount, string message)` on the kicker
+   - Selector: `0xaa53276b`
+   - Encode: `amount` (uint256), then the string (offset `0x40`, byte length, UTF-8 bytes right-padded to 32)
+
+Submit each via Bankr Wallet API `/wallet/submit` or the agent:
+```bash
+bankr agent prompt "On Base, approve 1000000 STAKR (0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3) to the kicker 0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b, then call kick(1000000e18, '<message>') on the kicker"
+```
