@@ -19,7 +19,7 @@
 <title>stakr &amp; stakr — hold stakr, earn bnkr</title>
 <meta name="description" content="famous for stakeburgers. $STAKR is paired with $BNKR — every trade pays the holders. hold stakr, earn bnkr. no staking, no lockups.">
 <meta property="og:title" content="stakr & stakr — hold stakr, earn bnkr">
-<meta property="og:description" content="famous for stakeburgers. 100% of $STAKR creator fees are served to holders weekly in $BNKR.">
+<meta property="og:description" content="famous for stakeburgers. 100% of $STAKR's $BNKR creator fees are served to holders weekly — and the $STAKR fee leg gets burned. the grill's hot.">
 <meta property="og:image" content="assets/stakeburger.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C8342A'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-weight='bold' font-size='36' fill='%23FAF3E7' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -41,7 +41,7 @@
     <div class="hero-copy">
       <p class="eyebrow">the weekly payout window</p>
       <h1 id="heroTitle">hold stakr.<br>earn bnkr.</h1>
-      <p class="lede">famous for stakeburgers. $stakr is paired with $bnkr, and every trade pays the holders — 100% of creator fees are collected in $bnkr and served weekly. no staking, no lockups, just hold and earn.</p>
+      <p class="lede">famous for stakeburgers. $stakr is paired with $bnkr, and every trade pays the holders — 100% of $bnkr creator fees are served weekly, and the $stakr fee leg gets burned. no staking, no lockups, just hold and earn. the grill's hot.</p>
       <div class="cta-row">
         <a class="btn btn-ketchup" href="#claim">check my rewards</a>
         <a class="textlink" href="#how">how the grill works</a>
@@ -91,7 +91,7 @@
         <span class="n" aria-hidden="true">03</span>
         <div>
           <h3>served weekly, pro-rata</h3>
-          <p>holders are weighed by time-weighted average balance across the week — a one-block flash loan counts for about one fifty-thousandth of a week. hold $5+ of stakr, claim your $bnkr. that's the whole menu.</p>
+          <p>holders are weighed by time-weighted average balance across the week — a one-block flash loan counts for about one three-hundred-thousandth of a week. hold $5+ of stakr, claim your $bnkr. that's the whole menu.</p>
         </div>
       </li>
     </ol>
@@ -153,7 +153,7 @@
     </details>
     <details>
       <summary>can someone game it with a flash loan?</summary>
-      <p>no. payouts are weighted by average balance over the whole week, not a single snapshot block. borrow a mountain for one block and it counts for about one fifty-thousandth of a week.</p>
+      <p>no. payouts are weighted by average balance over the whole week, not a single snapshot block. borrow a mountain for one block and it counts for about one three-hundred-thousandth of a week.</p>
     </details>
     <details>
       <summary>can i claim with bankr instead?</summary>
@@ -191,8 +191,8 @@
       <code class="mono">0xdf0dba6a5993c0d476ac1e1672a19d4938a6028ad696466b9b83470692395081</code><br>
       <a href="https://basescan.org/tx/0xdf0dba6a5993c0d476ac1e1672a19d4938a6028ad696466b9b83470692395081">view on basescan</a></p>
       <p>live proof — the keeper's claimFees pulled 0.133 $bnkr + 3.766 $stakr straight into the distributor:<br>
-      <code class="mono">0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392b60508f3</code><br>
-      <a href="https://basescan.org/tx/0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392b60508f3">view on basescan</a></p>
+      <code class="mono">0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392f755f60508f3</code><br>
+      <a href="https://basescan.org/tx/0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392f755f60508f3">view on basescan</a></p>
     </details>
     <details>
       <summary>live machinery test</summary>
@@ -200,10 +200,11 @@
       <p><code class="mono">0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a</code><br>
       <a href="https://basescan.org/tx/0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a">view on basescan</a></p>
       <p>the distributor's $bnkr went from 0.133 to 206.12 in that one transaction — the payout reservoir is already filling before the first epoch. converter: <code class="mono">0xBc159f6cf49D64E06e7041815b5Ff8718E9106f2</code></p>
+      <p>that test ran under keep+convert; going forward the $stakr leg gets burned instead of converted — same sweep, hotter grill.</p>
     </details>
     <details>
       <summary>the money flow</summary>
-      <p>100% of $stakr's creator fees are collected in $bnkr and served to holders weekly. sells also accrue a $stakr fee leg that sits in the distributor — the keeper sweeps it, converts to $bnkr, and rolls it into a later epoch (keep+convert).</p>
+      <p>100% of $stakr's $bnkr creator fees are served to holders weekly. trades also accrue a $stakr fee leg — the keeper sweeps it and burns it. the protocol never market-sells its own token: more volume, more $stakr burned, hotter grill.</p>
       <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>
       $bnkr: <code class="mono">0x22af33fe49fd1fa80c7149773dde5890d3c76f3b</code></p>
     </details>
