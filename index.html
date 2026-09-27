@@ -186,6 +186,13 @@
       <a href="https://basescan.org/tx/0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392b60508f3">view on basescan</a></p>
     </details>
     <details>
+      <summary>live machinery test</summary>
+      <p>the keep+convert loop already ran for real — not a drill. the keeper swept the $stakr fee leg and converted 699,000 $stakr → 205.99 $bnkr through the onchain converter, straight into the distributor:</p>
+      <p><code class="mono">0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a</code><br>
+      <a href="https://basescan.org/tx/0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a">view on basescan</a></p>
+      <p>the distributor's $bnkr went from 0.133 to 206.12 in that one transaction — the payout reservoir is already filling before the first epoch. converter: <code class="mono">0xBc159f6cf49D64E06e7041815b5Ff8718E9106f2</code></p>
+    </details>
+    <details>
       <summary>the money flow</summary>
       <p>100% of $stakr's creator fees are collected in $bnkr and served to holders weekly. sells also accrue a $stakr fee leg that sits in the distributor — the keeper sweeps it, converts to $bnkr, and rolls it into a later epoch (keep+convert).</p>
       <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>
