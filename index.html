@@ -180,6 +180,16 @@
       pool manager: <code class="mono">0x498581fF718922c3f8e6A244956aF099B2652b2b</code></p>
     </details>
     <details>
+      <summary>fee recipient proof</summary>
+      <p>the pool's fee beneficiary is the distributor — every creator fee accrues there, not to a wallet. (bankr's dashboard still shows the launch-time label; the chain is the source of truth.)</p>
+      <p>beneficiary set to the distributor on the fee hook:<br>
+      <code class="mono">0xdf0dba6a5993c0d476ac1e1672a19d4938a6028ad696466b9b83470692395081</code><br>
+      <a href="https://basescan.org/tx/0xdf0dba6a5993c0d476ac1e1672a19d4938a6028ad696466b9b83470692395081">view on basescan</a></p>
+      <p>live proof — the keeper's claimFees pulled 0.133 $bnkr + 3.766 $stakr straight into the distributor:<br>
+      <code class="mono">0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392b60508f3</code><br>
+      <a href="https://basescan.org/tx/0x4e00547f5ae2b54548dfa40691fb6161d3c177e962d7c3df8392b60508f3">view on basescan</a></p>
+    </details>
+    <details>
       <summary>the money flow</summary>
       <p>100% of $stakr's creator fees are collected in $bnkr and served to holders weekly. sells also accrue a $stakr fee leg that sits in the distributor — the keeper sweeps it, converts to $bnkr, and rolls it into a later epoch (keep+convert).</p>
       <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>
