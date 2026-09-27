@@ -413,6 +413,16 @@ function grillSmokeLevel(priceUsd) {
   return Math.min(3, Math.max(0.15, priceUsd / GRILL_REF_PRICE));
 }
 
+/* steak doneness stages: the grill's heat as the price climbs vs launch */
+function grillStage(mult) {
+  if (mult < 0.75) return 'blue rare';
+  if (mult < 1) return 'rare';
+  if (mult < 2) return 'medium rare';
+  if (mult < 4) return 'medium';
+  if (mult < 8) return 'medium well';
+  return 'well done';
+}
+
 async function fetchStakrPrice() {
   const urls = [
     'https://api.geckoterminal.com/api/v2/networks/base/tokens/0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3',
@@ -502,7 +512,8 @@ function initGrill() {
     const p = await fetchStakrPrice();
     if (p > 0) {
       smokeLevel = grillSmokeLevel(p);
-      if (label) label.textContent = '$' + p.toPrecision(3) + '  ·  ' + smokeLevel.toFixed(1) + '× launch heat';
+      const mult = p / GRILL_REF_PRICE;
+      if (label) label.textContent = '$' + p.toPrecision(3) + '  ·  ' + grillStage(mult) + ' (' + mult.toFixed(1) + '× launch heat)';
     } else if (label && label.dataset.fed !== '1') {
       label.dataset.fed = '1';
       label.textContent = 'price feed napping — grill at medium heat';
