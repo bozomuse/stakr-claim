@@ -409,9 +409,8 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 .kick-bubble {
   position: absolute;
   top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 80%;
+  right: 12px;
+  max-width: 44%;
   background: #fffdf5;
   color: var(--ink);
   border: 2px solid var(--ink);
