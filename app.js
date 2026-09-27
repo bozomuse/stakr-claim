@@ -652,7 +652,7 @@ function renderKick() {
   const meta = document.getElementById('kickMeta');
   if (!bubble || !msg || !meta) return;
   if (!kicks.length) {
-    msg.textContent = 'the grill is open — burn a little $stakr, get your words up here.';
+    msg.textContent = 'Tell a mfer how you want your steak cooked?';
     meta.textContent = 'no kicks yet · min 1M $stakr';
     return;
   }
