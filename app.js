@@ -404,6 +404,123 @@ function openPreview(to, amount, data) {
   if (typeof dlg.showModal === 'function') dlg.showModal();
 }
 
+/* ---------------- grill smoke (price-reactive) ---------------- */
+const GRILL_REF_PRICE = 1.06e-7; // ~launch price in usd per stakr (dev buy); smoke scales vs this
+let smokeLevel = 1;
+
+function grillSmokeLevel(priceUsd) {
+  if (!priceUsd || priceUsd <= 0) return 1;
+  return Math.min(3, Math.max(0.15, priceUsd / GRILL_REF_PRICE));
+}
+
+async function fetchStakrPrice() {
+  const urls = [
+    'https://api.geckoterminal.com/api/v2/networks/base/tokens/0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3',
+    'https://api.dexscreener.com/latest/dex/tokens/0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3',
+  ];
+  for (const u of urls) {
+    try {
+      const r = await fetch(u);
+      if (!r.ok) continue;
+      const j = await r.json();
+      const p = parseFloat(j && j.data && j.data.attributes && j.data.attributes.price_usd);
+      if (p > 0) return p;
+      const q = parseFloat(j && j.pairs && j.pairs[0] && j.pairs[0].priceUsd);
+      if (q > 0) return q;
+    } catch { /* try next source */ }
+  }
+  return 0;
+}
+
+function initGrill() {
+  const canvas = document.getElementById('smokeCanvas');
+  const img = document.getElementById('grillImg');
+  const label = document.getElementById('stakrPrice');
+  if (!canvas || !img) return;
+  const ctx = canvas.getContext('2d');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const parts = [];
+  let spawnAcc = 0, last = 0;
+
+  function sizeCanvas() {
+    const r = img.getBoundingClientRect();
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.max(1, Math.round(r.width * dpr));
+    canvas.height = Math.max(1, Math.round(r.height * dpr));
+  }
+
+  function spawn() {
+    const w = canvas.width, h = canvas.height;
+    const life = 2.6 + Math.random() * 2.2;
+    parts.push({
+      x: w * (0.28 + Math.random() * 0.34),
+      y: h * (0.72 + Math.random() * 0.06),
+      vx: (Math.random() - 0.5) * w * 0.02,
+      vy: -h * (0.10 + Math.random() * 0.08),
+      r: w * (0.015 + Math.random() * 0.02),
+      grow: w * 0.022,
+      life: 0, maxLife: life,
+      wob: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function frame(dt) {
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const maxParts = Math.round(110 * smokeLevel);
+    spawnAcc += 16 * smokeLevel * dt;
+    if (spawnAcc > 4) spawnAcc = 4;
+    while (spawnAcc >= 1 && parts.length < maxParts) { spawn(); spawnAcc -= 1; }
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life += dt;
+      if (p.life >= p.maxLife) { parts.splice(i, 1); continue; }
+      const t = p.life / p.maxLife;
+      p.wob += dt * 2;
+      p.x += (p.vx + Math.sin(p.wob) * w * 0.008) * dt;
+      p.y += p.vy * dt;
+      const rad = p.r + p.grow * t;
+      const alpha = 0.34 * Math.min(1, smokeLevel) * (1 - t) * Math.min(1, t * 6);
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad);
+      g.addColorStop(0, 'rgba(235,235,240,' + alpha.toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(235,235,240,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function loop(ts) {
+    const dt = Math.min(0.05, (ts - last) / 1000 || 0.016);
+    last = ts;
+    frame(dt);
+    requestAnimationFrame(loop);
+  }
+
+  async function refreshPrice() {
+    const p = await fetchStakrPrice();
+    if (p > 0) {
+      smokeLevel = grillSmokeLevel(p);
+      if (label) label.textContent = '$' + p.toPrecision(3) + '  ·  ' + smokeLevel.toFixed(1) + '× launch heat';
+    } else if (label && label.dataset.fed !== '1') {
+      label.dataset.fed = '1';
+      label.textContent = 'price feed napping — grill at medium heat';
+    }
+  }
+
+  function start() {
+    sizeCanvas();
+    if (!reduced) requestAnimationFrame(loop);
+    refreshPrice();
+    setInterval(refreshPrice, 5 * 60 * 1000);
+  }
+
+  if (img.complete && img.naturalWidth) start();
+  else img.addEventListener('load', start, { once: true });
+  window.addEventListener('resize', sizeCanvas);
+}
+
 /* ---------------- init ---------------- */
 function buildTicker() {
   const phrase = 'hold stakr <b>•</b> earn bnkr <b>•</b> stake bnkr <b>•</b> mfer <b>•</b> ';
@@ -419,6 +536,7 @@ async function init() {
     if (cb2) cb2.addEventListener('click', connect);
   } catch (e) { console.error('button wiring failed', e); }
   buildTicker();
+  try { initGrill(); } catch (e) { console.error('grill failed', e); }
   try {
     epochsData = await loadProofs();
   } catch {
