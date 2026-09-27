@@ -110,7 +110,7 @@
         <span class="n" aria-hidden="true">01</span>
         <div>
           <h3>every trade pays</h3>
-          <p>$stakr trades against $bnkr on base. every swap pays a fee, and the creator's cut of it belongs to the holders — not a treasury, not a team.</p>
+          <p>$stakr trades against $bnkr on base. every swap pays a fee, and the creator's cut lands in the distributor contract — not a wallet, not a treasury, not a team. (bankr's dashboard still shows the launch-time label; the chain is the source of truth — <a href="#fee-proof">receipts</a>.)</p>
         </div>
       </li>
       <li>
@@ -218,7 +218,7 @@
       fee hook: <code class="mono">0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544</code><br>
       pool manager: <code class="mono">0x498581fF718922c3f8e6A244956aF099B2652b2b</code></p>
     </details>
-    <details>
+    <details id="fee-proof">
       <summary>fee recipient proof</summary>
       <p>the pool's fee beneficiary is the distributor — every creator fee accrues there, not to a wallet. (bankr's dashboard still shows the launch-time label; the chain is the source of truth.)</p>
       <p>beneficiary set to the distributor on the fee hook:<br>
