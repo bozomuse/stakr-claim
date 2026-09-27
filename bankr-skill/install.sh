@@ -5,7 +5,9 @@
 set -e
 
 SKILL_DIR="$HOME/.stakr-claim"
-BASE_URL="https://bozomuse.github.io/stakr-claim/bankr-skill"
+# raw.githubusercontent serves every file verbatim (GitHub Pages renders
+# README.md -> README.html, so the Pages URL can't be used for it)
+BASE_URL="https://raw.githubusercontent.com/bozomuse/stakr-claim/master/bankr-skill"
 
 echo "Installing STAKR claim skill..."
 
