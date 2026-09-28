@@ -407,7 +407,7 @@ function openPreview(to, amount, data) {
   if (typeof dlg.showModal === 'function') dlg.showModal();
 }
 
-/* ---------------- payout reservoir ----------------
+/* ---------------- the cooler ----------------
    live $BNKR balance of the distributor — what weekly epochs pay out
    from. public RPC, no wallet needed. */
 const SEL_BALANCEOF = '0x70a08231';

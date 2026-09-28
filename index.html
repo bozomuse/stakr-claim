@@ -52,7 +52,7 @@
       </div>
       <div class="reservoir" role="status" aria-live="polite">
         <div class="res-top">
-          <span class="res-label">in the payout reservoir</span>
+          <span class="res-label">in the cooler</span>
           <span class="live-dot" aria-hidden="true"></span>
         </div>
         <div class="res-amount"><strong class="mono" id="reservoirAmt">…</strong> <span class="res-unit">bnkr</span></div>
@@ -249,7 +249,7 @@
       <p>the keep+convert loop already ran for real — not a drill. the keeper swept the $stakr fee leg and converted 699,000 $stakr → 205.99 $bnkr through the onchain converter, straight into the distributor:</p>
       <p><code class="mono">0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a</code><br>
       <a href="https://basescan.org/tx/0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a">view on basescan</a></p>
-      <p>the distributor's $bnkr went from 0.133 to 206.12 in that one transaction — the payout reservoir is already filling before the first epoch. converter: <code class="mono">0xBc159f6cf49D64E06e7041815b5Ff8718E9106f2</code></p>
+      <p>the distributor's $bnkr went from 0.133 to 206.12 in that one transaction — the cooler is already filling before the first epoch. converter: <code class="mono">0xBc159f6cf49D64E06e7041815b5Ff8718E9106f2</code></p>
       <p>that test ran the exact loop that's now live policy — under a $60k market cap the $stakr leg converts to $bnkr and lands in the distributor for holders. once $stakr holds $75k the leg burns instead — and keeps burning until $60k — and bozo's entire bag burns in the honorary first cook. same sweep, hotter grill.</p>
     </details>
     <details>
