@@ -30,7 +30,7 @@ async function runPlateCheck(e) {
   btn.disabled = true;
   btn.textContent = 'reading the chain…';
   try {
-    const balRes = await rpcCall('eth_call', [{ to: CONFIG.stakr, data: SEL_BALANCEOF + encAddr(addr) }, 'latest']);
+    const balRes = await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(addr));
     const stakr = BigInt(balRes);
     const [cut, rows] = await Promise.all([coolerCutEstimate(stakr), claimsDetailFor(addr)]);
 
@@ -102,14 +102,14 @@ const EXCLUDED_PLATES = [
   '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
 ];
 
-async function ethCallRetry(to, data, tries = 3) {
+async function ethCallRetry(to, data, tries = 4) {
   let lastErr = null;
   for (let i = 0; i < tries; i++) {
     try {
       return await rpcCall('eth_call', [{ to, data }, 'latest']);
     } catch (e) {
       lastErr = e;
-      await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+      await new Promise((r) => setTimeout(r, 600 * (i + 1) + Math.random() * 300));
     }
   }
   throw lastErr;
@@ -117,13 +117,14 @@ async function ethCallRetry(to, data, tries = 3) {
 
 async function coolerCutEstimate(stakr) {
   if (stakr <= 0n) return 0n;
-  const plates = [CONFIG.distributor, ...EXCLUDED_PLATES];
-  const [supplyHex, coolerHex, ...plateHex] = await Promise.all([
-    ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY),
-    ethCallRetry(CONFIG.bnkr, SEL_BALANCEOF + encAddr(CONFIG.distributor)),
-    ...plates.map((a) => ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(a))),
-  ]);
-  const eligible = plateHex.reduce((acc, h) => acc - BigInt(h), BigInt(supplyHex));
+  // sequential, not parallel: one flaky burst used to nuke the whole
+  // calculator on phones. 8 calls, each with its own retry budget.
+  const supplyHex = await ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY);
+  const coolerHex = await ethCallRetry(CONFIG.bnkr, SEL_BALANCEOF + encAddr(CONFIG.distributor));
+  let eligible = BigInt(supplyHex);
+  for (const a of [CONFIG.distributor, ...EXCLUDED_PLATES]) {
+    eligible -= BigInt(await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(a)));
+  }
   if (eligible <= 0n) return 0n;
   return (stakr * BigInt(coolerHex)) / eligible;
 }
