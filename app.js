@@ -407,6 +407,26 @@ function openPreview(to, amount, data) {
   if (typeof dlg.showModal === 'function') dlg.showModal();
 }
 
+/* ---------------- payout reservoir ----------------
+   live $BNKR balance of the distributor — what weekly epochs pay out
+   from. public RPC, no wallet needed. */
+const SEL_BALANCEOF = '0x70a08231';
+
+async function fetchReservoir() {
+  const el = document.getElementById('reservoirAmt');
+  const sub = document.getElementById('reservoirSub');
+  if (!el) return;
+  try {
+    const data = SEL_BALANCEOF + encAddr(CONFIG.distributor);
+    const res = await rpcCall('eth_call', [{ to: CONFIG.bnkr, data }, 'latest']);
+    el.textContent = fmtBnkr(BigInt(res).toString());
+    if (sub) sub.textContent = 'sitting in the distributor — served to stakr holders every week.';
+  } catch {
+    el.textContent = '—';
+    if (sub) sub.textContent = 'the chain didn\u2019t pick up — refresh to try again.';
+  }
+}
+
 /* ---------------- grill smoke (price-reactive) ---------------- */
 const GRILL_REF_PRICE = 1.06e-7; // ~launch price in usd per stakr (dev buy); smoke scales vs this
 let smokeLevel = 1;
@@ -851,6 +871,10 @@ async function init() {
   buildTicker();
   try { initGrill(); } catch (e) { console.error('grill failed', e); }
   try { initKicker(); } catch (e) { console.error('kicker failed', e); }
+  try {
+    fetchReservoir();
+    setInterval(fetchReservoir, 5 * 60 * 1000);
+  } catch (e) { console.error('reservoir failed', e); }
   try { initContractPill(); } catch (e) { console.error('contract pill failed', e); }
   try {
     document.querySelectorAll('[data-copy]').forEach((btn) => {
