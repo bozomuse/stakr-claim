@@ -652,6 +652,21 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   background: #0d0d0f;
   margin: 1.5rem 0 1rem;
 }
+.chart-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a7f6a;
+  font-size: 15px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+}
 .chart-frame iframe {
   display: block;
   width: 100%;
