@@ -174,7 +174,7 @@
       <p class="eyebrow">no wallet? no problem</p>
       <h2 id="platecheckTitle">what's my cut?</h2>
     </div>
-    <p class="muted">paste any wallet address — the grill reads its stakr weight and every epoch's bnkr rewards straight from the chain.</p>
+    <p class="muted">paste any wallet address — the grill reads its stakr weight, its cut of the cooler, and every epoch's bnkr rewards straight from the chain.</p>
     <form class="plate-ask-form" id="plateCheckForm">
       <input id="plateCheckInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x…">
       <button class="btn btn-ketchup" id="plateCheckBtn" type="submit">check my plate</button>
@@ -185,6 +185,11 @@
         <span id="plateCheckWho">plate</span>
         <a class="mono" id="plateCheckCard" href="card.html">get my card</a>
       </div>
+      <div class="receipt-cut">
+        <span>your cut of the cooler, right now</span>
+        <strong class="mono" id="plateCheckCut">~0.00 bnkr</strong>
+      </div>
+      <p class="cut-fineprint">estimate — if the whole cooler were served today at current weights. real cookouts pay from their own snapshot, and plates under $5 sit out, which nudges your share up.</p>
       <ul class="epoch-rows" id="plateCheckRows"></ul>
       <div class="receipt-total">
         <span>total ready</span>
@@ -322,6 +327,6 @@
 
 <script src="app.js?v=7"></script>
 <script src="share-card.js?v=5"></script>
-<script src="plate-check.js?v=1"></script>
+<script src="plate-check.js?v=2"></script>
 </body>
 </html>

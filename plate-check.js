@@ -32,10 +32,12 @@ async function runPlateCheck(e) {
   try {
     const balRes = await rpcCall('eth_call', [{ to: CONFIG.stakr, data: SEL_BALANCEOF + encAddr(addr) }, 'latest']);
     const stakr = BigInt(balRes);
-    const rows = await claimsDetailFor(addr);
+    const [cut, rows] = await Promise.all([coolerCutEstimate(stakr), claimsDetailFor(addr)]);
 
     document.getElementById('plateCheckWho').textContent =
       'plate for ' + cardName(addr) + ' — ' + fmtWhole(stakr) + ' stakr';
+    document.getElementById('plateCheckCut').textContent =
+      '~' + fmtBnkr(cut.toString()) + ' bnkr';
 
     const list = document.getElementById('plateCheckRows');
     list.innerHTML = '';
@@ -86,6 +88,44 @@ async function runPlateCheck(e) {
     btn.disabled = false;
     btn.textContent = 'check my plate';
   }
+}
+
+/* your cut of the cooler, right now: your weight divided by every
+   eligible plate, times what's sitting in the distributor. this is an
+   estimate — real cookouts pay from their own epoch snapshot, and
+   plates under $5 sit out (which nudges eligible shares up). */
+const SEL_TOTALSUPPLY = '0x18160ddd';
+const EXCLUDED_PLATES = [
+  '0x000000000000000000000000000000000000dEaD', // burned
+  '0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258', // keeper
+  '0x498581fF718922c3f8e6A244956aF099B2652b2b', // pool-side holder
+  '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
+];
+
+async function ethCallRetry(to, data, tries = 3) {
+  let lastErr = null;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await rpcCall('eth_call', [{ to, data }, 'latest']);
+    } catch (e) {
+      lastErr = e;
+      await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
+async function coolerCutEstimate(stakr) {
+  if (stakr <= 0n) return 0n;
+  const plates = [CONFIG.distributor, ...EXCLUDED_PLATES];
+  const [supplyHex, coolerHex, ...plateHex] = await Promise.all([
+    ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY),
+    ethCallRetry(CONFIG.bnkr, SEL_BALANCEOF + encAddr(CONFIG.distributor)),
+    ...plates.map((a) => ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(a))),
+  ]);
+  const eligible = plateHex.reduce((acc, h) => acc - BigInt(h), BigInt(supplyHex));
+  if (eligible <= 0n) return 0n;
+  return (stakr * BigInt(coolerHex)) / eligible;
 }
 
 (function initPlateCheck() {

@@ -393,6 +393,22 @@ section h2 { font-size: clamp(1.9rem, 1.2rem + 3vw, 3rem); margin-bottom: 0.5rem
 }
 .copy-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
 .epoch-rows { list-style: none; margin: 1.25rem 0 0; padding: 0; }
+.receipt-cut {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  margin: 0 0 0.75rem;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.receipt-cut span { font-weight: 600; font-size: 0.95rem; }
+.receipt-cut strong { font-size: 1.75rem; color: var(--ketchup, #d43a2f); }
+.cut-fineprint { font-size: 0.8rem; color: var(--muted); margin: 0 0 0.5rem; }
 .epoch-rows li {
   display: grid;
   grid-template-columns: 1fr auto;
