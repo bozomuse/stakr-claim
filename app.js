@@ -601,7 +601,7 @@ const KICK_RPC = 'https://mainnet.base.org';
 const KICK_MIN = 1000000n * 10n ** 18n;
 // public RPC caps eth_getLogs at 2,000 blocks per call — chunk below that
 const KICK_LOG_CHUNK = 1800;
-const KICK_CACHE_KEY = 'stakr-kicks-v1';
+const KICK_CACHE_KEY = 'stakr-kicks-v2'; // v2: force full rescan (v1 could cache an empty kick list)
 /* grill master counts every burn to dead, not just kicker kicks.
    direct transfers to dead bypass the kicker contract, so the crown
    ranks those too. the kicker pulls stakr from the kicker straight to
@@ -785,12 +785,17 @@ function shortKickAddr(a) {
   return a.slice(0, 6) + '…' + a.slice(-4);
 }
 
+function kickTxSet() {
+  // the kicker pulls stakr from the kicker straight to dead inside the kick
+  // tx, so that tx also appears in the direct-burn scan — these are the same
+  // burn, not two burns.
+  return new Set(kicks.map((k) => k.tx));
+}
+
 function grillMaster() {
   // crown = biggest total burner to dead, kicker kicks + direct burns combined.
   // kicks arrive oldest-first, so latestKick ends as their newest message.
-  // the kicker pulls stakr from the kicker straight to dead inside the kick
-  // tx, so that same tx also shows up in the direct-burn scan — dedupe by tx.
-  const kickTxs = new Set(kicks.map((k) => k.tx));
+  const kickTxs = kickTxSet();
   const totals = new Map(); // addr -> { total, latestKick }
   for (const k of kicks) {
     const e = totals.get(k.kicker) || { total: 0n, latestKick: null };
@@ -827,9 +832,11 @@ let lastMasterSig = '';
 function renderRecentKicks() {
   const el = document.getElementById('recentKicks');
   if (!el) return;
+  const kickTxs = kickTxSet();
   const rows = [
     ...kicks.map((k) => ({ kind: 'kick', addr: k.kicker, amount: k.amount, message: k.message, block: k.block || 0 })),
-    ...directBurns.map((b) => ({ kind: 'burn', addr: b.burner, amount: b.amount, message: null, block: b.block || 0 })),
+    ...directBurns.filter((b) => !kickTxs.has(b.tx))
+      .map((b) => ({ kind: 'burn', addr: b.burner, amount: b.amount, message: null, block: b.block || 0 })),
   ].sort((a, b) => b.block - a.block).slice(0, 5);
   el.innerHTML = '';
   if (!rows.length) return;
