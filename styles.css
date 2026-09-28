@@ -640,3 +640,22 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 }
 .plate-ask-form input:focus { outline: 2px solid var(--ketchup); outline-offset: 1px; }
 .platecheck { margin-top: 1rem; }
+
+/* ---------- chart ---------- */
+.chart { margin-top: 1rem; }
+.chart-frame {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  background: #0d0d0f;
+  margin: 1.5rem 0 1rem;
+}
+.chart-frame iframe {
+  display: block;
+  width: 100%;
+  height: min(70vh, 560px);
+  min-height: 380px;
+  border: 0;
+}
