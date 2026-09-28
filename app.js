@@ -604,8 +604,9 @@ const KICK_LOG_CHUNK = 1800;
 const KICK_CACHE_KEY = 'stakr-kicks-v1';
 /* grill master counts every burn to dead, not just kicker kicks.
    direct transfers to dead bypass the kicker contract, so the crown
-   ranks those too (kicker-forwarded burns are excluded here to avoid
-   double counting — they are tracked via Kick events above). */
+   ranks those too. the kicker pulls stakr from the kicker straight to
+   dead inside the kick tx (Transfer from=user, to=dead), so kicked burns
+   would double count if naively summed — grillMaster() dedupes by tx hash. */
 const DEAD_ADDR = '0x000000000000000000000000000000000000dEaD';
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'; // keccak256("Transfer(address,address,uint256)") -- verified against live USDC + STAKR burn logs
 const DEAD_PADDED = '0x000000000000000000000000' + DEAD_ADDR.slice(2).toLowerCase();
@@ -729,7 +730,7 @@ function saveBurnCache(logs, lastBlock) {
 function decodeBurn(log) {
   try {
     const burner = ('0x' + log.topics[1].slice(-40)).toLowerCase();
-    if (burner === CONFIG.kicker.toLowerCase()) return null; // kicker forwards to dead — counted via Kick events
+    if (burner === CONFIG.kicker.toLowerCase()) return null; // safety net: kicker's own balance forwarded to dead
     const amount = BigInt('0x' + log.data.slice(2, 66));
     if (amount <= 0n) return null;
     return { burner, amount, tx: (log.transactionHash || '').toLowerCase(), block: parseInt(log.blockNumber, 16) };
@@ -787,6 +788,9 @@ function shortKickAddr(a) {
 function grillMaster() {
   // crown = biggest total burner to dead, kicker kicks + direct burns combined.
   // kicks arrive oldest-first, so latestKick ends as their newest message.
+  // the kicker pulls stakr from the kicker straight to dead inside the kick
+  // tx, so that same tx also shows up in the direct-burn scan — dedupe by tx.
+  const kickTxs = new Set(kicks.map((k) => k.tx));
   const totals = new Map(); // addr -> { total, latestKick }
   for (const k of kicks) {
     const e = totals.get(k.kicker) || { total: 0n, latestKick: null };
@@ -795,6 +799,7 @@ function grillMaster() {
     totals.set(k.kicker, e);
   }
   for (const b of directBurns) {
+    if (kickTxs.has(b.tx)) continue; // already counted via the Kick event
     const e = totals.get(b.burner) || { total: 0n, latestKick: null };
     e.total += b.amount;
     totals.set(b.burner, e);

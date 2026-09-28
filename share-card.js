@@ -8,7 +8,8 @@ const CARD_H = 675;
 
 /* known burners, for the crown line. unknown -> truncated address. */
 const CARD_NAMES = {
-  '0x891691ce817db5d09fc5bbbea6ae012cfe829aef': 'kyle',
+  '0x891691ce817db5d09fc5bbbea6ae012cfe829aef': 'kyle', // admin wallet
+  '0xda641d4ff3a5ea3c8b5265db8701622a68998903': 'kyle', // holdings wallet — the 69M grill-master burn
   '0xbd771a0071ca2833604257eef6d2de5d676d33e1': 'bozo',
 };
 function cardName(addr) {
