@@ -49,15 +49,17 @@
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 3);
-    var r = FRAME.getBoundingClientRect();
-    // skip degenerate layouts (0x0 during transitions) — keep last good size
-    if (r.width < 50 || r.height < 50) return;
-    W = r.width;
+    // measure the canvas's CSS box (stylesheet-driven). setting the bitmap
+    // below never disturbs layout, so no measure->inline-style feedback loop.
+    var r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height || r.width < 50 || r.height < 50) return;
+    // clamp to viewport: never trust a transient huge rect
+    var vw = window.innerWidth || r.width;
+    W = Math.min(r.width, vw);
     H = r.height;
-    canvas.width = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
+    var bw = Math.round(W * DPR), bh = Math.round(H * DPR);
+    if (canvas.width !== bw) canvas.width = bw;   // assigning resets the bitmap; avoid churn
+    if (canvas.height !== bh) canvas.height = bh;
     draw();
   }
 
@@ -210,7 +212,7 @@
       });
   }
 
-  new ResizeObserver(resize).observe(FRAME);
+  new ResizeObserver(resize).observe(canvas);
   // mobile browsers can drop the canvas backing store while it's off-screen;
   // repaint from the cached candles whenever it scrolls back into view.
   if ("IntersectionObserver" in window) {
@@ -219,7 +221,7 @@
         if (en.isIntersecting) resize();
       });
     }, { threshold: 0.05 });
-    io.observe(FRAME);
+    io.observe(canvas);
   }
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden) resize();
