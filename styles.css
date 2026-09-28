@@ -659,3 +659,9 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   min-height: 380px;
   border: 0;
 }
+@media (max-width: 640px) {
+  .chart-frame iframe {
+    height: 78vh;
+    min-height: 520px;
+  }
+}
