@@ -32,7 +32,7 @@ async function runPlateCheck(e) {
   try {
     const balRes = await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(addr));
     const stakr = BigInt(balRes);
-    const [cut, rows] = await Promise.all([coolerCutEstimate(stakr), claimsDetailFor(addr)]);
+    const [cut, rows] = await Promise.all([coolerCutEstimate(addr, stakr), claimsDetailFor(addr)]);
 
     document.getElementById('plateCheckWho').textContent =
       'plate for ' + cardName(addr) + ' — ' + fmtWhole(stakr) + ' stakr';
@@ -100,6 +100,8 @@ const EXCLUDED_PLATES = [
   '0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258', // keeper
   '0x498581fF718922c3f8e6A244956aF099B2652b2b', // pool-side holder
   '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
+  '0xbd771a0071ca2833604257eef6d2de5d676d33e1', // bozo bankr wallet — Kyle: can't play (Sep 28 2026)
+  '0xe7aD68a354403660b4BEB99068580431D5c72602', // work/ceremonial wallet — Kyle: can't play (Sep 28 2026)
 ];
 
 async function ethCallRetry(to, data, tries = 4) {
@@ -115,8 +117,14 @@ async function ethCallRetry(to, data, tries = 4) {
   throw lastErr;
 }
 
-async function coolerCutEstimate(stakr) {
-  if (stakr <= 0n) return 0n;
+function isExcludedPlate(addr) {
+  const low = addr.toLowerCase();
+  return low === CONFIG.distributor.toLowerCase() ||
+    EXCLUDED_PLATES.some((a) => a.toLowerCase() === low);
+}
+
+async function coolerCutEstimate(addr, stakr) {
+  if (stakr <= 0n || isExcludedPlate(addr)) return 0n;
   // sequential, not parallel: one flaky burst used to nuke the whole
   // calculator on phones. 8 calls, each with its own retry budget.
   const supplyHex = await ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY);
