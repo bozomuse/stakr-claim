@@ -600,6 +600,15 @@ const KICK_MIN = 1000000n * 10n ** 18n;
 // public RPC caps eth_getLogs at 2,000 blocks per call — chunk below that
 const KICK_LOG_CHUNK = 1800;
 const KICK_CACHE_KEY = 'stakr-kicks-v1';
+/* grill master counts every burn to dead, not just kicker kicks.
+   direct transfers to dead bypass the kicker contract, so the crown
+   ranks those too (kicker-forwarded burns are excluded here to avoid
+   double counting — they are tracked via Kick events above). */
+const DEAD_ADDR = '0x000000000000000000000000000000000000dEaD';
+const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2be68fcb5e7a2eab365b294b6c4fd73eaf598fd77';
+const DEAD_PADDED = '0x000000000000000000000000' + DEAD_ADDR.slice(2).toLowerCase();
+const BURN_FROM_BLOCK = 51834000; // $stakr deploy neighborhood
+const BURN_CACHE_KEY = 'stakr-burns-v1';
 const SEL_APPROVE = '0x095ea7b3';
 const SEL_KICK = '0xaa53276b'; // kick(uint256,string)
 const HIDDEN_KICKS = []; // tx hashes (lowercase) bounced from the bubble
@@ -620,7 +629,7 @@ function decodeKick(log) {
     const msgHex = data.slice(msgOff + 64, msgOff + 64 + msgLen * 2);
     const bytes = new Uint8Array(msgHex.match(/../g).map((h) => parseInt(h, 16)));
     const message = new TextDecoder().decode(bytes);
-    return { kicker, amount, message, tx: (log.transactionHash || '').toLowerCase() };
+    return { kicker: kicker.toLowerCase(), amount, message, tx: (log.transactionHash || '').toLowerCase(), block: parseInt(log.blockNumber, 16) };
   } catch {
     return null;
   }
@@ -692,6 +701,68 @@ async function fetchKicks() {
   }
 }
 
+async function fetchBurnLogs(from, to) {
+  return (await rpcCall('eth_getLogs', [{
+    address: CONFIG.stakr,
+    fromBlock: '0x' + from.toString(16),
+    toBlock: '0x' + to.toString(16),
+    topics: [TRANSFER_TOPIC, null, DEAD_PADDED],
+  }])) || [];
+}
+
+function loadBurnCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(BURN_CACHE_KEY) || 'null');
+    if (c && Array.isArray(c.logs) && Number.isFinite(c.lastBlock)) return c;
+  } catch { /* corrupted cache — rescan */ }
+  return null;
+}
+
+function saveBurnCache(logs, lastBlock) {
+  try {
+    localStorage.setItem(BURN_CACHE_KEY, JSON.stringify({ logs, lastBlock }));
+  } catch { /* storage full/blocked — feed still works, just rescans */ }
+}
+
+function decodeBurn(log) {
+  try {
+    const burner = ('0x' + log.topics[1].slice(-40)).toLowerCase();
+    if (burner === CONFIG.kicker.toLowerCase()) return null; // kicker forwards to dead — counted via Kick events
+    const amount = BigInt('0x' + log.data.slice(2, 66));
+    if (amount <= 0n) return null;
+    return { burner, amount, tx: (log.transactionHash || '').toLowerCase(), block: parseInt(log.blockNumber, 16) };
+  } catch {
+    return null;
+  }
+}
+
+let directBurns = [];
+
+async function fetchDirectBurns() {
+  try {
+    const latest = parseInt(await rpcCall('eth_blockNumber', []), 16);
+    const cache = loadBurnCache();
+    let logs, from;
+    if (cache && cache.lastBlock >= BURN_FROM_BLOCK) {
+      logs = cache.logs;
+      from = cache.lastBlock + 1;
+    } else {
+      logs = [];
+      from = BURN_FROM_BLOCK;
+    }
+    if (from <= latest) {
+      for (let s = from; s <= latest; s += KICK_LOG_CHUNK) {
+        const e = Math.min(s + KICK_LOG_CHUNK - 1, latest);
+        logs.push(...await fetchBurnLogs(s, e));
+      }
+      saveBurnCache(logs, latest);
+    }
+    return logs.map(decodeBurn).filter(Boolean);
+  } catch {
+    return null; // failure signal — caller keeps the last good feed
+  }
+}
+
 function fmtKickAmount(wei) {
   const n = Number(wei) / 1e18;
   if (n >= 1e6) {
@@ -706,18 +777,24 @@ function shortKickAddr(a) {
 }
 
 function grillMaster() {
-  if (!kicks.length) return null;
-  const totals = new Map(); // kicker -> { total, latest }
+  // crown = biggest total burner to dead, kicker kicks + direct burns combined.
+  // kicks arrive oldest-first, so latestKick ends as their newest message.
+  const totals = new Map(); // addr -> { total, latestKick }
   for (const k of kicks) {
-    const e = totals.get(k.kicker) || { total: 0n, latest: null };
+    const e = totals.get(k.kicker) || { total: 0n, latestKick: null };
     e.total += k.amount;
-    e.latest = k; // kicks arrive oldest-first, so this ends as their newest
+    e.latestKick = k;
     totals.set(k.kicker, e);
+  }
+  for (const b of directBurns) {
+    const e = totals.get(b.burner) || { total: 0n, latestKick: null };
+    e.total += b.amount;
+    totals.set(b.burner, e);
   }
   let master = null;
   for (const [addr, e] of totals) {
     // strict > : on a tie the earlier burner keeps the crown
-    if (!master || e.total > master.total) master = { addr, total: e.total, latest: e.latest };
+    if (!master || e.total > master.total) master = { addr, total: e.total, latestKick: e.latestKick };
   }
   return master;
 }
@@ -727,21 +804,24 @@ let lastMasterSig = '';
 function renderRecentKicks() {
   const el = document.getElementById('recentKicks');
   if (!el) return;
-  const recent = kicks.slice(-5).reverse();
+  const rows = [
+    ...kicks.map((k) => ({ kind: 'kick', addr: k.kicker, amount: k.amount, message: k.message, block: k.block || 0 })),
+    ...directBurns.map((b) => ({ kind: 'burn', addr: b.burner, amount: b.amount, message: null, block: b.block || 0 })),
+  ].sort((a, b) => b.block - a.block).slice(0, 5);
   el.innerHTML = '';
-  if (!recent.length) return;
+  if (!rows.length) return;
   const title = document.createElement('div');
   title.className = 'recent-kicks-title';
   title.textContent = 'recent burns';
   el.appendChild(title);
-  for (const k of recent) {
+  for (const r of rows) {
     const row = document.createElement('div');
     row.innerHTML = '';
     const q = document.createElement('span');
-    q.textContent = '\u201c' + k.message + '\u201d';
+    q.textContent = r.kind === 'kick' ? '\u201c' + r.message + '\u201d' : '(direct burn — no message)';
     const m = document.createElement('span');
     m.className = 'muted';
-    m.textContent = ' — ' + shortKickAddr(k.kicker) + ' · ' + fmtKickAmount(k.amount);
+    m.textContent = ' — ' + shortKickAddr(r.addr) + ' · ' + fmtKickAmount(r.amount);
     row.appendChild(q);
     row.appendChild(m);
     el.appendChild(row);
@@ -754,7 +834,7 @@ function renderKick() {
   const meta = document.getElementById('kickMeta');
   if (!bubble || !msg || !meta) return;
   const master = grillMaster();
-  const sig = master ? master.addr + ':' + master.latest.tx : 'none';
+  const sig = master ? master.addr + ':' + (master.latestKick ? master.latestKick.tx : 'direct') : 'none';
   renderRecentKicks();
   if (sig === lastMasterSig) return; // crown hasn't moved — leave the bubble alone
   lastMasterSig = sig;
@@ -766,10 +846,12 @@ function renderKick() {
       meta.textContent = 'no kicks yet · min 1M $stakr';
       if (grillMsg) grillMsg.textContent = 'did you burn the stakr?';
     } else {
-      msg.textContent = '\u201c' + master.latest.message + '\u201d';
+      // direct-only burners have no message — the crown still shows, words stay default
+      const say = master.latestKick ? master.latestKick.message : null;
+      msg.textContent = say ? '\u201c' + say + '\u201d' : 'Tell a mfer how you want your steak cooked?';
       meta.textContent = '\uD83D\uDC51 grill master · ' + shortKickAddr(master.addr) +
         ' · burned ' + fmtKickAmount(master.total) + ' $stakr total';
-      if (grillMsg) grillMsg.textContent = master.latest.message;
+      if (grillMsg) grillMsg.textContent = say || 'did you burn the stakr?';
     }
     bubble.style.opacity = '1';
   }, 400);
@@ -797,15 +879,25 @@ async function kickAllowance(holder) {
 
 async function initKicker() {
   kicks = (await fetchKicks()) || [];
+  directBurns = (await fetchDirectBurns()) || [];
   renderKick();
   setInterval(async () => {
     // refetch every minute — the crown moves when someone out-burns the master
     const fresh = await fetchKicks();
-    if (!fresh) return; // rpc hiccup — keep the last good feed
-    if (fresh.length !== kicks.length ||
-        (fresh.length && fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
-      kicks = fresh;
+    if (fresh) {
+      if (fresh.length !== kicks.length ||
+          (fresh.length && fresh[fresh.length - 1].tx !== kicks[kicks.length - 1].tx)) {
+        kicks = fresh;
+      }
     }
+    const freshBurns = await fetchDirectBurns();
+    if (freshBurns) {
+      if (freshBurns.length !== directBurns.length ||
+          (freshBurns.length && freshBurns[freshBurns.length - 1].tx !== directBurns[directBurns.length - 1].tx)) {
+        directBurns = freshBurns;
+      }
+    }
+    if (!fresh && !freshBurns) return; // rpc hiccup — keep the last good feed
     renderKick();
   }, 60000);
 
