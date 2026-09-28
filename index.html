@@ -4,9 +4,9 @@
   design contract:
   1. point of view: the weekly payout window at a roadside burger joint.
      you're here to pick up what the grill owes you.
-  2. physical scene: late-night diner counter — cream formica, ketchup red,
-     mustard, diner teal, charcoal ink. every color is in the scene.
-  3. type: Alfa Slab One (diner poster) / Inter (body) / Space Mono (receipt figures).
+  2. physical scene: backyard cookout — cream formica, ketchup red,
+     mustard, grill teal, charcoal ink. every color is in the scene.
+  3. type: Alfa Slab One (cookout poster) / Inter (body) / Space Mono (receipt figures).
   4. tokens: --paper #FAF3E7, --ink #1E1A16, --ketchup #C8342A, --mustard #E8A020,
      --teal #1F6E6B, --muted #6B5F52, --line #E3D5BE. nothing else on the page.
   5. motion: calm with a playful wink — receipt slides, PAID stamp.
@@ -133,7 +133,7 @@
         <span class="n" aria-hidden="true">03</span>
         <div>
           <h3>served weekly, pro-rata</h3>
-          <p>holders are weighed by time-weighted average balance across the week — a one-block flash loan counts for about one three-hundred-thousandth of a week. hold $5+ of stakr, claim your $bnkr. that's the whole menu.</p>
+          <p>holders are weighed by time-weighted average balance across the week — a one-block flash loan counts for about one three-hundred-thousandth of a week. hold $5+ of stakr, claim your $bnkr. that's the whole cookout.</p>
         </div>
       </li>
     </ol>
@@ -143,16 +143,16 @@
 
   <section class="claim" id="claim" aria-labelledby="claimTitle">
     <div class="claim-head">
-      <p class="eyebrow">order window</p>
+      <p class="eyebrow">the grill</p>
       <h2 id="claimTitle">pick up your bnkr</h2>
     </div>
     <div class="receipt" role="region" aria-label="claim receipt">
       <div class="receipt-head">
         <span>stakr &amp; stakr</span>
-        <span class="mono" id="receiptNo">order #000</span>
+        <span class="mono" id="receiptNo">plate #000</span>
       </div>
       <div class="wallet-line" id="walletLine">
-        <p class="muted">connect a wallet to see what's on your tray.</p>
+        <p class="muted">connect a wallet to see what's on your plate.</p>
         <button class="btn btn-ketchup" id="connectBtn2" type="button">connect wallet</button>
       </div>
       <ul class="epoch-rows" id="epochRows" hidden></ul>
@@ -164,13 +164,13 @@
       <p class="receipt-note" id="receiptNote" hidden></p>
       <div class="tear" aria-hidden="true"></div>
     </div>
-    <p class="fineprint">claims are permissionless and gas is on you — only claim when it's worth the trip. each epoch stays open 4 weeks, then unclaimed $bnkr rolls into the next serving.</p>
+    <p class="fineprint">claims are permissionless and gas is on you — only claim when it's worth the trip. each epoch stays open 4 weeks, then unclaimed $bnkr rolls into the next cookout.</p>
   </section>
 
   <section class="epochs" id="epochs" aria-labelledby="epochsTitle">
     <div class="epochs-head">
       <p class="eyebrow">the ledger</p>
-      <h2 id="epochsTitle">past servings</h2>
+      <h2 id="epochsTitle">past cookouts</h2>
     </div>
     <div class="table-wrap">
       <table id="epochTable">
@@ -186,7 +186,7 @@
 
   <section class="faq" aria-labelledby="faqTitle">
     <p class="eyebrow">fine print, big type</p>
-    <h2 id="faqTitle">questions from the counter</h2>
+    <h2 id="faqTitle">questions from the grill</h2>
     <details>
       <summary>do i need to stake anything?</summary>
       <p>no. that's the point. hold $stakr in your wallet and you're in the payout list. no lockups, no staking contracts, no unstaking queues.</p>
@@ -211,7 +211,7 @@
     </details>
     <details>
       <summary>is this live?</summary>
-      <p id="liveAnswer">yes. $stakr launched on base and the distributor is live. weekly epochs start serving soon — connect your wallet to see what's on your tray.</p>
+      <p id="liveAnswer">yes. $stakr launched on base and the distributor is live. the weekly cookout starts serving soon — connect your wallet to see what's on your plate.</p>
     </details>
   </section>
 
@@ -279,7 +279,7 @@
 </footer>
 
 <dialog id="txDialog" aria-labelledby="txDialogTitle">
-  <h2 id="txDialogTitle">your order slip</h2>
+  <h2 id="txDialogTitle">your ticket</h2>
   <p class="muted" id="txDialogSub">this is what your wallet would sign:</p>
   <dl class="tx-fields">
     <div><dt>to</dt><dd class="mono" id="txTo">—</dd></div>

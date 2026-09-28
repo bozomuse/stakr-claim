@@ -166,7 +166,7 @@ function renderWallet() {
   copy.addEventListener('click', () => copyText(account, copy));
   const label = document.createElement('span');
   label.className = 'muted';
-  label.textContent = 'on the tray:';
+  label.textContent = 'on your plate:';
   wrap.append(label, pill, copy);
   line.appendChild(wrap);
 }
@@ -209,8 +209,8 @@ async function renderClaims() {
 
       if (!claim) {
         sub.textContent = holderKey
-          ? 'nothing on your tray this week.'
-          : 'connect a wallet to see what\'s on your tray.';
+          ? 'nothing on your plate this week.'
+          : 'connect a wallet to see what\'s on your plate.';
         right.innerHTML = '<small>0.00 bnkr</small>';
       } else {
         const amount = BigInt(claim.amount);
@@ -221,7 +221,7 @@ async function renderClaims() {
         const expired = timing && timing.claimDeadline > 0 && nowSec > timing.claimDeadline;
         sub.textContent = viewing
           ? 'your share of ' + fmtBnkr(ep.totalAllocated) + ' bnkr served.'
-          : 'sample serving for ' + trunc(holderKey, 10) + ' — connect to see yours.';
+          : 'sample plate for ' + trunc(holderKey, 10) + ' — connect to see yours.';
         const amt = document.createElement('span');
         amt.textContent = fmtBnkr(claim.amount);
         const unit = document.createElement('small');
@@ -317,7 +317,7 @@ function renderEpochTable() {
     body.appendChild(tr);
   }
   document.getElementById('receiptNo').textContent =
-    'order #' + String(epochsData.length).padStart(3, '0');
+    'plate #' + String(epochsData.length).padStart(3, '0');
 }
 
 function setNote(msg) {
@@ -376,7 +376,7 @@ async function sendClaim(epochId, data) {
       method: 'eth_sendTransaction',
       params: [{ from: account, to: CONFIG.distributor, data }],
     });
-    setNote('order sent — waiting on the kitchen (' + trunc(txHash, 10) + ')…');
+    setNote('claim sent — waiting on the grill (' + trunc(txHash, 10) + ')…');
     await waitForReceipt(txHash);
     setNote('served. check your wallet for the $bnkr.');
     await renderClaims();
