@@ -117,6 +117,17 @@ async function boot() {
     });
 
     showState('plateReady');
+
+    const altForm = document.getElementById('plateAltForm');
+    altForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = document.getElementById('plateAltInput').value.trim();
+      if (/^0x[0-9a-fA-F]{40}$/.test(v)) {
+        location.search = '?address=' + v;
+      } else {
+        document.getElementById('plateAltMsg').textContent = 'that doesn\u2019t look like an address — 0x plus 40 hex chars.';
+      }
+    });
   } catch (e) {
     fail('the chain didn\u2019t pick up — try again in a bit.');
   }

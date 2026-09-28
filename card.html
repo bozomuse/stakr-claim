@@ -64,6 +64,11 @@
       <button class="btn btn-wide" id="plateShare" type="button">share my plate</button>
       <button class="btn" id="plateDownload" type="button">download png</button>
     </div>
+    <form class="plate-ask-form" id="plateAltForm">
+      <input id="plateAltInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="check another plate: 0x…">
+      <button class="btn" type="submit">serve it</button>
+    </form>
+    <p class="muted" id="plateAltMsg"></p>
     <p class="muted plate-note">live numbers, rendered in your browser — nothing leaves the page. hold stakr. earn bnkr.</p>
   </div>
 
@@ -76,6 +81,6 @@
 <script>window.STAKR_CARD_PAGE = true;</script>
 <script src="app.js?v=3"></script>
 <script src="share-card.js?v=2"></script>
-<script src="card-page.js?v=1"></script>
+<script src="card-page.js?v=2"></script>
 </body>
 </html>
