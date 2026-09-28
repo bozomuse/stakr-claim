@@ -204,10 +204,9 @@
       <p class="eyebrow">mfers love charts</p>
       <h2 id="chartTitle">watch the sizzle</h2>
     </div>
-    <p class="muted">live $stakr / $bnkr candles, straight from the dexscreener feed. the grill doesn't lie.</p>
-    <div class="chart-frame">
+    <p class="muted">live $stakr / $bnkr candles, grilled fresh from base swaps. no embeds, no spinners.</p>
+    <div class="chart-frame" id="chartFrame">
       <div class="chart-loading" id="chartLoading">firing up the grill…</div>
-      <iframe src="https://dexscreener.com/base/0x3059a617cfd2c3b49c7ddab7b4ff947bef76846494e648fc9b9130621439f515?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartDefaultOnMobile=1&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15&trades=0&info=0" title="stakr price chart" loading="lazy" onload="document.getElementById('chartLoading').style.display='none'"></iframe>
     </div>
     <p class="muted"><a href="https://dexscreener.com/base/0x3059a617cfd2c3b49c7ddab7b4ff947bef76846494e648fc9b9130621439f515" target="_blank" rel="noopener">open the full chart on dexscreener</a></p>
   </section>
@@ -349,6 +348,7 @@
   <form method="dialog"><button class="btn" type="submit">close</button></form>
 </dialog>
 
+<script src="chart.js?v=1"></script>
 <script src="app.js?v=7"></script>
 <script src="share-card.js?v=5"></script>
 <script src="plate-check.js?v=4"></script>

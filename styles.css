@@ -667,16 +667,45 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   50% { opacity: 1; }
 }
 }
-.chart-frame iframe {
+.chart-frame canvas.chart-canvas {
   display: block;
   width: 100%;
   height: min(70vh, 560px);
   min-height: 380px;
-  border: 0;
+  touch-action: pan-y;
+  cursor: crosshair;
 }
+.chart-head {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 2;
+  pointer-events: none;
+  color: #FAF3E7;
+}
+.chart-sym {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a7f6a;
+}
+.chart-tf {
+  display: inline-block;
+  border: 1px solid #4a4238;
+  border-radius: 4px;
+  padding: 0 5px;
+  margin-left: 6px;
+  font-size: 10px;
+}
+.chart-stats { margin-top: 2px; }
+.chart-price { font-size: 20px; color: #FAF3E7; }
+.chart-chg { font-size: 13px; margin-left: 8px; }
+.chart-ohlc { font-size: 11px; color: #8a7f6a; margin-top: 2px; min-height: 16px; }
+.chart-loading a { color: #E8A020; }
 @media (max-width: 640px) {
-  .chart-frame iframe {
+  .chart-frame canvas.chart-canvas {
     height: 78vh;
     min-height: 520px;
   }
+  .chart-price { font-size: 17px; }
 }
