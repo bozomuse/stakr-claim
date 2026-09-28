@@ -656,13 +656,28 @@ async function rpcCall(method, params) {
   return j.result;
 }
 
+// one flaky chunk must not nuke a ~40-request scan on a phone — retry each
+// chunk a few times before giving up on the whole scan.
+async function rpcLogsWithRetry(params, tries = 3) {
+  let lastErr = null;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await rpcCall('eth_getLogs', [params]);
+    } catch (e) {
+      lastErr = e;
+      await new Promise((r) => setTimeout(r, 600 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 async function fetchKickLogs(from, to) {
-  return (await rpcCall('eth_getLogs', [{
+  return (await rpcLogsWithRetry({
     address: CONFIG.kicker,
     fromBlock: '0x' + from.toString(16),
     toBlock: '0x' + to.toString(16),
     topics: [KICK_TOPIC],
-  }])) || [];
+  })) || [];
 }
 
 function loadKickCache() {
@@ -705,12 +720,12 @@ async function fetchKicks() {
 }
 
 async function fetchBurnLogs(from, to) {
-  return (await rpcCall('eth_getLogs', [{
+  return (await rpcLogsWithRetry({
     address: CONFIG.stakr,
     fromBlock: '0x' + from.toString(16),
     toBlock: '0x' + to.toString(16),
     topics: [TRANSFER_TOPIC, null, DEAD_PADDED],
-  }])) || [];
+  })) || [];
 }
 
 function loadBurnCache() {
