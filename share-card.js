@@ -20,21 +20,31 @@ function cardName(addr) {
 const fmtWhole = (wei) =>
   (wei / 1000000000000000000n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-async function cardData() {
+/* Data for one plate. address = any 0x holder (card.html), or the
+   connected wallet (index.html). claimableBnkr overrides the DOM scrape
+   when the caller computed it directly (card.html has no claim rows). */
+async function cardDataFor(address, claimableBnkr) {
   const bnkrData = SEL_BALANCEOF + encAddr(CONFIG.distributor);
   const coolerRes = await rpcCall('eth_call', [{ to: CONFIG.bnkr, data: bnkrData }, 'latest']);
   const cooler = BigInt(coolerRes);
 
   let myStakr = 0n;
-  if (account) {
-    const stakrData = SEL_BALANCEOF + encAddr(account);
+  if (address) {
+    const stakrData = SEL_BALANCEOF + encAddr(address);
     myStakr = BigInt(await rpcCall('eth_call', [{ to: CONFIG.stakr, data: stakrData }, 'latest']));
   }
 
-  const tc = document.getElementById('totalClaimable');
-  const claimable = tc ? parseFloat((tc.textContent || '').replace(/[^0-9.]/g, '')) || 0 : 0;
+  let claimable = claimableBnkr;
+  if (typeof claimable !== 'number') {
+    const tc = document.getElementById('totalClaimable');
+    claimable = tc ? parseFloat((tc.textContent || '').replace(/[^0-9.]/g, '')) || 0 : 0;
+  }
 
-  return { cooler, myStakr, claimable, master: grillMaster() };
+  return { cooler, myStakr, claimable, master: grillMaster(), address };
+}
+
+async function cardData() {
+  return cardDataFor(account);
 }
 
 function fitFont(ctx, text, maxW, base, family, weight) {
@@ -127,6 +137,18 @@ function drawCard(d) {
   return c;
 }
 
+/* Render the plate canvas for any address. Shared by the index page
+   (connected wallet) and card.html (?address=, no wallet). */
+async function plateCanvasFor(address, claimableBnkr) {
+  try {
+    await document.fonts.load('400 104px "Alfa Slab One"');
+    await document.fonts.load('700 118px "Space Mono"');
+    await document.fonts.ready;
+  } catch { /* fall back to system fonts */ }
+  const d = await cardDataFor(address, claimableBnkr);
+  return drawCard(d);
+}
+
 async function sharePlate() {
   const btn = document.getElementById('sharePlateBtn');
   const old = btn ? btn.textContent : '';
@@ -136,13 +158,7 @@ async function sharePlate() {
       await connect();
       if (!account) { setNote('connect a wallet first — the card needs your plate.'); return; }
     }
-    try {
-      await document.fonts.load('400 104px "Alfa Slab One"');
-      await document.fonts.load('700 118px "Space Mono"');
-      await document.fonts.ready;
-    } catch { /* fall back to system fonts */ }
-    const d = await cardData();
-    const canvas = drawCard(d);
+    const canvas = await plateCanvasFor(account);
     const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
     if (!blob) throw new Error('render failed');
     const file = new File([blob], 'my-stakr-plate.png', { type: 'image/png' });

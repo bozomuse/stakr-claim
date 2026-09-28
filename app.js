@@ -989,6 +989,9 @@ async function initKicker() {
 
 
 async function init() {
+  // card.html (?address=) loads app.js for its chain helpers only — the
+  // full claim-window init (buttons, ticker, grill) stays parked there.
+  if (window.STAKR_CARD_PAGE) return;
   // wire buttons FIRST — never let later failures break them
   try {
     const cb1 = document.getElementById('connectBtn');
