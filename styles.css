@@ -637,7 +637,6 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
-}
 .plate-ask-form input:focus { outline: 2px solid var(--ketchup); outline-offset: 1px; }
 .platecheck { margin-top: 1rem; }
 
@@ -665,7 +664,6 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 @keyframes pulse {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
-}
 }
 .chart-frame canvas.chart-canvas {
   display: block;

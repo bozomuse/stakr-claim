@@ -50,8 +50,10 @@
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 3);
     var r = FRAME.getBoundingClientRect();
-    W = Math.max(50, r.width);
-    H = Math.max(50, r.height);
+    // skip degenerate layouts (0x0 during transitions) — keep last good size
+    if (r.width < 50 || r.height < 50) return;
+    W = r.width;
+    H = r.height;
     canvas.width = Math.round(W * DPR);
     canvas.height = Math.round(H * DPR);
     canvas.style.width = W + "px";
@@ -198,7 +200,7 @@
           chgEl.textContent = (chg >= 0 ? "+" : "") + chg.toFixed(2) + "% / 24h";
           chgEl.style.color = chg >= 0 ? "#2ebd85" : "#f6465d";
         }
-        draw();
+        resize(); // re-measure + repaint from the fresh data
       })
       .catch(function () {
         if (LOADING) {
@@ -209,8 +211,24 @@
   }
 
   new ResizeObserver(resize).observe(FRAME);
+  // mobile browsers can drop the canvas backing store while it's off-screen;
+  // repaint from the cached candles whenever it scrolls back into view.
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) resize();
+      });
+    }, { threshold: 0.05 });
+    io.observe(FRAME);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) resize();
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { draw(); });
+  }
   window.addEventListener("orientationchange", function () { setTimeout(resize, 300); });
+  resize();
   load();
   setInterval(function () { load(); }, 5 * 60 * 1000); // refresh every 5 min
-  resize();
 })();
