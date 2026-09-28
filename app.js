@@ -592,8 +592,10 @@ function buildTicker() {
 
 
 /* ---------------- kick the grill ----------------
-   Burn >= 1M $STAKR through the kicker contract with a message; the site
-   reads Kick events and shows them in the speech bubble above bozo's head. */
+   Burn $STAKR through the kicker contract with a message; the site
+   reads Kick events and shows them in the speech bubble above bozo's head.
+   The contract floor is 1M, but the displayed + enforced minimum is the
+   grill master's total burn — the crown only moves on an out-burn. */
 const KICK_TOPIC = '0x43fe7ae845cc4c446c011530cec63504d3d3c08d2ddc95df79ba025293ac756e';
 const KICK_RPC = 'https://mainnet.base.org';
 const KICK_MIN = 1000000n * 10n ** 18n;
@@ -772,6 +774,12 @@ function fmtKickAmount(wei) {
   return Math.round(n).toLocaleString('en-US');
 }
 
+function fmtKickFull(wei) {
+  // full comma-formatted whole STAKR — BigInt math, no float precision loss
+  const whole = wei / 1000000000000000000n;
+  return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function shortKickAddr(a) {
   return a.slice(0, 6) + '…' + a.slice(-4);
 }
@@ -797,6 +805,16 @@ function grillMaster() {
     if (!master || e.total > master.total) master = { addr, total: e.total, latestKick: e.latestKick };
   }
   return master;
+}
+
+function crownKickMin() {
+  // the number that matters: the grill master's total burn. the contract
+  // floor is 1M, but the crown only moves when someone out-burns the master,
+  // so the site treats the master's total as the real minimum. falls back
+  // to the contract floor when nobody has burned yet.
+  const master = grillMaster();
+  const target = master ? master.total : 0n;
+  return target > KICK_MIN ? target : KICK_MIN;
 }
 
 let lastMasterSig = '';
@@ -834,6 +852,19 @@ function renderKick() {
   const meta = document.getElementById('kickMeta');
   if (!bubble || !msg || !meta) return;
   const master = grillMaster();
+  const cmin = crownKickMin();
+  // the crown number, everywhere the minimum appears — it only changes when
+  // the crown moves, so these stay in sync with the bubble below
+  const intro = document.getElementById('kickMinIntro');
+  if (intro) intro.textContent = fmtKickAmount(cmin);
+  const lab = document.getElementById('kickMinLabel');
+  if (lab) lab.textContent = fmtKickFull(cmin) + ' $stakr';
+  const amtEl = document.getElementById('kickAmount');
+  if (amtEl) {
+    const minWhole = (cmin / 1000000000000000000n).toString();
+    amtEl.min = minWhole;
+    if (!amtEl.dataset.touched) amtEl.value = minWhole;
+  }
   const sig = master ? master.addr + ':' + (master.latestKick ? master.latestKick.tx : 'direct') : 'none';
   renderRecentKicks();
   if (sig === lastMasterSig) return; // crown hasn't moved — leave the bubble alone
@@ -843,7 +874,7 @@ function renderKick() {
     const grillMsg = document.getElementById('grillBubbleMsg');
     if (!master) {
       msg.textContent = 'Tell a mfer how you want your steak cooked?';
-      meta.textContent = 'no kicks yet · min 1M $stakr';
+      meta.textContent = 'no kicks yet · min ' + fmtKickAmount(cmin) + ' $stakr';
       if (grillMsg) grillMsg.textContent = 'did you burn the stakr?';
     } else {
       // direct-only burners have no message — the crown still shows, words stay default
@@ -901,6 +932,9 @@ async function initKicker() {
     renderKick();
   }, 60000);
 
+  const amt0 = document.getElementById('kickAmount');
+  if (amt0) amt0.addEventListener('input', () => { amt0.dataset.touched = '1'; });
+
   const btnC = document.getElementById('kickConnect');
   const btnA = document.getElementById('kickApprove');
   const btnK = document.getElementById('kickSend');
@@ -912,7 +946,8 @@ async function initKicker() {
     if (!account) { setKickStatus('connect your wallet first.'); return; }
     const amtRaw = document.getElementById('kickAmount').value;
     const amount = BigInt(Math.floor(Number(amtRaw) || 0)) * 10n ** 18n;
-    if (amount < KICK_MIN) { setKickStatus('minimum kick is 1,000,000 $stakr.'); return; }
+    const cminA = crownKickMin();
+    if (amount < cminA) { setKickStatus('minimum kick is ' + fmtKickFull(cminA) + ' $stakr — out-burn the grill master to take the crown.'); return; }
     try {
       setKickStatus('sending approval…');
       const data = SEL_APPROVE + encAddr(CONFIG.kicker) + u256(amount);
@@ -932,7 +967,8 @@ async function initKicker() {
     const amount = BigInt(Math.floor(Number(amtRaw) || 0)) * 10n ** 18n;
     if (!message) { setKickStatus('give the grill something to say.'); return; }
     if (message.length > 140) { setKickStatus('140 characters max — keep it punchy.'); return; }
-    if (amount < KICK_MIN) { setKickStatus('minimum kick is 1,000,000 $stakr.'); return; }
+    const cminK = crownKickMin();
+    if (amount < cminK) { setKickStatus('minimum kick is ' + fmtKickFull(cminK) + ' $stakr — out-burn the grill master to take the crown.'); return; }
     if (!kickAllowed({ message, tx: '' })) { setKickStatus('the grill has standards — try different words.'); return; }
     try {
       const ok = await kickAllowance(account);
