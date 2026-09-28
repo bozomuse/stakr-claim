@@ -607,10 +607,10 @@ const KICK_CACHE_KEY = 'stakr-kicks-v1';
    ranks those too (kicker-forwarded burns are excluded here to avoid
    double counting — they are tracked via Kick events above). */
 const DEAD_ADDR = '0x000000000000000000000000000000000000dEaD';
-const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2be68fcb5e7a2eab365b294b6c4fd73eaf598fd77';
+const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'; // keccak256("Transfer(address,address,uint256)") -- verified against live USDC + STAKR burn logs
 const DEAD_PADDED = '0x000000000000000000000000' + DEAD_ADDR.slice(2).toLowerCase();
 const BURN_FROM_BLOCK = 51834000; // $stakr deploy neighborhood
-const BURN_CACHE_KEY = 'stakr-burns-v1';
+const BURN_CACHE_KEY = 'stakr-burns-v2'; // v2: fixed TRANSFER_TOPIC (v1 scanned a bogus topic)
 const SEL_APPROVE = '0x095ea7b3';
 const SEL_KICK = '0xaa53276b'; // kick(uint256,string)
 const HIDDEN_KICKS = []; // tx hashes (lowercase) bounced from the bubble
