@@ -47,6 +47,65 @@ async function cardData() {
   return cardDataFor(account);
 }
 
+/* wallet-free plate reads — shared by card.html and the main-site plate
+   calculator. same rules as the claim rows: the address must be in the
+   epoch proofs, not claimed onchain, and the claim window must be open. */
+async function claimedViaRpc(epochId, holder) {
+  const data = SEL.hasClaimed + u256(epochId) + encAddr(holder);
+  const res = await rpcCall('eth_call', [{ to: CONFIG.distributor, data }, 'latest']);
+  return BigInt(res) === 1n;
+}
+
+async function timingViaRpc(ep) {
+  try {
+    const res = await rpcCall('eth_call', [{ to: CONFIG.distributor, data: SEL.epochs + u256(ep.epochId) }, 'latest']);
+    const words = splitWords(res);
+    if (words.length < 6) return null;
+    return {
+      claimStart: Number(BigInt(words[3])),
+      claimDeadline: Number(BigInt(words[4])),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/* per-epoch reward detail for any address.
+   status: 'ready' | 'paid' | 'wait' | 'expired' | 'none' */
+async function claimsDetailFor(address) {
+  const epochs = await loadProofs();
+  const lower = address.toLowerCase();
+  const nowSec = Math.floor(Date.now() / 1000);
+  const out = [];
+  for (const ep of epochs) {
+    const claim = (ep._claimsLower || {})[lower];
+    if (!claim) { out.push({ epochId: ep.epochId, amount: 0n, status: 'none' }); continue; }
+    const amount = BigInt(claim.amount);
+    if (await claimedViaRpc(ep.epochId, address)) {
+      out.push({ epochId: ep.epochId, amount, status: 'paid' });
+      continue;
+    }
+    const timing = await timingViaRpc(ep);
+    if (timing && timing.claimStart > nowSec) {
+      out.push({ epochId: ep.epochId, amount, status: 'wait', claimStart: timing.claimStart });
+      continue;
+    }
+    if (timing && timing.claimDeadline > 0 && nowSec > timing.claimDeadline) {
+      out.push({ epochId: ep.epochId, amount, status: 'expired' });
+      continue;
+    }
+    out.push({ epochId: ep.epochId, amount, status: 'ready' });
+  }
+  return out;
+}
+
+async function claimableFor(address) {
+  const rows = await claimsDetailFor(address);
+  let total = 0n;
+  for (const r of rows) if (r.status === 'ready') total += r.amount;
+  return Number(total) / 1e18;
+}
+
 function fitFont(ctx, text, maxW, base, family, weight) {
   let size = base;
   ctx.font = weight + ' ' + size + 'px ' + family;

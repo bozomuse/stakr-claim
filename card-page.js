@@ -8,47 +8,9 @@ function pageAddress() {
   return /^0x[0-9a-fA-F]{40}$/.test(a) ? a : null;
 }
 
-/* rpc versions of the wallet-gated helpers in app.js */
-async function claimedViaRpc(epochId, holder) {
-  const data = SEL.hasClaimed + u256(epochId) + encAddr(holder);
-  const res = await rpcCall('eth_call', [{ to: CONFIG.distributor, data }, 'latest']);
-  return BigInt(res) === 1n;
-}
-
-async function timingViaRpc(ep) {
-  try {
-    const data = SEL.epochs + u256(ep.epochId);
-    const res = await rpcCall('eth_call', [{ to: CONFIG.distributor, data }, 'latest']);
-    const words = splitWords(res);
-    if (words.length < 6) return null;
-    return {
-      claimStart: Number(BigInt('0x' + words[3])),
-      claimDeadline: Number(BigInt('0x' + words[4])),
-    };
-  } catch {
-    return null;
-  }
-}
-
-/* total claimable bnkr for an address, same rules as the claim rows:
-   in the proofs, not claimed onchain, window open. */
-async function claimableFor(address) {
-  const epochs = await loadProofs();
-  if (!epochs.length) return 0;
-  const nowSec = Math.floor(Date.now() / 1000);
-  const lower = address.toLowerCase();
-  let total = 0n;
-  for (const ep of epochs) {
-    const claim = (ep._claimsLower || {})[lower];
-    if (!claim) continue;
-    if (await claimedViaRpc(ep.epochId, address)) continue;
-    const timing = await timingViaRpc(ep);
-    if (timing && (timing.claimStart > nowSec ||
-        (timing.claimDeadline > 0 && nowSec > timing.claimDeadline))) continue;
-    total += BigInt(claim.amount);
-  }
-  return Number(total) / 1e18;
-}
+/* claimable/claims reads live in share-card.js (claimedViaRpc,
+   timingViaRpc, claimsDetailFor, claimableFor) — shared with the
+   main-site plate calculator. */
 
 function showState(which) {
   for (const id of ['plateLoading', 'plateReady', 'plateError', 'plateAsk']) {

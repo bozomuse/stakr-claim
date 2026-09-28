@@ -129,9 +129,9 @@ async function epochTiming(ep) {
     const words = splitWords(res);
     if (words.length < 6) return null;
     return {
-      claimStart: Number(BigInt('0x' + words[3])),
-      claimDeadline: Number(BigInt('0x' + words[4])),
-    };
+      claimStart: Number(BigInt(words[3])),
+      claimDeadline: Number(BigInt(words[4])),
+    }; // splitWords already 0x-prefixes each word
   } catch {
     return null;
   }

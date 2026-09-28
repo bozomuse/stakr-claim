@@ -162,10 +162,36 @@
       </div>
       <button class="btn btn-ketchup btn-wide" id="claimAllBtn" type="button" hidden disabled>claim all</button>
       <button class="btn btn-wide" id="sharePlateBtn" type="button">share my plate</button>
+      <p class="fineprint">no wallet handy? <a href="card.html">check any plate by address</a> — the card renders straight from the chain.</p>
       <p class="receipt-note" id="receiptNote" hidden></p>
       <div class="tear" aria-hidden="true"></div>
     </div>
     <p class="fineprint">claims are permissionless and gas is on you — only claim when it's worth the trip. each epoch stays open 4 weeks, then unclaimed $bnkr rolls into the next cookout.</p>
+  </section>
+
+  <section class="platecheck" id="platecheck" aria-labelledby="platecheckTitle">
+    <div class="claim-head">
+      <p class="eyebrow">no wallet? no problem</p>
+      <h2 id="platecheckTitle">what's my cut?</h2>
+    </div>
+    <p class="muted">paste any wallet address — the grill reads its stakr weight and every epoch's bnkr rewards straight from the chain.</p>
+    <form class="plate-ask-form" id="plateCheckForm">
+      <input id="plateCheckInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x…">
+      <button class="btn btn-ketchup" id="plateCheckBtn" type="submit">check my plate</button>
+    </form>
+    <p class="receipt-note" id="plateCheckMsg" hidden></p>
+    <div class="receipt" id="plateCheckOut" hidden>
+      <div class="receipt-head">
+        <span id="plateCheckWho">plate</span>
+        <a class="mono" id="plateCheckCard" href="card.html">get my card</a>
+      </div>
+      <ul class="epoch-rows" id="plateCheckRows"></ul>
+      <div class="receipt-total">
+        <span>total ready</span>
+        <strong class="mono" id="plateCheckTotal">0.00 bnkr</strong>
+      </div>
+      <div class="tear" aria-hidden="true"></div>
+    </div>
   </section>
 
   <section class="epochs" id="epochs" aria-labelledby="epochsTitle">
@@ -209,6 +235,10 @@
       </div>
       <p>once it's in, just say <code>claim my stakr rewards</code> — it checks the proofs, verifies what's claimable onchain, and submits the claims from your bankr wallet. same skill kicks the grill: <code>kick the grill with 1M stakr saying "did you burn the stakr?"</code> burns through the kicker and puts your message on the feed. and if you're just curious, ask <code>what's in the cooler?</code> — it reads the distributor's live $bnkr balance straight off the chain.</p>
       <p class="skill-update-row"><span class="muted">already installed it? grab the latest fixes:</span> <button class="btn btn-small" id="skillUpdateBtn" type="button" data-copy="reinstall the stakr-claim skill from https://bankr.bot/skills/0xbd771a0071ca2833604257eef6d2de5d676d33e1/stakr-claim">tap to copy the reinstall command</button></p>
+    </details>
+    <details>
+      <summary>what's the plate card?</summary>
+      <p>a shareable snapshot of your plate: your stakr weight (or claimable bnkr), the cooler, and the grill master — rendered live from the chain. hit <q>share my plate</q> with your wallet connected, or open <a href="card.html">the card page</a> and paste any address. bankr can hand out your card too — just say <code>share my plate</code>.</p>
     </details>
     <details>
       <summary>is this live?</summary>
@@ -290,7 +320,8 @@
   <form method="dialog"><button class="btn" type="submit">close</button></form>
 </dialog>
 
-<script src="app.js?v=3"></script>
-<script src="share-card.js?v=2"></script>
+<script src="app.js?v=4"></script>
+<script src="share-card.js?v=4"></script>
+<script src="plate-check.js?v=1"></script>
 </body>
 </html>

@@ -609,3 +609,18 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 .kick-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem; }
 .kick-status { font-family: "Space Mono", monospace; font-size: 0.85rem; min-height: 1.2em; margin: 0.2rem 0 0; }
 .kick-fine code { font-size: 0.75rem; word-break: break-all; }
+
+/* plate check (index) + card page address forms */
+.plate-ask-form { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; max-width: 44rem; }
+.plate-ask-form input {
+  flex: 1 1 280px;
+  padding: 12px 14px;
+  font-family: "Space Mono", monospace;
+  font-size: 15px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.plate-ask-form input:focus { outline: 2px solid var(--ketchup); outline-offset: 1px; }
+.platecheck { margin-top: 1rem; }
