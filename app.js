@@ -598,6 +598,16 @@ function buildTicker() {
    grill master's total burn — the crown only moves on an out-burn. */
 const KICK_TOPIC = '0x43fe7ae845cc4c446c011530cec63504d3d3c08d2ddc95df79ba025293ac756e';
 const KICK_RPC = 'https://mainnet.base.org';
+// failover list: mainnet.base.org started 403ing (Sep 29 2026), so rpcCall
+// below walks this list and sticks with whatever answers.
+const KICK_RPCS = [
+  'https://mainnet.base.org',
+  'https://base.publicnode.com',
+  'https://base.llamarpc.com',
+  'https://1rpc.io/base',
+  'https://base.meowrpc.com',
+];
+let kickRpcIdx = 0;
 const KICK_MIN = 1000000n * 10n ** 18n;
 // public RPC caps eth_getLogs at 2,000 blocks per call — chunk below that
 const KICK_LOG_CHUNK = 1800;
@@ -646,14 +656,27 @@ function kickAllowed(k) {
 }
 
 async function rpcCall(method, params) {
-  const res = await fetch(KICK_RPC, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  });
-  const j = await res.json();
-  if (j.error) throw new Error((j.error && j.error.message) || method + ' failed');
-  return j.result;
+  // walk the failover list; stick with the first endpoint that answers
+  // so a dead primary doesn't stall every call.
+  let lastErr = null;
+  for (let i = 0; i < KICK_RPCS.length; i++) {
+    const url = KICK_RPCS[(kickRpcIdx + i) % KICK_RPCS.length];
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+      });
+      if (!res.ok) throw new Error('rpc http ' + res.status);
+      const j = await res.json();
+      if (j.error) throw new Error((j.error && j.error.message) || method + ' failed');
+      kickRpcIdx = (kickRpcIdx + i) % KICK_RPCS.length;
+      return j.result;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error(method + ' failed on all RPCs');
 }
 
 // one flaky chunk must not nuke a ~40-request scan on a phone — retry each
