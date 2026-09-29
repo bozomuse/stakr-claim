@@ -14,9 +14,9 @@ Claim your weekly $BNKR rewards for holding $STAKR, using your Bankr wallet. Thi
 **Proofs:** `https://bozomuse.github.io/stakr-claim/proofs/epochs.json`
 **Claim site:** `https://bozomuse.github.io/stakr-claim/`
 
-## What's in the cooler?
+## What's in the cooler? / What's my cut from the cooler?
 
-"The cooler" is the payout reservoir: the **live $BNKR balance of the StakrDistributor**. When anyone asks "what's in the cooler?", read it fresh from the chain — never guess or quote an old number.
+"The cooler" is the payout reservoir: the **live $BNKR balance of the StakrDistributor**. When anyone asks about it, read it fresh from the chain — never guess or quote an old number.
 
 ```bash
 # BNKR balanceOf(distributor) on Base (BNKR = 0x22af33fe49fd1fa80c7149773dde5890d3c76f3b, 18 decimals)
@@ -29,9 +29,10 @@ Convert the hex result to decimal and divide by 1e18. Answer plainly, e.g. "the 
 
 Feeding the cooler, besides the $STAKR fee sweeps: bozo's Bankr wallet holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. A daily `brb-reflection-sweep` cron claims the wallet's pending $BNKR (at 250+ BNKR) via `claimDividend()` and forwards it to the distributor. If someone asks where the extra $BNKR came from, that's the $BRB stream.
 
-## What's my cut from the cooler?
+Two depths, one code path:
 
-When someone asks "what's my cut from the cooler" (or "what's my cut", "my cooler cut"), answer with two numbers: the total $BNKR sitting in the cooler right now, and their estimated allotment of it. This mirrors the claim site's plate calculator: `cut = (their STAKR × cooler BNKR) / eligible STAKR`.
+- **"what's in the cooler?"** → answer with just the total, e.g. "the cooler's holding 24,977 bnkr."
+- **"what's my cut from the cooler?"** (or "what's my cut", "my cooler cut") → the total **plus** their estimated allotment. This mirrors the claim site's plate calculator: `cut = (their STAKR × cooler BNKR) / eligible STAKR`.
 
 1. Resolve their address (same as "Share your plate" step 1): their Bankr wallet on CLI, or look up their Bankr user by X/Farcaster handle on social. If they have no Bankr user, ask for the address.
 2. Read their STAKR weight fresh from the chain:
