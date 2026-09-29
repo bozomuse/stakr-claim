@@ -197,9 +197,15 @@ function drawCard(d) {
   x.textAlign = 'left';
   x.fillStyle = INK;
   x.font = '400 104px "Alfa Slab One", Georgia, serif';
-  x.fillText('my plate', 56, 268);
+  x.fillText('my plate', 56, 250);
 
-  /* hero number: claimable bnkr if there is any, else my stakr weight */
+  /* the wallet this plate belongs to — full address, mono */
+  x.fillStyle = MUTED;
+  x.font = '400 24px "Space Mono", monospace';
+  x.fillText(d.address || '', 58, 290);
+
+  /* hero number: claimable bnkr if there is any, else my stakr weight.
+     hs capped at 92 so the address + stats + footer all fit in 675px. */
   let hero, sub;
   if (d.claimable > 0) {
     hero = d.claimable.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' bnkr';
@@ -209,20 +215,22 @@ function drawCard(d) {
     sub = 'on my plate — first cookout soon';
   }
   x.fillStyle = KETCHUP;
-  const hs = fitFont(x, hero, CARD_W - 112, 118, '"Space Mono", monospace', '700');
+  const hs = fitFont(x, hero, CARD_W - 112, 92, '"Space Mono", monospace', '700');
+  const heroY = 290 + hs + 24;
+  const subY = heroY + 42;
   x.font = '700 ' + hs + 'px "Space Mono", monospace';
-  x.fillText(hero, 56, 268 + hs + 28);
+  x.fillText(hero, 56, heroY);
   x.fillStyle = MUTED;
   x.font = '400 30px Inter, sans-serif';
-  x.fillText(sub, 58, 268 + hs + 72);
+  x.fillText(sub, 58, subY);
 
   /* divider */
-  const divY = 268 + hs + 84;
+  const divY = subY + 32;
   x.fillStyle = LINE;
   x.fillRect(56, divY, CARD_W - 112, 3);
 
-  /* stat rows — compact: worst-case hero (hs=118) puts divY at 470,
-     footer at 639, so all four rows must land above ~630. */
+  /* stat rows — worst case hs=92 puts divY at 480, cut value at 610,
+     footer at 639. clears with room to spare. */
   x.textAlign = 'left';
   x.font = '400 27px Inter, sans-serif';
   x.fillStyle = MUTED;
