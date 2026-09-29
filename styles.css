@@ -510,6 +510,23 @@ td.mono { font-size: 0.82rem; }
   color: var(--ink);
 }
 
+/* ---------- cookout games ---------- */
+.games { padding: 4rem clamp(1rem, 4vw, 2.5rem); max-width: 60rem; margin: 0 auto; }
+.games .lede { margin-bottom: 1.75rem; }
+.game-cards { display: grid; gap: 1rem; }
+.game-card {
+  display: flex; align-items: center; gap: 1.1rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 1.25rem 1.35rem; text-decoration: none; color: inherit;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.game-card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(30, 26, 22, 0.1); }
+.game-emoji { font-size: 2rem; line-height: 1; }
+.game-text { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
+.game-name { font-family: "Alfa Slab One", Georgia, serif; font-size: 1.25rem; }
+.game-sub { font-size: 0.9rem; }
+.game-go { font-size: 1.4rem; color: var(--ketchup); font-weight: 700; }
+
 /* ---------- footer ---------- */
 footer {
   border-top: 2px solid var(--ink);
@@ -666,10 +683,10 @@ dialog form { margin-top: 1.25rem; text-align: right; }
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
+}
 .chart-frame canvas.chart-canvas {
   display: block;
   width: 100%;
-  max-width: 100%;
   height: min(70vh, 560px);
   min-height: 380px;
   touch-action: pan-y;
