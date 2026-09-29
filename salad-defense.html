@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>salad defense — stakr &amp; stakr cookout games</title>
+<meta name="description" content="tap the flies before they touch the potato salad. 6 landings ruins the batch.">
+<link rel="stylesheet" href="styles.css?v=1">
+<style>
+  .game-main { max-width: 560px; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2rem) 3rem; }
+  .game-main h1 { font-size: clamp(2.2rem, 9vw, 3.2rem); margin-bottom: 0.5rem; }
+  .mode-row { display: flex; gap: 0.6rem; margin: 1.25rem 0; flex-wrap: wrap; align-items: center; }
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .sc {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 0.6rem 0.4rem; text-align: center;
+  }
+  .sc-label { display: block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+  .sc-val { display: block; font-size: 1.35rem; margin-top: 0.15rem; }
+  .canvas-wrap {
+    position: relative; border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--line); background: #F3E8D2;
+    box-shadow: 0 12px 32px rgba(30, 26, 22, 0.12);
+  }
+  #game { display: block; width: 100%; aspect-ratio: 400 / 640; touch-action: none; cursor: crosshair; }
+  .overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.75rem;
+    background: rgba(30, 26, 22, 0.72); backdrop-filter: blur(3px);
+    text-align: center; padding: 2rem; z-index: 2;
+  }
+  .overlay[hidden] { display: none; }
+  .overlay h2 { color: var(--paper); font-size: 1.9rem; }
+  .overlay p { color: rgba(250, 243, 231, 0.82); margin: 0; max-width: 30ch; }
+  .hint { text-align: center; margin-top: 0.9rem; min-height: 1.6em; }
+  .game-rules { margin-top: 2rem; }
+  .game-rules li { margin-bottom: 0.4rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="wordmark" href="index.html" aria-label="stakr and stakr — home">
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#C8342A"/><text x="32" y="44" font-family="Georgia,serif" font-weight="bold" font-size="36" fill="#FAF3E7" text-anchor="middle">S</text></svg>
+    <span>stakr <em>&amp;</em> stakr</span>
+  </a>
+  <a class="btn btn-small" href="index.html">back to the cookout</a>
+</header>
+
+<main class="game-main">
+  <p class="eyebrow">the cookout games</p>
+  <h1>salad defense.</h1>
+  <p class="lede muted">the flies want your potato salad. tap them out of the sky before they land. 6 landings and the batch is ruined.</p>
+
+  <div class="mode-row" role="group" aria-label="game options">
+    <button class="btn btn-small" id="muteBtn" type="button" aria-pressed="false">sound on</button>
+  </div>
+
+  <div class="scoreboard" id="scoreboard" role="status" aria-live="polite"></div>
+
+  <div class="canvas-wrap">
+    <canvas id="game" aria-label="potato salad bowl under fly attack. tap flies to swat them."></canvas>
+    <div class="overlay" id="overlay" hidden>
+      <h2 id="overlayTitle"></h2>
+      <p id="overlaySub"></p>
+      <button class="btn btn-ketchup" id="overlayBtn" type="button"></button>
+    </div>
+  </div>
+  <p class="hint muted" id="hint"></p>
+
+  <section class="game-rules" aria-label="how to play">
+    <h2>house rules</h2>
+    <ul class="muted">
+      <li>tap a fly to swat it. swats in quick succession build a combo.</li>
+      <li>every 5th combo in a streak earns a +5 bonus.</li>
+      <li>a fly that touches the salad leaves a germ. 6 germs ruins the batch.</li>
+      <li>waves get faster and hungrier. there is no final wave. good luck.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <p class="foot-word">stakr <em>&amp;</em> stakr</p>
+  <p class="foot-tag">the grill never closes. stake &amp; stake.</p>
+</footer>
+
+<script src="salad-defense.js?v=1"></script>
+</body>
+</html>
