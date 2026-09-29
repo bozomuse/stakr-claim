@@ -46,6 +46,8 @@
   var W = 0, H = 0, DPR = 1;
   var PAD_R = 64, PAD_B = 22, PAD_T = 8, PAD_L = 6;
   var VOL_H = 0.18; // fraction of plot height for volume
+  var INTERVAL = 900; // candle interval, seconds (overridden by candles.json when present)
+  var geom = null; // last computed time geometry {t0,t1,span,plotW}, shared with hover
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 3);
@@ -89,8 +91,18 @@
     hi += pad; lo = Math.max(0, lo - pad);
 
     function y(p) { return PAD_T + (1 - (p - lo) / (hi - lo)) * priceH; }
-    function x(i) { return PAD_L + (i + 0.5) * (plotW / data.length); }
-    var cw = Math.max(2, (plotW / data.length) * 0.62);
+    // time-scaled x, right-anchored on the data: gaps render as gaps, never
+    // as one evenly-spaced slot. window adapts to the data span (min 6h).
+    var firstT = data[0][0], lastT = data[data.length - 1][0];
+    var t1 = lastT + INTERVAL * 2;
+    var t0 = firstT - INTERVAL;
+    if (t1 - t0 < 6 * 3600) t0 = t1 - 6 * 3600;
+    var span = t1 - t0;
+    geom = { t0: t0, t1: t1, span: span, plotW: plotW };
+    function x(t) { return PAD_L + (t - t0) / span * plotW; }
+    function xc(c) { return x(c[0] + INTERVAL / 2); }
+    var slotPx = INTERVAL / span * plotW;
+    var cw = Math.max(2, Math.min(slotPx * 0.62, 22));
 
     // grid + price labels
     ctx.font = "10px 'Space Mono', monospace";
@@ -104,33 +116,39 @@
       ctx.fillStyle = "#8a7f6a";
       ctx.fillText(fmtPrice(pv), W - PAD_R + 6, gy);
     }
-    // time labels
+    // time labels at nice intervals across the window
     ctx.fillStyle = "#8a7f6a";
-    var every = Math.max(1, Math.floor(data.length / 5));
-    for (var ti = 0; ti < data.length; ti += every) {
-      ctx.fillText(fmtTime(data[ti][0]), x(ti) - 30, H - PAD_B / 2);
+    var tickSteps = [3600, 7200, 10800, 21600, 43200, 86400, 172800];
+    var tick = tickSteps[tickSteps.length - 1];
+    for (var si = 0; si < tickSteps.length; si++) {
+      if (tickSteps[si] >= span / 5) { tick = tickSteps[si]; break; }
     }
+    ctx.textAlign = "center";
+    for (var tt = Math.ceil(t0 / tick) * tick; tt <= t1; tt += tick) {
+      ctx.fillText(fmtTime(tt), x(tt), H - PAD_B / 2);
+    }
+    ctx.textAlign = "left";
 
     // volume bars
-    data.forEach(function (c, i) {
+    data.forEach(function (c) {
       var vh = vmax > 0 ? (c[5] / vmax) * plotH * VOL_H : 0;
       ctx.fillStyle = c[4] >= c[1] ? "rgba(46,189,133,0.35)" : "rgba(246,70,93,0.35)";
-      ctx.fillRect(x(i) - cw / 2, volTop + plotH * VOL_H - vh, cw, vh);
+      ctx.fillRect(xc(c) - cw / 2, volTop + plotH * VOL_H - vh, cw, vh);
     });
 
     // candles
-    data.forEach(function (c, i) {
+    data.forEach(function (c) {
       var up = c[4] >= c[1];
       var col = up ? "#2ebd85" : "#f6465d";
       ctx.strokeStyle = col;
       ctx.fillStyle = col;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(x(i), y(c[2])); ctx.lineTo(x(i), y(c[3]));
+      ctx.moveTo(xc(c), y(c[2])); ctx.lineTo(xc(c), y(c[3]));
       ctx.stroke();
       var yo = y(c[1]), yc = y(c[4]);
       var top = Math.min(yo, yc), hgt = Math.max(1, Math.abs(yc - yo));
-      ctx.fillRect(x(i) - cw / 2, top, cw, hgt);
+      ctx.fillRect(xc(c) - cw / 2, top, cw, hgt);
     });
 
     // last price line
@@ -147,11 +165,11 @@
 
     // crosshair
     if (hover >= 0 && hover < data.length) {
-      var c = data[hover];
+      var hc = data[hover];
       ctx.strokeStyle = "rgba(250,243,231,0.35)";
       ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(x(hover), PAD_T); ctx.lineTo(x(hover), volTop + plotH * VOL_H); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(PAD_L, y(c[4])); ctx.lineTo(W - PAD_R, y(c[4])); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xc(hc), PAD_T); ctx.lineTo(xc(hc), volTop + plotH * VOL_H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(PAD_L, y(hc[4])); ctx.lineTo(W - PAD_R, y(hc[4])); ctx.stroke();
       ctx.setLineDash([]);
     }
   }
@@ -160,9 +178,16 @@
     var r = canvas.getBoundingClientRect();
     var px = (e.touches && e.touches.length ? e.touches[0].clientX : e.clientX) - r.left;
     var data = visible();
-    var plotW = W - PAD_L - PAD_R;
-    var i = Math.floor((px - PAD_L) / (plotW / data.length));
-    hover = Math.max(0, Math.min(data.length - 1, i));
+    if (!data.length || !geom) return;
+    var best = -1, bestD = Infinity;
+    for (var i = 0; i < data.length; i++) {
+      var cxp = PAD_L + (data[i][0] + INTERVAL / 2 - geom.t0) / geom.span * geom.plotW;
+      var d = Math.abs(cxp - px);
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    var slotPx = INTERVAL / geom.span * geom.plotW;
+    if (bestD > Math.max(slotPx * 0.75, 24)) { clearHover(); return; }
+    hover = best;
     var c = data[hover];
     var up = c[4] >= c[1];
     document.getElementById("chartOhlc").innerHTML =
@@ -190,17 +215,24 @@
       .then(function (doc) {
         if (!doc.candles || !doc.candles.length) throw new Error("empty");
         candles = doc.candles;
+        if (doc.interval) INTERVAL = doc.interval;
         lastUpdated = doc.updated_at || 0;
         if (LOADING) LOADING.style.display = "none";
         var last = candles[candles.length - 1][4];
         document.getElementById("chartPrice").textContent = fmtPrice(last) + " bnkr";
         var chgEl = document.getElementById("chartChg");
-        var refIdx = Math.max(0, candles.length - 1 - 96);
-        var ref = candles[refIdx][4];
-        if (ref > 0 && candles.length > 1) {
-          var chg = (last - ref) / ref * 100;
-          chgEl.textContent = (chg >= 0 ? "+" : "") + chg.toFixed(2) + "% / 24h";
-          chgEl.style.color = chg >= 0 ? "#2ebd85" : "#f6465d";
+        // honest window label: the feed only has candles for intervals with
+        // swaps, so label the change with the actual span, not "24h".
+        if (candles.length > 1) {
+          var first = candles[0];
+          var ref = first[4];
+          var hrs = (candles[candles.length - 1][0] - first[0]) / 3600;
+          if (ref > 0) {
+            var chg = (last - ref) / ref * 100;
+            var spanLbl = hrs >= 48 ? Math.round(hrs / 24) + "d" : Math.max(1, Math.round(hrs)) + "h";
+            chgEl.textContent = (chg >= 0 ? "+" : "") + chg.toFixed(2) + "% / " + spanLbl;
+            chgEl.style.color = chg >= 0 ? "#2ebd85" : "#f6465d";
+          }
         }
         resize(); // re-measure + repaint from the fresh data
       })
