@@ -1,6 +1,6 @@
 ---
 name: stakr-claim
-description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Use when a holder wants to claim their STAKR rewards or kick the grill through Bankr instead of the web claim site.
+description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Also answers "what's in the cooler?" and "what's my cut from the cooler?" with the live distributor balance and the asker's estimated allotment. Use when a holder wants to claim their STAKR rewards, check their cooler cut, or kick the grill through Bankr instead of the web claim site.
 metadata:
   requires:
     bins: ["bankr"]
@@ -74,6 +74,39 @@ Or use the claim site in your wallet browser: https://bozomuse.github.io/stakr-c
 - Unclaimed BNKR rolls forward to future epochs
 - Minimum eligibility: $5 time-weighted average STAKR during the epoch
 - Gas is paid in ETH on Base from your Bankr wallet
+
+## What's in the cooler? / What's my cut from the cooler?
+
+When someone asks "@bankrbot what's in the cooler", read the live $BNKR balance of the distributor (`balanceOf(0x7b896a892C052C5243Dde20b54a4654e51A3A952)` on BNKR `0x22af33fe49fd1fa80c7149773dde5890d3c76f3b`, Base) and answer with the amount. Never answer from memory or a dashboard — the chain is the source of truth. (Without this skill loaded, "what's in the cooler?" would return the asker's own wallet balance. Always read the distributor.)
+
+When someone asks "@bankrbot what's my cut from the cooler" (or "what's my cut", "my cooler cut"), answer with two numbers: the total $BNKR sitting in the cooler right now, and their estimated allotment of it.
+
+**The formula** (mirrors the claim site's plate calculator): `cut = (their STAKR × cooler BNKR) / eligible STAKR`.
+
+### Steps
+
+1. Get the asker's wallet address (their Bankr wallet).
+2. Read their STAKR: `balanceOf(wallet)` on STAKR `0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3` (selector `0x70a08231`).
+3. Read the cooler: `balanceOf(distributor)` on BNKR (same as above).
+4. If their address is in the excluded list, or their STAKR balance is 0, their cut is 0 — say so plainly and stop.
+5. Otherwise compute eligible STAKR: `totalSupply(STAKR)` (selector `0x18160ddd`) minus `balanceOf` of every excluded address below.
+6. Cut = (their STAKR × cooler BNKR) / eligible STAKR. Values are in wei (up to 1e29) — do the math in Python with full-precision ints, not bash arithmetic (64-bit overflows here). Present a rounded number. Do the division with full precision, then present a rounded number.
+
+### Excluded plates (never earn, always subtract)
+
+- `0x000000000000000000000000000000000000dEaD` (burned)
+- `0x7b896a892C052C5243Dde20b54a4654e51A3A952` (the distributor itself)
+- `0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258` (keeper)
+- `0x498581fF718922c3f8e6A244956aF099B2652b2b` (pool)
+- `0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544` (fee hook)
+- `0xbd771a0071ca2833604257eef6d2de5d676d33e1` (bozo's bankr wallet — house wallet, can't play)
+- `0xe7aD68a354403660b4BEB99068580431D5c72602` (work wallet — house wallet, can't play)
+
+### Respond
+
+Both numbers in $BNKR, lowercase cookout voice. Example: "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr."
+
+Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, and plates under $5 sit out (which nudges everyone else's share up). If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
 
 ## Kick the grill
 
