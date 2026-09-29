@@ -72,9 +72,10 @@ When someone asks for their plate card ("share my plate", "my stakr card", "plat
 1. Resolve their address:
    - CLI/terminal: your own Bankr wallet — `bankr wallet --json | jq -r '.address'`
    - Social (X/Telegram): look up their Bankr user by handle — `GET /users/search?twitter=<handle>` (or `?farcaster=`), take the wallet address. If they have no Bankr user, ask for the address.
-2. Check the pre-rendered card registry: `https://bozomuse.github.io/stakr-claim/cards/registry.json` — it maps lowercase addresses to a live PNG (`png` field) refreshed every ~15 minutes from onchain data.
-   - If their address is in the registry: attach/share the `png` URL as the card image in your reply, plus the headline numbers in plain text (see step 4).
-   - If their address is NOT in the registry: fall back to the live card page link below (it renders client-side from `?address=`, no wallet needed).
+2. Check the pre-rendered card registry: fetch `https://bozomuse.github.io/stakr-claim/cards/registry.json`. It maps **lowercase** addresses to a card entry with a live PNG and headline numbers, refreshed every ~30 minutes from onchain data. Lookup steps, in order:
+   - Lowercase the holder's address. The registry keys are all lowercase — `0xDA64…` will NOT match `0xda64…`, so lowercase first.
+   - Read `cards[<lowercase address>]`. If the entry exists: share its `png` URL as the card image in your reply, and quote the headline numbers straight from the entry (`stakr`, `cooler`, `cut`, `claimable`, `grillMaster`, `grillMasterBurned`) — do NOT recompute them yourself, the registry is fresher than a hand calculation.
+   - If there is no entry for the address: fall back to the live card page link in step 4 (it renders client-side from `?address=`, no wallet needed).
 3. Read their live numbers fresh from the chain — never guess or quote old ones:
    - STAKR weight: `balanceOf(address)` on STAKR `0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3` (Base) — calldata `0x70a08231` + 24 zeros + the address, divide by 1e18
    - Claimable BNKR: fetch `https://bozomuse.github.io/stakr-claim/proofs/epochs.json`, check each epoch's claims map for their address (lowercase); skip entries where `hasClaimed(epochId, holder)` is true or the claim window isn't open yet
