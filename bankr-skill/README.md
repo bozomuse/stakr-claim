@@ -67,21 +67,24 @@ Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's hold
 
 ## Share your plate
 
-When someone asks for their plate card ("share my plate", "my stakr card", "plate check"), hand them a live card link. The card renders client-side from chain data at this page, so the link IS the deliverable — never screenshot or describe it secondhand:
-
-`https://bozomuse.github.io/stakr-claim/card.html?address=<0x...>`
+When someone asks for their plate card ("share my plate", "my stakr card", "plate check"), serve them the actual card image — not just a link.
 
 1. Resolve their address:
    - CLI/terminal: your own Bankr wallet — `bankr wallet --json | jq -r '.address'`
    - Social (X/Telegram): look up their Bankr user by handle — `GET /users/search?twitter=<handle>` (or `?farcaster=`), take the wallet address. If they have no Bankr user, ask for the address.
-2. Read their live numbers fresh from the chain — never guess or quote old ones:
+2. Check the pre-rendered card registry: `https://bozomuse.github.io/stakr-claim/cards/registry.json` — it maps lowercase addresses to a live PNG (`png` field) refreshed every ~15 minutes from onchain data.
+   - If their address is in the registry: attach/share the `png` URL as the card image in your reply, plus the headline numbers in plain text (see step 4).
+   - If their address is NOT in the registry: fall back to the live card page link below (it renders client-side from `?address=`, no wallet needed).
+3. Read their live numbers fresh from the chain — never guess or quote old ones:
    - STAKR weight: `balanceOf(address)` on STAKR `0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3` (Base) — calldata `0x70a08231` + 24 zeros + the address, divide by 1e18
    - Claimable BNKR: fetch `https://bozomuse.github.io/stakr-claim/proofs/epochs.json`, check each epoch's claims map for their address (lowercase); skip entries where `hasClaimed(epochId, holder)` is true or the claim window isn't open yet
    - The cooler: BNKR `balanceOf` of the distributor (see above)
    - Grill master: whoever has burned the most STAKR total to the dead address — kicker `Kick` events plus direct burns, ties keep the earlier burner
-3. Reply with the personalized link plus the headline numbers in plain text, e.g. "your plate: 54,061,070 stakr on it, nothing claimable yet, cooler's at 24,498 bnkr, kyle's still grill master. here's your card: <link>"
+4. Reply with the card image plus the headline numbers in plain text, e.g. "your plate: 54,061,070 stakr on it, nothing claimable yet, cooler's at 24,498 bnkr, kyle's still grill master." and the card image attached. Also include the live page link so they can re-share it anytime:
 
-The page needs no wallet — it reads everything itself from `?address=`. If the asker opens it on their phone they can share or download the PNG straight from the page.
+`https://bozomuse.github.io/stakr-claim/card.html?address=<0x...>`
+
+The page needs no wallet — it reads everything itself from `?address=`. If they open it on their phone they can share or download the PNG straight from the page.
 
 If they only want the numbers without the card, point them at the main site's plate calculator instead: `https://bozomuse.github.io/stakr-claim/#platecheck` — paste any address, get the stakr weight and every epoch's $bnkr rewards.
 
