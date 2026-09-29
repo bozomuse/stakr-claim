@@ -261,6 +261,7 @@ function nextAfterRest() {
 }
 
 function endTurn() {
+  S.phase = 'tally'; // leave 'rest' so nextAfterRest can't re-fire endTurn every frame
   if (S.mode === 'solo') {
     const gained = S.roundScore[0];
     S.round++;
