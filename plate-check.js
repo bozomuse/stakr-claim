@@ -94,47 +94,13 @@ async function runPlateCheck(e) {
    eligible plate, times what's sitting in the distributor. this is an
    estimate — real cookouts pay from their own epoch snapshot, and
    plates under $5 sit out (which nudges eligible shares up). */
-const SEL_TOTALSUPPLY = '0x18160ddd';
-const EXCLUDED_PLATES = [
-  '0x000000000000000000000000000000000000dEaD', // burned
-  '0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258', // keeper
-  '0x498581fF718922c3f8e6A244956aF099B2652b2b', // pool-side holder
-  '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
-  '0xbd771a0071ca2833604257eef6d2de5d676d33e1', // bozo bankr wallet — Kyle: can't play (Sep 28 2026)
-  '0xe7aD68a354403660b4BEB99068580431D5c72602', // work/ceremonial wallet — Kyle: can't play (Sep 28 2026)
-];
-
-async function ethCallRetry(to, data, tries = 4) {
-  let lastErr = null;
-  for (let i = 0; i < tries; i++) {
-    try {
-      return await rpcCall('eth_call', [{ to, data }, 'latest']);
-    } catch (e) {
-      lastErr = e;
-      await new Promise((r) => setTimeout(r, 600 * (i + 1) + Math.random() * 300));
-    }
-  }
-  throw lastErr;
-}
-
-function isExcludedPlate(addr) {
-  const low = addr.toLowerCase();
-  return low === CONFIG.distributor.toLowerCase() ||
-    EXCLUDED_PLATES.some((a) => a.toLowerCase() === low);
-}
-
+/* cooler math (SEL_TOTALSUPPLY, EXCLUDED_PLATES, ethCallRetry,
+   isExcludedPlate, coolerCutFor) lives in share-card.js, loaded before
+   this file on index.html. */
 async function coolerCutEstimate(addr, stakr) {
   if (stakr <= 0n || isExcludedPlate(addr)) return 0n;
-  // sequential, not parallel: one flaky burst used to nuke the whole
-  // calculator on phones. 8 calls, each with its own retry budget.
-  const supplyHex = await ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY);
   const coolerHex = await ethCallRetry(CONFIG.bnkr, SEL_BALANCEOF + encAddr(CONFIG.distributor));
-  let eligible = BigInt(supplyHex);
-  for (const a of [CONFIG.distributor, ...EXCLUDED_PLATES]) {
-    eligible -= BigInt(await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(a)));
-  }
-  if (eligible <= 0n) return 0n;
-  return (stakr * BigInt(coolerHex)) / eligible;
+  return coolerCutFor(addr, stakr, BigInt(coolerHex));
 }
 
 (function initPlateCheck() {

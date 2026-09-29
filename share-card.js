@@ -21,6 +21,52 @@ function cardName(addr) {
 const fmtWhole = (wei) =>
   (wei / 1000000000000000000n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
+/* pro-rata cooler math, shared by the card and the main-site plate
+   calculator. your cut = your stakr / eligible stakr * cooler bnkr.
+   plates under $5 sit out of real payouts (which nudges eligible shares
+   up) — the card shows the raw estimate. */
+const SEL_TOTALSUPPLY = '0x18160ddd';
+const EXCLUDED_PLATES = [
+  '0x000000000000000000000000000000000000dEaD', // burned
+  '0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258', // keeper
+  '0x498581fF718922c3f8e6A244956aF099B2652b2b', // pool-side holder
+  '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
+  '0xbd771a0071ca2833604257eef6d2de5d676d33e1', // bozo bankr wallet — Kyle: can't play (Sep 28 2026)
+  '0xe7aD68a354403660b4BEB99068580431D5c72602', // work/ceremonial wallet — Kyle: can't play (Sep 28 2026)
+];
+
+async function ethCallRetry(to, data, tries = 4) {
+  let lastErr = null;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await rpcCall('eth_call', [{ to, data }, 'latest']);
+    } catch (e) {
+      lastErr = e;
+      await new Promise((r) => setTimeout(r, 600 * (i + 1) + Math.random() * 300));
+    }
+  }
+  throw lastErr;
+}
+
+function isExcludedPlate(addr) {
+  const low = addr.toLowerCase();
+  return low === CONFIG.distributor.toLowerCase() ||
+    EXCLUDED_PLATES.some((a) => a.toLowerCase() === low);
+}
+
+async function coolerCutFor(addr, myStakr, cooler) {
+  if (myStakr <= 0n || isExcludedPlate(addr)) return 0n;
+  // sequential, not parallel: one flaky burst used to nuke the whole
+  // calculator on phones. 9 calls, each with its own retry budget.
+  const supplyHex = await ethCallRetry(CONFIG.stakr, SEL_TOTALSUPPLY);
+  let eligible = BigInt(supplyHex);
+  for (const a of [CONFIG.distributor, ...EXCLUDED_PLATES]) {
+    eligible -= BigInt(await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(a)));
+  }
+  if (eligible <= 0n) return 0n;
+  return (myStakr * cooler) / eligible;
+}
+
 /* Data for one plate. address = any 0x holder (card.html), or the
    connected wallet (index.html). claimableBnkr overrides the DOM scrape
    when the caller computed it directly (card.html has no claim rows). */
@@ -41,7 +87,12 @@ async function cardDataFor(address, claimableBnkr) {
     claimable = tc ? parseFloat((tc.textContent || '').replace(/[^0-9.]/g, '')) || 0 : 0;
   }
 
-  return { cooler, myStakr, claimable, master: grillMaster(), address };
+  let cut = 0n;
+  try {
+    cut = await coolerCutFor(address, myStakr, cooler);
+  } catch { /* cut stays 0 — card still renders */ }
+
+  return { cooler, myStakr, claimable, cut, master: grillMaster(), address };
 }
 
 async function cardData() {
@@ -166,28 +217,36 @@ function drawCard(d) {
   x.fillText(sub, 58, 268 + hs + 72);
 
   /* divider */
-  const divY = 268 + hs + 108;
+  const divY = 268 + hs + 84;
   x.fillStyle = LINE;
   x.fillRect(56, divY, CARD_W - 112, 3);
 
-  /* stat rows */
+  /* stat rows — compact: worst-case hero (hs=118) puts divY at 470,
+     footer at 639, so all four rows must land above ~630. */
   x.textAlign = 'left';
   x.font = '400 27px Inter, sans-serif';
   x.fillStyle = MUTED;
-  x.fillText('the cooler', 58, divY + 52);
+  x.fillText('the cooler', 58, divY + 40);
   x.fillStyle = INK;
   x.font = '700 34px "Space Mono", monospace';
-  x.fillText(fmtWhole(d.cooler) + ' bnkr', 58, divY + 96);
+  x.fillText(fmtWhole(d.cooler) + ' bnkr', 58, divY + 74);
 
   x.fillStyle = MUTED;
   x.font = '400 27px Inter, sans-serif';
-  x.fillText('grill master', 620, divY + 52);
+  x.fillText('my cut', 58, divY + 110);
+  x.fillStyle = KETCHUP;
+  x.font = '700 34px "Space Mono", monospace';
+  x.fillText('~' + fmtWhole(d.cut) + ' bnkr', 58, divY + 144);
+
+  x.fillStyle = MUTED;
+  x.font = '400 27px Inter, sans-serif';
+  x.fillText('grill master', 620, divY + 40);
   x.fillStyle = INK;
   x.font = '700 34px "Space Mono", monospace';
   const crown = d.master
     ? cardName(d.master.addr) + ' · ' + fmtKickAmount(d.master.total) + ' burned'
     : 'up for grabs · 1M to enter';
-  x.fillText(crown, 620, divY + 96);
+  x.fillText(crown, 620, divY + 74);
 
   /* footer */
   x.fillStyle = MUTED;
