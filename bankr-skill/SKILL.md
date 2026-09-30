@@ -1,6 +1,6 @@
 ---
 name: stakr-claim
-description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Also answers "what's in the cooler?", "what's my cut from the cooler?", shares live plate cards, and sweeps the BRB reflections vault into the cooler on "put the bnkr in the cooler". Use when a holder wants to claim their STAKR rewards, check their cooler cut, share their plate, sweep the vault, or kick the grill through Bankr instead of the web claim site.
+description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Also answers "what's in the cooler?", "what's my cut from the cooler?", shares live plate cards, and sweeps the BRB reflections vault into the cooler on "fill the cooler". Use when a holder wants to claim their STAKR rewards, check their cooler cut, share their plate, sweep the vault, or kick the grill through Bankr instead of the web claim site.
 metadata:
   requires:
     bins: ["bankr"]
@@ -65,14 +65,14 @@ Excluded plates (never earn — always subtract from the supply, and a cut of 0 
 
 Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr." Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, and plates under $5 sit out (which nudges everyone else's share up). If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
 
-## Sweep the vault ("put the bnkr in the cooler")
+## Sweep the vault ("fill the cooler")
 
 The BRB reflections vault accrues $BNKR from $BRB's per-trade tax. Anyone can push the pending $BNKR into the cooler by calling `sweep()` on the vault. The $BNKR can only ever go to the cooler (immutable) — never to the caller. The caller pays Base gas and lands on the cooler-fills leaderboard.
 
 **Vault:** `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` (Base)
 **Floor:** `sweep()` reverts below 6,969 $BNKR pending (immutable `MIN_SWEEP`)
 
-Trigger phrases: "put the bnkr in the cooler", "put the bnkr in the cooler mfer", "sweep the vault".
+Trigger phrases: "fill the cooler", "fill the cooler mfer". (Deliberately no token name in the trigger — "bnkr" in the command risks misrouting to a swap/transfer.)
 
 1. Check pending first — never submit blind:
 ```bash
