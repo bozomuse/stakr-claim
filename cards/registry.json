@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-09-30T17:23:01.276Z",
+  "updatedAt": "2026-09-30T17:53:06.793Z",
   "cards": {
     "0x0000000000000000000000000000000000000000": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x0000000000000000000000000000000000000000.png",
-      "renderedAt": "2026-09-30T17:22:49.319Z",
+      "renderedAt": "2026-09-30T17:52:51.120Z",
       "stakr": "0",
       "cooler": "25,723",
       "cut": "0",
@@ -13,7 +13,7 @@
     },
     "0x000000000000000000000000000000000000dead": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x000000000000000000000000000000000000dead.png",
-      "renderedAt": "2026-09-30T17:22:50.003Z",
+      "renderedAt": "2026-09-30T17:52:51.826Z",
       "stakr": "70,000,000",
       "cooler": "25,723",
       "cut": "0",
@@ -23,7 +23,7 @@
     },
     "0x1111110f0f73c0b2ef09ec012eae758b3e03a902": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x1111110f0f73c0b2ef09ec012eae758b3e03a902.png",
-      "renderedAt": "2026-09-30T17:22:50.717Z",
+      "renderedAt": "2026-09-30T17:52:52.930Z",
       "stakr": "12,018",
       "cooler": "25,723",
       "cut": "0",
@@ -33,18 +33,18 @@
     },
     "0x16caf4a8a3def5da8d5bd1b69eab7102863f6f08": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x16caf4a8a3def5da8d5bd1b69eab7102863f6f08.png",
-      "renderedAt": "2026-09-30T17:22:52.012Z",
-      "stakr": "192,787,834",
+      "renderedAt": "2026-09-30T17:52:54.631Z",
+      "stakr": "311,398,189",
       "cooler": "25,723",
-      "cut": "6,315",
+      "cut": "8,850",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0x498581ff718922c3f8e6a244956af099b2652b2b": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x498581ff718922c3f8e6a244956af099b2652b2b.png",
-      "renderedAt": "2026-09-30T17:22:52.145Z",
-      "stakr": "98,815,219,643",
+      "renderedAt": "2026-09-30T17:52:54.799Z",
+      "stakr": "98,695,481,621",
       "cooler": "25,723",
       "cut": "0",
       "claimable": 0,
@@ -53,7 +53,7 @@
     },
     "0x72b30a9dfeedc67e8a554e16bfca3b57600f7258": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x72b30a9dfeedc67e8a554e16bfca3b57600f7258.png",
-      "renderedAt": "2026-09-30T17:22:52.667Z",
+      "renderedAt": "2026-09-30T17:52:55.169Z",
       "stakr": "7,196,767",
       "cooler": "25,723",
       "cut": "0",
@@ -63,7 +63,7 @@
     },
     "0x891691ce817db5d09fc5bbbea6ae012cfe829aef": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x891691ce817db5d09fc5bbbea6ae012cfe829aef.png",
-      "renderedAt": "2026-09-30T17:22:52.788Z",
+      "renderedAt": "2026-09-30T17:52:55.329Z",
       "stakr": "0",
       "cooler": "25,723",
       "cut": "0",
@@ -73,7 +73,7 @@
     },
     "0x8b1fb4937bab5d02248a0825bf2564863237b00f": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8b1fb4937bab5d02248a0825bf2564863237b00f.png",
-      "renderedAt": "2026-09-30T17:22:53.914Z",
+      "renderedAt": "2026-09-30T17:52:56.719Z",
       "stakr": "11,777",
       "cooler": "25,723",
       "cut": "0",
@@ -83,17 +83,17 @@
     },
     "0x8dbb3d5a852d1c1561e339d4a39118fe345321d2": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8dbb3d5a852d1c1561e339d4a39118fe345321d2.png",
-      "renderedAt": "2026-09-30T17:22:54.694Z",
+      "renderedAt": "2026-09-30T17:52:57.860Z",
       "stakr": "111,491,392",
       "cooler": "25,723",
-      "cut": "3,652",
+      "cut": "3,168",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0x8f10b468b06c6fd214b65f87778827f7d113f996": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8f10b468b06c6fd214b65f87778827f7d113f996.png",
-      "renderedAt": "2026-09-30T17:22:55.994Z",
+      "renderedAt": "2026-09-30T17:52:59.280Z",
       "stakr": "0",
       "cooler": "25,723",
       "cut": "0",
@@ -103,27 +103,27 @@
     },
     "0x9982538f41f2ae29ddb9d3d9307010052984fdbb": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x9982538f41f2ae29ddb9d3d9307010052984fdbb.png",
-      "renderedAt": "2026-09-30T17:22:56.741Z",
-      "stakr": "1,197,512",
+      "renderedAt": "2026-09-30T17:53:00.391Z",
+      "stakr": "1,261,011",
       "cooler": "25,723",
-      "cut": "39",
+      "cut": "35",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0xbaad58a8f0a0944148adb2ddb100db22ea67ebf8": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbaad58a8f0a0944148adb2ddb100db22ea67ebf8.png",
-      "renderedAt": "2026-09-30T17:22:57.795Z",
+      "renderedAt": "2026-09-30T17:53:01.809Z",
       "stakr": "1,000,000",
       "cooler": "25,723",
-      "cut": "32",
+      "cut": "28",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0xbd771a0071ca2833604257eef6d2de5d676d33e1": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbd771a0071ca2833604257eef6d2de5d676d33e1.png",
-      "renderedAt": "2026-09-30T17:22:57.920Z",
+      "renderedAt": "2026-09-30T17:53:01.982Z",
       "stakr": "54,061,070",
       "cooler": "25,723",
       "cut": "0",
@@ -133,7 +133,7 @@
     },
     "0xbdf938149ac6a781f94faa0ed45e6a0e984c6544": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbdf938149ac6a781f94faa0ed45e6a0e984c6544.png",
-      "renderedAt": "2026-09-30T17:22:58.342Z",
+      "renderedAt": "2026-09-30T17:53:02.487Z",
       "stakr": "383,206",
       "cooler": "25,723",
       "cut": "0",
@@ -143,27 +143,27 @@
     },
     "0xcd1ac3efcae0dc58163ee538d666dc363d469802": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xcd1ac3efcae0dc58163ee538d666dc363d469802.png",
-      "renderedAt": "2026-09-30T17:22:59.196Z",
+      "renderedAt": "2026-09-30T17:53:03.665Z",
       "stakr": "113,837,693",
       "cooler": "25,723",
-      "cut": "3,729",
+      "cut": "3,235",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0xda641d4ff3a5ea3c8b5265db8701622a68998903": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xda641d4ff3a5ea3c8b5265db8701622a68998903.png",
-      "renderedAt": "2026-09-30T17:23:00.127Z",
-      "stakr": "316,430,831",
+      "renderedAt": "2026-09-30T17:53:05.208Z",
+      "stakr": "317,494,998",
       "cooler": "25,723",
-      "cut": "10,365",
+      "cut": "9,024",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
     },
     "0xe7ad68a354403660b4beb99068580431d5c72602": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xe7ad68a354403660b4beb99068580431d5c72602.png",
-      "renderedAt": "2026-09-30T17:23:00.270Z",
+      "renderedAt": "2026-09-30T17:53:05.367Z",
       "stakr": "267,876,660",
       "cooler": "25,723",
       "cut": "0",
@@ -173,10 +173,10 @@
     },
     "0xfafe70b60908162956a5c1c6a16a1261dd183d30": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xfafe70b60908162956a5c1c6a16a1261dd183d30.png",
-      "renderedAt": "2026-09-30T17:23:01.275Z",
+      "renderedAt": "2026-09-30T17:53:06.790Z",
       "stakr": "48,493,592",
       "cooler": "25,723",
-      "cut": "1,588",
+      "cut": "1,378",
       "claimable": 0,
       "grillMaster": "kyle",
       "grillMasterBurned": "69,000,000"
