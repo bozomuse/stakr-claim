@@ -1,6 +1,6 @@
 ---
 name: stakr-claim
-description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Also answers "what's in the cooler?", "what's my cut from the cooler?", and shares live plate cards. Use when a holder wants to claim their STAKR rewards, check their cooler cut, share their plate, or kick the grill through Bankr instead of the web claim site.
+description: Claim STAKR weekly BNKR rewards and kick the grill via Bankr. Checks your Bankr wallet for claimable STAKR epochs, verifies onchain claim status, and submits claim transactions — or burns STAKR through the Kicker with a message that lands on the grill feed. Also answers "what's in the cooler?", "what's my cut from the cooler?", shares live plate cards, and sweeps the BRB reflections vault into the cooler on "put the bnkr in the cooler". Use when a holder wants to claim their STAKR rewards, check their cooler cut, share their plate, sweep the vault, or kick the grill through Bankr instead of the web claim site.
 metadata:
   requires:
     bins: ["bankr"]
@@ -27,7 +27,7 @@ curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
 
 Convert the hex result to decimal and divide by 1e18. Answer plainly, e.g. "the cooler's holding 24,498.08 bnkr." This is the pool that weekly epochs pay out from — it grows as fee sweeps land and shrinks as holders claim.
 
-Feeding the cooler, besides the $STAKR fee sweeps: bozo's Bankr wallet holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. A daily `brb-reflection-sweep` cron claims the wallet's pending $BNKR (at 250+ BNKR) via `claimDividend()` and forwards it to the distributor. If someone asks where the extra $BNKR came from, that's the $BRB stream.
+Feeding the cooler, besides the $STAKR fee sweeps: the BRB reflections vault (`0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0`) holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. Once 6,969 $BNKR is pending, anyone can call `sweep()` to push it all into the cooler (see "Sweep the vault" below). If someone asks where the extra $BNKR came from, that's the $BRB stream.
 
 Two depths, one code path:
 
@@ -64,6 +64,34 @@ Excluded plates (never earn — always subtract from the supply, and a cut of 0 
 - `0xe7aD68a354403660b4BEB99068580431D5c72602` (work wallet — house wallet, can't play)
 
 Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr." Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, and plates under $5 sit out (which nudges everyone else's share up). If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
+
+## Sweep the vault ("put the bnkr in the cooler")
+
+The BRB reflections vault accrues $BNKR from $BRB's per-trade tax. Anyone can push the pending $BNKR into the cooler by calling `sweep()` on the vault. The $BNKR can only ever go to the cooler (immutable) — never to the caller. The caller pays Base gas and lands on the cooler-fills leaderboard.
+
+**Vault:** `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` (Base)
+**Floor:** `sweep()` reverts below 6,969 $BNKR pending (immutable `MIN_SWEEP`)
+
+Trigger phrases: "put the bnkr in the cooler", "put the bnkr in the cooler mfer", "sweep the vault".
+
+1. Check pending first — never submit blind:
+```bash
+# pendingSweep() on the vault, selector 0x6849bcbb
+curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0","data":"0x6849bcbb"},"latest"]}' \
+  | jq -r .result
+```
+Convert the hex result to decimal and divide by 1e18. If below 6,969, say so plainly with the pending amount and how far off the floor it is — do NOT submit.
+2. At or above 6,969, submit `sweep()` (selector `0x35faa416`, no args) via Bankr Wallet API `/wallet/submit` or the agent:
+```bash
+bankr agent prompt "On Base, call sweep() on 0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0 (calldata 0x35faa416)"
+```
+3. Report the sweep tx hash and the $BNKR amount swept, and note the caller lands on the cooler-fills leaderboard.
+
+Notes:
+- The keeper auto-sweeper is off as of Sep 30 2026 — the community does the sweeps now, that's the point. Never re-enable it without Kyle's order.
+- Gas is paid in ETH on Base from the caller's Bankr wallet.
+- `sweep()` claims via `BRB.claimDividend()` and forwards everything to the cooler atomically — no custody, no take-backs.
 
 ## Share your plate
 
