@@ -462,6 +462,10 @@ tr:last-child td { border-bottom: none; }
 td.mono { font-size: 0.82rem; }
 .root-cell { display: flex; align-items: center; gap: 0.5rem; }
 
+/* ---------- fills leaderboard ---------- */
+.fills-lede { max-width: 44rem; }
+#fillsBody tr.leader td { font-weight: 700; }
+
 /* ---------- faq ---------- */
 .faq details {
   border: 2px solid var(--ink);

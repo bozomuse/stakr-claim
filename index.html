@@ -150,6 +150,19 @@
     <p class="muted chef-wallet">staking wallet <code>0xbd771a0071ca2833604257eef6d2de5d676d33e1</code></p>
   </section>
 
+  <section class="fills" id="fills" aria-labelledby="fillsTitle">
+    <p class="eyebrow">the patience game</p>
+    <h2 id="fillsTitle">who filled the cooler</h2>
+    <p class="muted fills-lede">whoever sweeps the most $bnkr from the vault leads the board. the longer you hold out, the bigger the pot grows — and the higher the bar for everyone else. patience is this game.</p>
+    <div class="table-wrap">
+      <table aria-label="cooler fills leaderboard">
+        <thead><tr><th>#</th><th>sweeper</th><th>fills</th><th>$bnkr swept</th></tr></thead>
+        <tbody id="fillsBody"><tr><td colspan="4" class="muted">checking the vault…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="muted fineprint">the vault only opens at 6,969 $bnkr pending. sweeps are permissionless — anyone can call <span class="mono">sweep()</span> on the vault, or tell bankrbot <span class="mono">fill the cooler</span>, and the $bnkr lands straight in the cooler.</p>
+  </section>
+
   <section class="claim" id="claim" aria-labelledby="claimTitle">
     <div class="claim-head">
       <p class="eyebrow">the grill</p>
@@ -372,6 +385,7 @@
 </dialog>
 
 <script src="app.js?v=8"></script>
+<script src="fills.js?v=1"></script>
 <script src="share-card.js?v=7"></script>
 <script src="plate-check.js?v=5"></script>
 </body>
