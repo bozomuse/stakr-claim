@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-09-30T19:53:00.666Z",
+  "updatedAt": "2026-09-30T20:23:05.121Z",
   "cards": {
     "0x0000000000000000000000000000000000000000": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x0000000000000000000000000000000000000000.png",
-      "renderedAt": "2026-09-30T19:52:42.672Z",
+      "renderedAt": "2026-09-30T20:22:42.647Z",
       "stakr": "0",
       "cooler": "26,294",
       "cut": "0",
@@ -13,7 +13,7 @@
     },
     "0x000000000000000000000000000000000000dead": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x000000000000000000000000000000000000dead.png",
-      "renderedAt": "2026-09-30T19:52:43.454Z",
+      "renderedAt": "2026-09-30T20:22:43.317Z",
       "stakr": "70,000,000",
       "cooler": "26,294",
       "cut": "0",
@@ -23,7 +23,7 @@
     },
     "0x042455f9990098e11592be1fbd72e6dc68419b13": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x042455f9990098e11592be1fbd72e6dc68419b13.png",
-      "renderedAt": "2026-09-30T19:52:44.457Z",
+      "renderedAt": "2026-09-30T20:22:44.572Z",
       "stakr": "688",
       "cooler": "26,294",
       "cut": "0",
@@ -33,7 +33,7 @@
     },
     "0x1111110f0f73c0b2ef09ec012eae758b3e03a902": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x1111110f0f73c0b2ef09ec012eae758b3e03a902.png",
-      "renderedAt": "2026-09-30T19:52:45.753Z",
+      "renderedAt": "2026-09-30T20:22:46.061Z",
       "stakr": "12,018",
       "cooler": "26,294",
       "cut": "0",
@@ -43,7 +43,7 @@
     },
     "0x16caf4a8a3def5da8d5bd1b69eab7102863f6f08": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x16caf4a8a3def5da8d5bd1b69eab7102863f6f08.png",
-      "renderedAt": "2026-09-30T19:52:46.754Z",
+      "renderedAt": "2026-09-30T20:22:47.419Z",
       "stakr": "311,398,189",
       "cooler": "26,294",
       "cut": "9,096",
@@ -53,7 +53,7 @@
     },
     "0x498581ff718922c3f8e6a244956af099b2652b2b": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x498581ff718922c3f8e6a244956af099b2652b2b.png",
-      "renderedAt": "2026-09-30T19:52:47.218Z",
+      "renderedAt": "2026-09-30T20:22:47.954Z",
       "stakr": "98,700,252,506",
       "cooler": "26,294",
       "cut": "0",
@@ -63,7 +63,7 @@
     },
     "0x58f408500bf0dc2a0037d4e2e368f65f331fb6e3": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x58f408500bf0dc2a0037d4e2e368f65f331fb6e3.png",
-      "renderedAt": "2026-09-30T19:52:48.225Z",
+      "renderedAt": "2026-09-30T20:22:49.208Z",
       "stakr": "1,168,199",
       "cooler": "26,294",
       "cut": "34",
@@ -73,7 +73,7 @@
     },
     "0x5f8da8f88ec81e27f2e22fcb9ca5d926c595e508": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x5f8da8f88ec81e27f2e22fcb9ca5d926c595e508.png",
-      "renderedAt": "2026-09-30T19:52:49.531Z",
+      "renderedAt": "2026-09-30T20:22:50.984Z",
       "stakr": "1,376",
       "cooler": "26,294",
       "cut": "0",
@@ -83,7 +83,7 @@
     },
     "0x72b30a9dfeedc67e8a554e16bfca3b57600f7258": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x72b30a9dfeedc67e8a554e16bfca3b57600f7258.png",
-      "renderedAt": "2026-09-30T19:52:49.753Z",
+      "renderedAt": "2026-09-30T20:22:51.206Z",
       "stakr": "7,254,028",
       "cooler": "26,294",
       "cut": "0",
@@ -93,7 +93,7 @@
     },
     "0x891691ce817db5d09fc5bbbea6ae012cfe829aef": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x891691ce817db5d09fc5bbbea6ae012cfe829aef.png",
-      "renderedAt": "2026-09-30T19:52:50.421Z",
+      "renderedAt": "2026-09-30T20:22:51.708Z",
       "stakr": "0",
       "cooler": "26,294",
       "cut": "0",
@@ -103,7 +103,7 @@
     },
     "0x8b1fb4937bab5d02248a0825bf2564863237b00f": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8b1fb4937bab5d02248a0825bf2564863237b00f.png",
-      "renderedAt": "2026-09-30T19:52:51.449Z",
+      "renderedAt": "2026-09-30T20:22:53.088Z",
       "stakr": "11,777",
       "cooler": "26,294",
       "cut": "0",
@@ -113,7 +113,7 @@
     },
     "0x8dbb3d5a852d1c1561e339d4a39118fe345321d2": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8dbb3d5a852d1c1561e339d4a39118fe345321d2.png",
-      "renderedAt": "2026-09-30T19:52:52.832Z",
+      "renderedAt": "2026-09-30T20:22:54.919Z",
       "stakr": "111,491,392",
       "cooler": "26,294",
       "cut": "3,256",
@@ -123,7 +123,7 @@
     },
     "0x8f10b468b06c6fd214b65f87778827f7d113f996": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x8f10b468b06c6fd214b65f87778827f7d113f996.png",
-      "renderedAt": "2026-09-30T19:52:53.834Z",
+      "renderedAt": "2026-09-30T20:22:56.316Z",
       "stakr": "0",
       "cooler": "26,294",
       "cut": "0",
@@ -133,7 +133,7 @@
     },
     "0x9982538f41f2ae29ddb9d3d9307010052984fdbb": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0x9982538f41f2ae29ddb9d3d9307010052984fdbb.png",
-      "renderedAt": "2026-09-30T19:52:55.088Z",
+      "renderedAt": "2026-09-30T20:22:58.043Z",
       "stakr": "1,259,589",
       "cooler": "26,294",
       "cut": "36",
@@ -143,7 +143,7 @@
     },
     "0xbaad58a8f0a0944148adb2ddb100db22ea67ebf8": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbaad58a8f0a0944148adb2ddb100db22ea67ebf8.png",
-      "renderedAt": "2026-09-30T19:52:56.054Z",
+      "renderedAt": "2026-09-30T20:22:59.267Z",
       "stakr": "1,000,000",
       "cooler": "26,294",
       "cut": "29",
@@ -153,7 +153,7 @@
     },
     "0xbd771a0071ca2833604257eef6d2de5d676d33e1": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbd771a0071ca2833604257eef6d2de5d676d33e1.png",
-      "renderedAt": "2026-09-30T19:52:56.547Z",
+      "renderedAt": "2026-09-30T20:22:59.736Z",
       "stakr": "54,061,070",
       "cooler": "26,294",
       "cut": "0",
@@ -163,7 +163,7 @@
     },
     "0xbdf938149ac6a781f94faa0ed45e6a0e984c6544": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xbdf938149ac6a781f94faa0ed45e6a0e984c6544.png",
-      "renderedAt": "2026-09-30T19:52:56.750Z",
+      "renderedAt": "2026-09-30T20:22:59.925Z",
       "stakr": "386,219",
       "cooler": "26,294",
       "cut": "0",
@@ -173,7 +173,7 @@
     },
     "0xcd1ac3efcae0dc58163ee538d666dc363d469802": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xcd1ac3efcae0dc58163ee538d666dc363d469802.png",
-      "renderedAt": "2026-09-30T19:52:58.079Z",
+      "renderedAt": "2026-09-30T20:23:01.729Z",
       "stakr": "113,837,693",
       "cooler": "26,294",
       "cut": "3,325",
@@ -183,7 +183,7 @@
     },
     "0xda641d4ff3a5ea3c8b5265db8701622a68998903": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xda641d4ff3a5ea3c8b5265db8701622a68998903.png",
-      "renderedAt": "2026-09-30T19:52:59.085Z",
+      "renderedAt": "2026-09-30T20:23:03.118Z",
       "stakr": "317,494,998",
       "cooler": "26,294",
       "cut": "9,274",
@@ -193,7 +193,7 @@
     },
     "0xe7ad68a354403660b4beb99068580431d5c72602": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xe7ad68a354403660b4beb99068580431d5c72602.png",
-      "renderedAt": "2026-09-30T19:52:59.694Z",
+      "renderedAt": "2026-09-30T20:23:03.798Z",
       "stakr": "267,876,660",
       "cooler": "26,294",
       "cut": "0",
@@ -203,7 +203,7 @@
     },
     "0xfafe70b60908162956a5c1c6a16a1261dd183d30": {
       "png": "https://bozomuse.github.io/stakr-claim/cards/0xfafe70b60908162956a5c1c6a16a1261dd183d30.png",
-      "renderedAt": "2026-09-30T19:53:00.666Z",
+      "renderedAt": "2026-09-30T20:23:05.121Z",
       "stakr": "42,493,592",
       "cooler": "26,294",
       "cut": "1,241",
