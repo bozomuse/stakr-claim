@@ -82,10 +82,27 @@ async function connect() {
     if (!CONFIG.demo) {
       const chainId = await window.ethereum.request({ method: 'eth_chainId' });
       if (chainId !== CONFIG.chainIdHex) {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: CONFIG.chainIdHex }],
-        });
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: CONFIG.chainIdHex }],
+          });
+        } catch (switchErr) {
+          if (switchErr && switchErr.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: CONFIG.chainIdHex,
+                chainName: 'Base',
+                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                rpcUrls: ['https://mainnet.base.org'],
+                blockExplorerUrls: ['https://basescan.org'],
+              }],
+            });
+          } else {
+            throw switchErr;
+          }
+        }
       }
     }
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -93,7 +110,11 @@ async function connect() {
     renderWallet();
     await renderClaims();
   } catch (err) {
-    setNote('connection refused. the window stays open whenever you are ready.');
+    if (err && err.code === 4001) {
+      setNote('connection refused. the window stays open whenever you are ready.');
+    } else {
+      setNote('could not connect: ' + (err && err.message ? err.message : 'unknown hiccup') + '. give it another go.');
+    }
   }
 }
 
@@ -324,6 +345,7 @@ function setNote(msg) {
   const n = document.getElementById('receiptNote');
   n.hidden = false;
   n.textContent = msg;
+  n.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 async function copyText(text, btn) {
