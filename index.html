@@ -19,7 +19,7 @@
 <title>stakr &amp; stakr — hold stakr, earn bnkr</title>
 <meta name="description" content="famous for stakeburgers. $STAKR is paired with $BNKR — every trade pays the holders. hold stakr, earn bnkr. no staking, no lockups.">
 <meta property="og:title" content="stakr & stakr — hold stakr, earn bnkr">
-<meta property="og:description" content="famous for stakeburgers. 100% of $STAKR's $BNKR creator fees are served to holders weekly — and the $STAKR fee leg gets swapped into $BNKR and served too while the token sits under a $60k market cap. past $75k, it burns. the grill's hot.">
+<meta property="og:description" content="famous for stakeburgers. epoch 1 fires when a holder sweeps the brb vault — $25 to everyone holding $5+ of stakr. the founder funds the first epoch; after that it's all up to the market. four grills, one cooler.">
 <meta property="og:image" content="https://bozomuse.github.io/stakr-claim/assets/bozo-grill-og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -45,7 +45,7 @@
     <div class="hero-copy">
       <p class="eyebrow">the weekly payout window</p>
       <h1 id="heroTitle">hold stakr.<br>earn bnkr.</h1>
-      <p class="lede">famous for stakeburgers. $stakr is paired with $bnkr, and every trade pays the holders — 100% of $bnkr creator fees are served weekly, and the $stakr fee leg gets swapped into $bnkr and served too while the token sits under a $60k market cap. past $75k it burns instead, and between the two lines the grill holds its temper — no flip-flopping. no staking, no lockups, just hold and earn. bozo's staked $bnkr feeds the pot too, every reward it earns swept into the distributor. the grill's hot.</p>
+      <p class="lede">famous for stakeburgers. epoch 1 fires the moment one of you sweeps the brb vault — permissionless, your name on the leaderboard. $25 split across everyone holding $5+ of $stakr. the honest part: the first epoch is funded by the founder, his brb, his wallet. after that it's all up to the market — four grills feed the cooler: $stakr fees, $brb reflections, $bnkr staking rewards, veaero bribes. no staking, no lockups, just hold and earn.</p>
       <div class="cta-row">
         <a class="btn btn-ketchup" href="#claim">check my rewards</a>
         <a class="textlink" href="#how">kiss the chef</a>
@@ -64,6 +64,26 @@
         <span class="pill-copy" id="pillCopy">copy</span>
       </div>
     </div>
+  </section>
+
+  <section class="gameplan" id="gameplan" aria-labelledby="gameplanTitle">
+    <p class="eyebrow">the game plan</p>
+    <h2 id="gameplanTitle">epoch 1 starts when you sweep</h2>
+    <p class="lede">the brb vault is simmering. the second 6,969 $bnkr is pending, anyone can sweep the whole thing straight into the cooler — permissionless, no allowlist. that sweep fires epoch 1: $25 split across everyone holding $5+ of $stakr.</p>
+    <div class="vault-meter" role="status" aria-live="polite">
+      <div class="vault-top"><span>in the vault</span><span class="mono" id="vaultPending">…</span></div>
+      <div class="vault-bar" aria-hidden="true"><div class="vault-fill" id="vaultFill"></div></div>
+      <p class="muted" id="vaultSub">checking the vault…</p>
+    </div>
+    <p class="honest">the honest part: the first epoch is funded by the founder — his brb, his wallet, his money. after that it's all up to the market.</p>
+    <h3>four grills, one cooler</h3>
+    <ul class="grills">
+      <li><b>$stakr fees</b> — every trade's creator cut seasons the keeper pile; every epoch close it gets swapped to $bnkr and stirred into the next cooler.</li>
+      <li><b>$brb reflections</b> — the vault's $brb earns $bnkr on every $brb trade; anyone can sweep it past 6,969.</li>
+      <li><b>$bnkr staking</b> — bozo's staked $bnkr streams its rewards into the cooler.</li>
+      <li><b>veAERO</b> — locks voting on aerodrome sweep $bnkr fees and bribes into the cooler weekly.</li>
+    </ul>
+    <p class="seasoning">the seasoning pile: <b class="mono" id="seasoningAmt">…</b> $stakr waiting at the keeper.</p>
   </section>
 
   <section class="grill" id="grill" aria-label="bozo on the grill">
@@ -126,7 +146,7 @@
         <span class="n" aria-hidden="true">02</span>
         <div>
           <h3>fees come home in both tokens</h3>
-          <p>the creator cut accumulates in $bnkr and $stakr, and a keeper sweeps it into the payout contract every week. until $stakr holds a $75k market cap, the whole $stakr leg gets swapped into $bnkr and served to the holders who showed up early. once the room gets crowded, the $stakr leg starts to burn instead — and it keeps burning until the room clears back under $60k.</p>
+          <p>the creator cut accumulates in $bnkr and $stakr. the $bnkr leg flows straight to the cooler. the $stakr leg seasons at the keeper — a trickle until volume shows up, no fairy tales — and every epoch close the whole pile gets swapped into $bnkr and stirred into the next epoch's cooler. once $stakr holds a $75k market cap the leg burns instead, and it keeps burning until the room clears back under $60k.</p>
         </div>
       </li>
       <li>
@@ -142,7 +162,7 @@
           <h3>the flywheel eats elsewhere too</h3>
           <p>the vault holds $brb — every $brb trade pays a 3% tax that market-buys $bnkr and streams it to holders as reflections. anyone can sweep the vault's share straight into the cooler once 6,969 $bnkr is pending, so $brb volume feeds $stakr holders too.</p>
           <p class="muted">brb vault <code>0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0</code></p>
-          <p>and now the wallet votes: veAERO locks in bozo's wallet vote on aerodrome, and every $bnkr they earn flows into the cooler weekly. one wallet, one vault, three grills.</p>
+          <p>and now the wallet votes: veAERO locks in bozo's wallet vote on aerodrome, and every $bnkr they earn flows into the cooler weekly. one wallet, one vault, four grills.</p>
         </div>
       </li>
     </ol>
@@ -160,7 +180,7 @@
         <tbody id="fillsBody"><tr><td colspan="4" class="muted">checking the vault…</td></tr></tbody>
       </table>
     </div>
-    <p class="muted fineprint">the vault only opens at 6,969 $bnkr pending. sweeps are permissionless — anyone can call <span class="mono">sweep()</span> on the vault, or tell bankrbot <span class="mono">fill the cooler</span>, and the $bnkr lands straight in the cooler.</p>
+    <p class="muted fineprint">the vault only opens at 6,969 $bnkr pending. sweeps are permissionless — anyone can call <span class="mono">sweep()</span> on the vault, or tell bankrbot <span class="mono">fill the cooler mfer</span>, and the $bnkr lands straight in the cooler.</p>
   </section>
 
   <section class="claim" id="claim" aria-labelledby="claimTitle">
@@ -279,8 +299,16 @@
       0xe7aD68a354403660b4BEB99068580431D5c72602 (ceremonial wallet)</p>
     </details>
     <details>
+      <summary>who funds the cookout?</summary>
+      <p>the founder funds the first epoch — his brb, his wallet, his money. after that it's all up to the market: $stakr trading fees, $brb reflections, $bnkr staking rewards, and veaero bribes feed the cooler. no fairy tales about fee volume that doesn't exist yet.</p>
+    </details>
+    <details>
+      <summary>what's the seasoning pile?</summary>
+      <p>the $stakr fee leg accrues at the keeper — right now it's a trickle, about 57k $stakr a day. every epoch close, the whole pile gets swapped into $bnkr and stirred into the next epoch's cooler. watch it grow in the meter above.</p>
+    </details>
+    <details>
       <summary>is this live?</summary>
-      <p id="liveAnswer">yes. $stakr launched on base and the distributor is live. the weekly cookout starts serving soon — connect your wallet to see what's on your plate.</p>
+      <p id="liveAnswer">the grill is lit but epoch 1 hasn't fired yet. it starts the moment a holder sweeps the brb vault past 6,969 $bnkr — check the meter above. once it fires, connect your wallet to see what's on your plate.</p>
     </details>
   </section>
 
@@ -386,6 +414,7 @@
 
 <script src="app.js?v=8"></script>
 <script src="fills.js?v=1"></script>
+<script src="grills.js?v=1"></script>
 <script src="share-card.js?v=7"></script>
 <script src="plate-check.js?v=5"></script>
 </body>
