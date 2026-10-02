@@ -1,0 +1,58 @@
+{
+  "epochId": 0,
+  "priceSource": "STAKR/BNKR 24h TWAP x BNKR/USDC 24h TWAP",
+  "stakrPriceUsd": 1.3517456233345606e-07,
+  "bnkrPriceUsd": 0.0004114434601314487,
+  "twap": {
+    "stakr_leg": {
+      "samples": 24,
+      "window_s": 82800,
+      "end_block": 52056240
+    },
+    "bnkr_leg": {
+      "samples": 24,
+      "window_s": 82800,
+      "end_block": 52056240
+    },
+    "stakr_per_bnkr": 0.0003285373943974471,
+    "bnkr_per_usdc": 0.0004114434601314487
+  },
+  "holdersEvaluated": 281,
+  "distributorBalance": "73107462391241621610225",
+  "totalReserved": "0",
+  "sweptEpochs": [],
+  "root": "af3cf82ae848b37c2c7ad712e7edcd66528a1f8b8b657b1a0e852841f198fc74",
+  "totalAllocated": "73107462391241621610225",
+  "claims": {
+    "0xDa641D4ff3a5eA3c8b5265db8701622A68998903": {
+      "amount": "44740313691939043675574",
+      "proof": [
+        "94ae8490d67374a42761a61c51ec1ea4da0fdfc43afa853aaca62db21f721478",
+        "e8a81238d7b95b8405138ba6646fa524fd4ac4a31aded03faa817775f3d8a8ec"
+      ]
+    },
+    "0xCd1aC3eFcAE0dC58163Ee538D666dC363d469802": {
+      "amount": "7312391515294105535942",
+      "proof": [
+        "40edb4ed8ce770c79b820025588573f828a3c41e87fefde3b2d3312f5781d583",
+        "e8a81238d7b95b8405138ba6646fa524fd4ac4a31aded03faa817775f3d8a8ec"
+      ]
+    },
+    "0x16CAf4a8A3DEf5Da8d5BD1b69eaB7102863F6f08": {
+      "amount": "13420646302488594333084",
+      "proof": [
+        "b6839f962eb963dc06ed0293255cf524d1d8877007b1e402453b42fc664068fa",
+        "774305aca4031a2d5036a739344589bde7f63f95d042874056e76bc9bd503b10"
+      ]
+    },
+    "0x8DbB3D5a852d1C1561E339d4a39118FE345321d2": {
+      "amount": "7634110881519878065625",
+      "proof": [
+        "a8c9461383d514d1add3cb29fb22513c425f09b422d7fb4e32c315b8579fc4e5",
+        "774305aca4031a2d5036a739344589bde7f63f95d042874056e76bc9bd503b10"
+      ]
+    }
+  },
+  "demo": false,
+  "published": "2026-10-02T00:45:55.750595+00:00"
+}

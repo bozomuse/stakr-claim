@@ -1,1 +1,11 @@
-{"epochs": []}
+{
+  "epochs": [
+    {
+      "id": 0,
+      "file": "epoch-0.json",
+      "demo": false,
+      "distributed": "73107462391241621610225",
+      "holders": 4
+    }
+  ]
+}
