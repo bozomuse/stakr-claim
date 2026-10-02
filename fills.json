@@ -1,6 +1,12 @@
 {
- "updated": "2026-10-02T00:01:21.883Z",
+ "updated": "2026-10-02T00:31:23.804Z",
  "vault": "0xe77ba6aA7CbdCc771FA24840fbC87D3d770408A0",
- "totalFills": 0,
- "board": []
+ "totalFills": 1,
+ "board": [
+  {
+   "caller": "0xfafe70b60908162956a5c1c6a16a1261dd183d30",
+   "fills": 1,
+   "totalBnkr": "6972082290936192391232"
+  }
+ ]
 }
