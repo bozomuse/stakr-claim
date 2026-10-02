@@ -760,3 +760,9 @@ dialog form { margin-top: 1.25rem; text-align: right; }
 .honest { font-size: 1.05rem; max-width: 44rem; margin: 0; }
 .seasoning { max-width: 44rem; color: var(--muted); margin: 0; }
 .seasoning b { color: var(--ink); }
+
+/* bankr claim helper */
+.bankr-claim { margin-top: 18px; border: 1px dashed var(--ketchup); border-radius: 12px; padding: 12px 16px; max-width: 44rem; }
+.bankr-claim summary { cursor: pointer; font-weight: 700; }
+.bankr-claim textarea.mono { width: 100%; box-sizing: border-box; font-size: 11px; word-break: break-all; margin-top: 8px; background: #111; color: #eee; border: 1px solid #333; border-radius: 8px; padding: 8px; }
+.bankr-claim code.mono { word-break: break-all; }

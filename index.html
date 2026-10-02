@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://bozomuse.github.io/stakr-claim/assets/bozo-grill-og.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23C8342A'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-weight='bold' font-size='36' fill='%23FAF3E7' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="fonts/fonts.css">
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -209,6 +209,22 @@
       <div class="tear" aria-hidden="true"></div>
     </div>
     <p class="fineprint">claims are permissionless and gas is on you — only claim when it's worth the trip. each epoch stays open 4 weeks, then unclaimed $bnkr rolls into the next cookout.</p>
+    <details class="bankr-claim">
+      <summary>bankr wallet? claim without connecting</summary>
+      <p class="muted">bankr holds your wallet's keys, so it can't connect here. no problem — the claim just needs to come <em>from</em> your bankr wallet. paste your bankr wallet address, copy your claim data, and submit it through bankr.</p>
+      <form class="plate-ask-form" id="bankrClaimForm">
+        <input id="bankrClaimInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x… (your bankr wallet)">
+        <button class="btn btn-ketchup" id="bankrClaimBtn" type="submit">get my claim data</button>
+      </form>
+      <p class="receipt-note" id="bankrClaimMsg" hidden></p>
+      <div id="bankrClaimOut" hidden>
+        <p class="muted">send a transaction <strong>from your bankr wallet</strong> with:</p>
+        <p><span class="muted">to:</span> <code class="mono" id="bankrClaimTo">…</code> <button class="btn btn-small" id="bankrCopyTo" type="button">copy</button></p>
+        <p><span class="muted">data:</span> <button class="btn btn-small" id="bankrCopyData" type="button">copy claim data</button></p>
+        <textarea class="mono" id="bankrClaimData" rows="4" readonly></textarea>
+        <p class="muted">how to send it: tell the bankr agent <code>submit this transaction</code> with the to-address and data above, or use <code>bankr wallet submit</code> in the cli, or paste both into bankr.bot. gas is a little eth on base, paid from your bankr wallet.</p>
+      </div>
+    </details>
   </section>
 
   <section class="platecheck" id="platecheck" aria-labelledby="platecheckTitle">
@@ -417,5 +433,6 @@
 <script src="grills.js?v=1"></script>
 <script src="share-card.js?v=7"></script>
 <script src="plate-check.js?v=5"></script>
+<script src="bankr-claim.js?v=1"></script>
 </body>
 </html>
