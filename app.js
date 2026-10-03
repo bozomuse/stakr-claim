@@ -608,7 +608,7 @@ function initContractPill() {
 
 /* ---------------- init ---------------- */
 function buildTicker() {
-  const phrase = 'hold stakr <b>•</b> earn bnkr <b>•</b> stake bnkr <b>•</b> mfer <b>•</b> ';
+  const phrase = 'sell high <b>•</b> keep $5 <b>•</b> eat weekly <b>•</b> mfer <b>•</b> ';
   document.getElementById('tickerInner').innerHTML = phrase.repeat(8);
 }
 

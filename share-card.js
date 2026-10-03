@@ -259,7 +259,7 @@ function drawCard(d) {
   /* footer */
   x.fillStyle = MUTED;
   x.font = '400 24px Inter, sans-serif';
-  x.fillText('hold stakr. earn bnkr · bozomuse.github.io/stakr-claim', 58, CARD_H - 36);
+  x.fillText('sell high. keep $5. eat weekly · bozomuse.github.io/stakr-claim', 58, CARD_H - 36);
 
   return c;
 }
