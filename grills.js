@@ -1,4 +1,4 @@
-/* Game plan live bits: BRB vault pending meter + keeper seasoning pile.
+/* Game plan live bits: BRB vault pending meter + sweepstakes seasoning pile.
    Read-only public RPC with failover. No wallet needed. */
 (async () => {
   const RPCS = [
@@ -29,7 +29,7 @@
 
   const VAULT = '0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0';
   const STAKR = '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3';
-  const KEEPER = '0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258';
+  const DISTRIBUTOR = '0x7b896a892C052C5243Dde20b54a4654e51A3A952';
   const FLOOR = 6969;
   const PENDING_SEL = '0x6849bcbb';
   const BAL_SEL = '0x70a08231';
@@ -55,9 +55,9 @@
     if (sub) sub.textContent = 'the vault is simmering — check back shortly.';
   }
 
-  // seasoning pile: keeper STAKR balance
+  // seasoning pile: $stakr fee leg waiting in the distributor for a race
   try {
-    const hex = await rpcCall('eth_call', [{ to: STAKR, data: BAL_SEL + encAddr(KEEPER) }, 'latest']);
+    const hex = await rpcCall('eth_call', [{ to: STAKR, data: BAL_SEL + encAddr(DISTRIBUTOR) }, 'latest']);
     const amt = Number(BigInt(hex)) / 1e18;
     const el = document.getElementById('seasoningAmt');
     if (el) el.textContent = amt.toLocaleString('en-US', { maximumFractionDigits: 0 });
