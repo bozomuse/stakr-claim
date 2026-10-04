@@ -33,6 +33,7 @@ const EXCLUDED_PLATES = [
   '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544', // fee hook
   '0xbd771a0071ca2833604257eef6d2de5d676d33e1', // bozo bankr wallet — Kyle: can't play (Sep 28 2026)
   '0xe7aD68a354403660b4BEB99068580431D5c72602', // work/ceremonial wallet — Kyle: can't play (Sep 28 2026)
+  '0x3d1f933bc205Ae9f5324fECb787636F20AA22575', // deep freezer (Fridge) — house treasury, can't play (Oct 4 2026)
 ];
 
 async function ethCallRetry(to, data, tries = 4) {

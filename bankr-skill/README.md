@@ -75,6 +75,7 @@ Excluded plates (never earn — always subtract from the supply, and a cut of 0 
 - `0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544` (fee hook)
 - `0xbd771a0071ca2833604257eef6d2de5d676d33e1` (bozo's bankr wallet — house wallet, can't play)
 - `0xe7aD68a354403660b4BEB99068580431D5c72602` (work wallet — house wallet, can't play)
+- `0x3d1f933bc205Ae9f5324fECb787636F20AA22575` (deep freezer — house treasury, can't play)
 
 Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr." Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, plates under $5 sit out (which nudges everyone else's share up), and sauce (1.25x for ending at/above start) isn't reflected in a spot check. If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
 
@@ -115,8 +116,9 @@ Send $STAKR from your Bankr wallet to the deep freezer timelock. Once it's in, o
 
 When the user says "put X stakr in the deep freezer" (or "freeze X stakr"):
 
-1. Check their STAKR balance. They must keep at least 1,000 STAKR dust — the token reverts full-balance transfers.
-2. Transfer via the Bankr CLI:
+1. Check their STAKR balance.
+2. **Throttle check (mandatory):** STAKR enforces a per-address rolling transfer throttle (custom error 0xf4d678b8). After an address sends a large amount, transfers over 1,000 STAKR revert until the window clears (observed: still throttled ~3h after a 54M send). Simulate first with eth_call `transfer(0x3d1f933bc205Ae9f5324fECb787636F20AA22575, <amount>)` from their wallet — if it reverts, tell them the throttle is active and to try again later. Do not submit a transfer that the simulation rejects.
+3. Transfer via the Bankr CLI:
 ```bash
 export PATH="$HOME/.bun/bin:$PATH"
 bankr wallet transfer --to 0x3d1f933bc205Ae9f5324fECb787636F20AA22575 --token STAKR --amount <amount> --chain base
