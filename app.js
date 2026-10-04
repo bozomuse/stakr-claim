@@ -8,7 +8,7 @@ const CONFIG = {
   bnkrDecimals: 18,
   stakr: '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3',
   stakrDecimals: 18,
-  refrigerator: '0xe7aD68a354403660b4BEB99068580431D5c72602', // work wallet, the stakr treasury
+  refrigerator: '0x3d1f933bc205Ae9f5324fECb787636F20AA22575', // fridge timelock contract, the stakr treasury
   kicker: '0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b',
   kickDeployBlock: 51849243,
   proofsBase: './proofs/',
@@ -452,8 +452,8 @@ async function fetchReservoir() {
 }
 
 /* ---------------- the refrigerator ----------------
-   live $STAKR balance of the work wallet — the treasury stacking
-   until $75k market cap. public RPC, no wallet needed. */
+   live $STAKR balance of the fridge timelock contract — the treasury stacking
+   until $75k market cap. 48-hour timelock on withdrawals. public RPC, no wallet needed. */
 function fmtStakr(raw) {
   const n = Number(raw) / 1e18;
   if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
@@ -472,7 +472,7 @@ async function fetchFridge() {
     const res = await rpcCall('eth_call', [{ to: CONFIG.stakr, data }, 'latest']);
     const txt = fmtStakr(BigInt(res).toString());
     el.textContent = txt;
-    if (sub) sub.textContent = 'stacking in the work wallet — flips to feeding the cooler at $75k market cap.';
+    if (sub) sub.textContent = 'locked in the fridge timelock — 48h on withdrawals. flips to feeding the cooler at $75k market cap.';
     if (note) note.textContent = txt;
   } catch {
     el.textContent = '—';
