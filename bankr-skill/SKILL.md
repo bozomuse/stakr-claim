@@ -27,6 +27,19 @@ curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
 
 Convert the hex result to decimal and divide by 1e18. Answer plainly, e.g. "the cooler's holding 24,498.08 bnkr." This is the pool that weekly epochs pay out from — it grows as fee sweeps land and shrinks as holders claim.
 
+## What's in the deep freezer?
+
+"The deep freezer" is the STAKR treasury: the **live $STAKR balance of the Fridge timelock contract** (`0x3d1f933bc205Ae9f5324fECb787636F20AA22575`). It holds STAKR bought by LP harvests, stacking until $75k market cap. Withdrawals have a 48-hour timelock.
+
+```bash
+# STAKR balanceOf(fridge) on Base (STAKR = 0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3, 18 decimals)
+curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3","data":"0x70a082310000000000000000000000003d1f933bc205Ae9f5324fECb787636F20AA22575"},"latest"]}' \
+  | jq -r .result
+```
+
+Convert hex to decimal, divide by 1e18. Answer plainly, e.g. "the deep freezer's holding 54.06M stakr."
+
 Feeding the cooler, besides the $STAKR fee sweeps: the BRB reflections vault (`0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0`) holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. Once 6,969 $BNKR is pending, anyone can call `sweep()` to push it all into the cooler (see "Sweep the vault" below). If someone asks where the extra $BNKR came from, that's the $BRB stream.
 
 Two depths, one code path:
