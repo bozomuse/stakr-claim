@@ -173,14 +173,14 @@
   <section class="fills" id="fills" aria-labelledby="fillsTitle">
     <p class="eyebrow">the patience game</p>
     <h2 id="fillsTitle">who filled the cooler</h2>
-    <p class="muted fills-lede">whoever sweeps the most $bnkr from the vault leads the board. the longer you hold out, the bigger the pot grows — and the higher the bar for everyone else. patience is this game.</p>
+    <p class="muted fills-lede">whoever feeds the cooler most leads the board — vault sweeps and sweepstakes races both count. the longer you hold out, the bigger the pot grows — and the higher the bar for everyone else. patience is this game.</p>
     <div class="table-wrap">
       <table aria-label="cooler fills leaderboard">
         <thead><tr><th>#</th><th>sweeper</th><th>fills</th><th>$bnkr swept</th></tr></thead>
         <tbody id="fillsBody"><tr><td colspan="4" class="muted">checking the vault…</td></tr></tbody>
       </table>
     </div>
-    <p class="muted fineprint">the vault only opens at 6,969 $bnkr pending. sweeps are permissionless — anyone can call <span class="mono">sweep()</span> on the vault, or tell bankrbot <span class="mono">fill the cooler mfer</span>, and the $bnkr lands straight in the cooler.</p>
+    <p class="muted fineprint">the vault only opens at 6,969 $bnkr pending. sweeps are permissionless — anyone can call <span class="mono">sweep()</span> on the vault, or tell bankrbot <span class="mono">fill the cooler mfer</span>, and the $bnkr lands straight in the cooler. sweepstakes races land here too — tell bankrbot <span class="mono">start a race</span>.</p>
   </section>
 
   <section class="claim" id="claim" aria-labelledby="claimTitle">
@@ -296,7 +296,7 @@
         <code>install the stakr-claim skill from https://bankr.bot/skills/0xbd771a0071ca2833604257eef6d2de5d676d33e1/stakr-claim</code>
         <button class="btn btn-small" type="button" data-copy="install the stakr-claim skill from https://bankr.bot/skills/0xbd771a0071ca2833604257eef6d2de5d676d33e1/stakr-claim">copy prompt</button>
       </div>
-      <p>once it's in, just say <code>claim my stakr rewards</code> — it checks the proofs, verifies what's claimable onchain, and submits the claims from your bankr wallet. same skill kicks the grill: <code>kick the grill with 1M stakr saying "did you burn the stakr?"</code> burns through the kicker and puts your message on the feed. and if you're just curious, ask <code>what's in the cooler?</code> — it reads the distributor's live $bnkr balance straight off the chain.</p>
+      <p>once it's in, just say <code>claim my stakr rewards</code> — it checks the proofs, verifies what's claimable onchain, and submits the claims from your bankr wallet. same skill kicks the grill: <code>kick the grill with 1M stakr saying "did you burn the stakr?"</code> burns through the kicker and puts your message on the feed. feeling racy? say <code>start a race</code> — it checks the $stakr leg, quotes the pool, and runs the sweepstakes for the 1% bounty. and if you're just curious, ask <code>what's in the cooler?</code> — it reads the distributor's live $bnkr balance straight off the chain.</p>
       <p class="skill-update-row"><span class="muted">already installed it? grab the latest fixes:</span> <button class="btn btn-small" id="skillUpdateBtn" type="button" data-copy="reinstall the stakr-claim skill from https://bankr.bot/skills/0xbd771a0071ca2833604257eef6d2de5d676d33e1/stakr-claim">tap to copy the reinstall command</button></p>
     </details>
     <details>
@@ -320,7 +320,7 @@
     </details>
     <details>
       <summary>what's the seasoning pile?</summary>
-      <p>the $stakr fee leg gets swept by the sweepstakes — anyone calls <code>race()</code> on the race contract and the leg splits on a burn curve: under a $15k market cap the whole leg converts to $bnkr for the cooler, from $15k to $75k the burn share climbs on an accelerating curve, and past $75k the burn caps at 69% while the cooler still eats at least 31%. the caller pockets a 1% bounty. no keeper, no schedule — permissionless. the keeper's 12h sweep is just the dust backstop now.</p>
+      <p>the $stakr fee leg, waiting on its race. anyone calls <code>race()</code> on the sweepstakes and it splits on the burn curve — full convert under $15k mcap, up to 69% burn past $75k, 1% bounty to the caller. the full curve lives under <a href="#recipeTitle">due diligence</a>.</p>
     </details>
     <details>
       <summary>is this live?</summary>
@@ -339,6 +339,12 @@
       launch tx: <code class="mono">0xf576d6300bc668d1eff2edfea8adcc1f1b0c7b27ed467afea550d3ce5fc1f541</code><br>
       pool id: <code class="mono">0x3059a617cfd2c3b49c7ddab7b4ff947bef76846494e648fc9b9130621439f515</code><br>
       <a href="https://bankr.bot/terminal/trade?out=0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3&chain=base">trade on bankr</a></p>
+    </details>
+    <details>
+      <summary>the sweepstakes</summary>
+      <p>permissionless race contract for the $stakr fee leg — anyone calls <code>race(minBnkrOut)</code>, the caller pockets a 1% $stakr bounty instantly, the leg splits on the burn curve (0% under $15k mcap, accelerating quadratically to a 69% cap at $75k), and every converted $bnkr lands in the cooler. legs under $10 go home, no bounty. immutable, ownerless, source-verified.</p>
+      <p>race contract: <code class="mono">0x55C7C03B8e532A8D76029C372b292b080214C367</code><br>
+      <a href="https://basescan.org/address/0x55C7C03B8e532A8D76029C372b292b080214C367#code">view on basescan</a></p>
     </details>
     <details>
       <summary>the distributor</summary>
@@ -367,7 +373,7 @@
     </details>
     <details>
       <summary>the money flow</summary>
-      <p>100% of $stakr's $bnkr creator fees land in the cooler for holders to claim weekly. trades also accrue a $stakr fee leg — the sweepstakes splits it on a burn curve: under a $15k market cap the whole leg converts to $bnkr and stirs into the cooler, so a small token means a fuller pot; from $15k to $75k the burn share climbs on an accelerating curve; past $75k the burn caps at 69% and the cooler still eats at least 31%. anyone can start a race and pocket a 1% bounty. bozo's entire bag still burns in the honorary first cook. volume feeds the pot — hotter grill.</p>
+      <p>100% of $stakr's $bnkr creator fees land in the cooler for holders to claim weekly. trades also accrue a $stakr fee leg — the sweepstakes splits it on the burn curve (full convert under $15k mcap, accelerating to a 69% burn cap at $75k, 1% bounty to whoever starts the race). bozo's entire bag still burns in the honorary first cook. volume feeds the pot — hotter grill.</p>
       <p>plus the $brb stream: bozo's wallet holds $brb, whose 3%-per-trade tax market-buys $bnkr and pays it to holders as reflections. bozo's reflections get claimed and swept into the distributor on the regular — $brb: <code class="mono">0x0e86efe5ba52336c2173ad69ee726e054619e0d8</code></p>
       <p>plus the veAERO stream: veAERO locks in bozo's wallet vote on aerodrome, and every $bnkr of fees and bribes they earn is swept into the distributor weekly.</p>
       <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>
