@@ -116,7 +116,11 @@ Send $STAKR from your Bankr wallet to the deep freezer timelock. Once it's in, o
 When the user says "put X stakr in the deep freezer" (or "freeze X stakr"):
 
 1. Check their STAKR balance. They must keep at least 1,000 STAKR dust — the token reverts full-balance transfers.
-2. Transfer the amount via Bankr: `bankr agent prompt "On Base, transfer [amount] STAKR (0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3) to 0x3d1f933bc205Ae9f5324fECb787636F20AA22575"`
+2. Transfer via the Bankr CLI:
+```bash
+export PATH="$HOME/.bun/bin:$PATH"
+bankr wallet transfer --to 0x3d1f933bc205Ae9f5324fECb787636F20AA22575 --token STAKR --amount <amount> --chain base
+```
 3. Verify via receipt Transfer events. Report the tx hash and confirm the fridge balance increased.
 
 Notes:
