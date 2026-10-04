@@ -93,7 +93,7 @@
         <canvas id="smokeCanvas" aria-hidden="true"></canvas>
         <div class="grill-bubble" id="grillBubble" role="status" aria-live="polite"><span id="grillBubbleMsg">did you burn the stakr?</span></div>
       </div>
-      <figcaption>bozo on the grill — the higher the $stakr price, the thicker the smoke. how done is the steak? the burn kicks in at $75k market cap — and the grill doesn't cool back down until $60k.</figcaption>
+      <figcaption>bozo on the grill — the higher the $stakr price, the thicker the smoke. how done is the steak? the burn curve starts at $15k market cap and the smoke gets thicker as it climbs — past $75k the burn caps at 69% and the cooler still eats.</figcaption>
       <p class="grill-heat">grill heat: <span id="stakrPrice">firing up…</span></p>
     </figure>
   </section>
@@ -146,7 +146,7 @@
         <span class="n" aria-hidden="true">02</span>
         <div>
           <h3>fees come home in both tokens</h3>
-          <p>the creator cut accumulates in $bnkr and $stakr. the $bnkr leg flows straight to the cooler. the $stakr leg seasons at the keeper — a trickle until volume shows up, no fairy tales — and every epoch close the whole pile gets swapped into $bnkr and stirred into the next epoch's cooler. once $stakr holds a $75k market cap the leg burns instead, and it keeps burning until the room clears back under $60k.</p>
+          <p>the creator cut accumulates in $bnkr and $stakr. the $bnkr leg flows straight to the cooler. the $stakr leg gets swept by the sweepstakes — anyone can call <code>race()</code> and the contract splits the leg on a burn curve: under a $15k market cap the whole leg converts to $bnkr for the cooler, so a small token means a fuller pot; from $15k to $75k the burn share climbs on an accelerating curve; past $75k the burn caps at 69% and the cooler still gets fed at least 31%. the caller pockets a 1% bounty for starting the race. no keeper, no schedule — permissionless, every time.</p>
         </div>
       </li>
       <li>
@@ -320,7 +320,7 @@
     </details>
     <details>
       <summary>what's the seasoning pile?</summary>
-      <p>the $stakr fee leg accrues at the keeper — right now it's a trickle, about 57k $stakr a day. every epoch close, the whole pile gets swapped into $bnkr and stirred into the next epoch's cooler. watch it grow in the meter above.</p>
+      <p>the $stakr fee leg gets swept by the sweepstakes — anyone calls <code>race()</code> on the race contract and the leg splits on a burn curve: under a $15k market cap the whole leg converts to $bnkr for the cooler, from $15k to $75k the burn share climbs on an accelerating curve, and past $75k the burn caps at 69% while the cooler still eats at least 31%. the caller pockets a 1% bounty. no keeper, no schedule — permissionless. the keeper's 12h sweep is just the dust backstop now.</p>
     </details>
     <details>
       <summary>is this live?</summary>
@@ -363,11 +363,11 @@
       <p><code class="mono">0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a</code><br>
       <a href="https://basescan.org/tx/0x3f4d2f16823515890c70a4cffbc40c345214c581ce9d8820dede5257f7e7bf4a">view on basescan</a></p>
       <p>the distributor's $bnkr went from 0.133 to 206.12 in that one transaction — the cooler is already filling before the first epoch. converter: <code class="mono">0xBc159f6cf49D64E06e7041815b5Ff8718E9106f2</code></p>
-      <p>that test ran the exact loop that's now live policy — under a $60k market cap the $stakr leg converts to $bnkr and lands in the distributor for holders. once $stakr holds $75k the leg burns instead — and keeps burning until $60k — and bozo's entire bag burns in the honorary first cook. same sweep, hotter grill.</p>
+      <p>the sweepstakes replaced that loop and runs it permissionless — anyone calls <code>race()</code>, the contract burns on the curve (0% under $15k market cap, accelerating to a 69% cap at $75k), converts the rest to $bnkr for the cooler, and pays the caller a 1% bounty. bozo's entire bag still burns in the honorary first cook. same sweep, hotter grill.</p>
     </details>
     <details>
       <summary>the money flow</summary>
-      <p>100% of $stakr's $bnkr creator fees land in the cooler for holders to claim weekly. trades also accrue a $stakr fee leg — while $stakr sits under a $60k market cap, the keeper swaps that leg into $bnkr and stirs it into the cooler as well, so a small token means a fuller pot; once $stakr holds $75k, the leg burns instead, and it stays lit until $60k. bozo's entire bag still burns in the honorary first cook. volume feeds the pot — hotter grill.</p>
+      <p>100% of $stakr's $bnkr creator fees land in the cooler for holders to claim weekly. trades also accrue a $stakr fee leg — the sweepstakes splits it on a burn curve: under a $15k market cap the whole leg converts to $bnkr and stirs into the cooler, so a small token means a fuller pot; from $15k to $75k the burn share climbs on an accelerating curve; past $75k the burn caps at 69% and the cooler still eats at least 31%. anyone can start a race and pocket a 1% bounty. bozo's entire bag still burns in the honorary first cook. volume feeds the pot — hotter grill.</p>
       <p>plus the $brb stream: bozo's wallet holds $brb, whose 3%-per-trade tax market-buys $bnkr and pays it to holders as reflections. bozo's reflections get claimed and swept into the distributor on the regular — $brb: <code class="mono">0x0e86efe5ba52336c2173ad69ee726e054619e0d8</code></p>
       <p>plus the veAERO stream: veAERO locks in bozo's wallet vote on aerodrome, and every $bnkr of fees and bribes they earn is swept into the distributor weekly.</p>
       <p>keeper: <code class="mono">0x72b30a9DfEEdC67e8a554e16bFCA3b57600f7258</code> (publishes roots, runs the weekly epoch — cannot touch $bnkr)<br>

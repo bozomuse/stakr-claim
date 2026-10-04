@@ -93,6 +93,28 @@ Notes:
 - Gas is paid in ETH on Base from the caller's Bankr wallet.
 - `sweep()` claims via `BRB.claimDividend()` and forwards everything to the cooler atomically — no custody, no take-backs.
 
+## Race the sweepstakes ("start a race")
+
+The $STAKR fee leg (creator fees in $STAKR, pulled into the distributor by the Doppler hook) gets swept by the permissionless SweepStake race contract — armed 2026-10-04. Anyone can call `race(uint256 minBnkrOut)`; the contract does the whole loop in one tx:
+
+1. Claims hook fees and pulls the $STAKR leg.
+2. Pays the caller a **1% bounty** in $STAKR off the top (legs under $10 go home instead, no bounty).
+3. Burns a curve share to 0xdead — **0% below $15k market cap, accelerating quadratically to a 69% cap at/above $75k** (e.g. ~4.3% at $30k, ~19% at $46.5k, ~38.8% at $60k).
+4. Swaps the rest to $BNKR through the v4 PoolManager and sends **all** of it to the cooler. At least 31% of the post-bounty leg always feeds the cooler.
+
+**Race contract:** `0x55C7C03B8e532A8D76029C372b292b080214C367` (Base, source-verified)
+**Selector:** `race(uint256)` = `0xb7dda85e` — pass `minBnkrOut` as the slippage floor (0 = accept whatever the pool gives, only for dust legs).
+
+Trigger phrases: "start a race", "run the race", "race the sweepstakes".
+
+1. Never submit blind: read the distributor's $STAKR balance and the current $STAKR market cap first. If the leg is dust (under ~$10 at TWAP), say so — the race would just send it home.
+2. Submit `race(minBnkrOut)` via Bankr Wallet API `/wallet/submit` or the agent with a sane `minBnkrOut` (quote the pool first; the contract reverts if the swap comes back below it).
+3. Report the tx hash, the $BNKR fed to the cooler, the $STAKR burned, and the caller's 1% bounty — all from the `RaceWon` event in the receipt. The caller lands on the cooler-fills leaderboard (races count as fills, scored by $BNKR fed).
+
+Notes:
+- No admin keys, no multisig: the contract is immutable and ownerless. The distributor admin can revoke its KEEPER_ROLE, nothing else.
+- The keeper's 12h sweep cron is now the dust/emergency backstop only — it follows the same curve. The race is the primary path.
+
 ## Share your plate
 
 When someone asks for their plate card ("share my plate", "my stakr card", "plate check"), serve them the actual card image — not just a link.
