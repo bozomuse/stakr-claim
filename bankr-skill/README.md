@@ -63,7 +63,7 @@ Excluded plates (never earn — always subtract from the supply, and a cut of 0 
 - `0xbd771a0071ca2833604257eef6d2de5d676d33e1` (bozo's bankr wallet — house wallet, can't play)
 - `0xe7aD68a354403660b4BEB99068580431D5c72602` (work wallet — house wallet, can't play)
 
-Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr." Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, and plates under $5 sit out (which nudges everyone else's share up). If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
+Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's holding 24,603 bnkr right now. your cut: ~41.2 bnkr." Always label the cut an **estimate**: real epochs pay from their own time-weighted snapshot, plates under $5 sit out (which nudges everyone else's share up), and sauce (1.25x for ending at/above start) isn't reflected in a spot check. If their STAKR is 0, tell them they need at least $5 of stakr to get a plate — one good steak-burger-priced buy covers it.
 
 ## Sweep the vault ("fill the cooler")
 
@@ -198,6 +198,7 @@ Or use the claim site in your wallet browser: https://bozomuse.github.io/stakr-c
 - Each epoch can only be claimed once per holder
 - Unclaimed BNKR rolls forward to future epochs
 - Minimum eligibility: $5 time-weighted average STAKR during the epoch
+- Sauce: holders who end the epoch with at least as much STAKR as they started get a 1.25x weight boost. Sell high, buy the dip, keep the sauce.
 - Gas is paid in ETH on Base from your Bankr wallet
 
 ## Kick the grill
