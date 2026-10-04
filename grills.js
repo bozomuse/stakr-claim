@@ -30,6 +30,7 @@
   const VAULT = '0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0';
   const STAKR = '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3';
   const DISTRIBUTOR = '0x7b896a892C052C5243Dde20b54a4654e51A3A952';
+  const DEAD = '0x000000000000000000000000000000000000dEaD';
   const FLOOR = 6969;
   const PENDING_SEL = '0x6849bcbb';
   const BAL_SEL = '0x70a08231';
@@ -61,5 +62,14 @@
     const amt = Number(BigInt(hex)) / 1e18;
     const el = document.getElementById('seasoningAmt');
     if (el) el.textContent = amt.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  } catch (e) { /* leave the placeholder */ }
+
+  // total burned: dead-address STAKR balance as % of the 100B supply
+  try {
+    const hex = await rpcCall('eth_call', [{ to: STAKR, data: BAL_SEL + encAddr(DEAD) }, 'latest']);
+    const burned = Number(BigInt(hex)) / 1e18;
+    const el = document.getElementById('burnedTotal');
+    if (el) el.textContent = burned.toLocaleString('en-US', { maximumFractionDigits: 0 }) +
+      ' $stakr (' + (burned / 1e9).toFixed(2) + '% of supply) burned to date';
   } catch (e) { /* leave the placeholder */ }
 })();
