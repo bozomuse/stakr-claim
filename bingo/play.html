@@ -93,8 +93,7 @@ let pollTimer = null;
 
 // layout: metadata numbers are col-major, N skips center
 function numbersToGrid(nums) {
-  const grid = [[null]*5 for _ in [0,0,0,0,0]];
-  // actually build col-major
+  // build col-major grid
   const g = [];
   for (let c = 0; c < 5; c++) { g.push([null,null,null,null,null]); }
   let idx = 0;
