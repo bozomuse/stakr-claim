@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>cookout bingo — live game</title>
-<meta name="description" content="play cookout bingo live. load your card, watch the balls drop, get marked off in real time.">
+<meta name="description" content="play cookout bingo live. load your cards, watch the balls drop, get marked off in real time.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1a1a1a; color: #faf3e7; min-height: 100vh; padding: 24px 16px 64px; }
   .wrap { max-width: 900px; margin: 0 auto; }
   h1 { font-size: clamp(28px, 6vw, 44px); text-align: center; margin-bottom: 4px; }
   p.sub { opacity: .7; text-align: center; margin-bottom: 20px; }
-  .lookup { display: flex; gap: 8px; margin: 0 auto 20px; max-width: 400px; }
-  .lookup input { flex: 1; padding: 12px 16px; font-size: 18px; border: 2px solid #e8a020; border-radius: 8px; background: #2a2a2a; color: #faf3e7; }
+  .lookup { display: flex; gap: 8px; margin: 0 auto 12px; max-width: 480px; }
+  .lookup input { flex: 1; padding: 12px 16px; font-size: 16px; border: 2px solid #e8a020; border-radius: 8px; background: #2a2a2a; color: #faf3e7; }
   .lookup button { padding: 12px 20px; font-size: 16px; font-weight: bold; background: #c8342a; color: #faf3e7; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; }
   .lookup button:hover { background: #e04a3a; }
+  .hint { text-align: center; opacity: .5; font-size: 13px; margin-bottom: 16px; }
   #error { color: #e04a3a; text-align: center; margin-bottom: 12px; display: none; }
   .game-area { display: none; }
   .game-area.show { display: block; }
@@ -28,15 +29,21 @@
   .ball { width: 48px; height: 48px; border-radius: 50%; background: #e8a020; color: #1a1a1a; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; }
   .ball.latest { background: #c8342a; color: #faf3e7; transform: scale(1.15); box-shadow: 0 0 16px rgba(200,52,42,.6); }
   .ball.old { opacity: .45; transform: scale(.85); }
+  .card-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .card-tab { padding: 10px 18px; border-radius: 10px; background: #2a2a2a; border: 2px solid transparent; cursor: pointer; font-size: 15px; font-weight: bold; color: #faf3e7; }
+  .card-tab.active { border-color: #e8a020; background: #3a3a3a; }
+  .card-tab.has-bingo { border-color: #4caf50; }
+  .card-tab .remove { margin-left: 8px; opacity: .5; font-size: 13px; }
+  .card-tab .remove:hover { opacity: 1; color: #e04a3a; }
   .bingo-card { background: #faf3e7; border-radius: 16px; padding: 16px; max-width: 520px; margin: 0 auto 20px; }
+  .bingo-card-title { text-align: center; font-size: 18px; font-weight: bold; color: #1a1a1a; margin-bottom: 12px; }
   .bingo-header { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
   .bingo-header span { text-align: center; font-size: 28px; font-weight: 900; color: #c8342a; }
   .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 4vw, 26px); font-weight: bold; color: #1a1a1a; background: #fff; border-radius: 10px; border: 2px solid #e3d5be; transition: all .3s; }
   .cell.free { background: #c8342a; color: #faf3e7; font-size: clamp(12px, 3vw, 16px); border-color: #c8342a; }
   .cell.marked { background: #e8a020; border-color: #c8342a; transform: scale(.94); box-shadow: inset 0 0 0 3px #c8342a; }
-  .cell.marked::after { content: ''; position: absolute; }
-  .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+  .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; max-width: 520px; margin-left: auto; margin-right: auto; }
   .stage-card { background: #2a2a2a; border-radius: 10px; padding: 12px 8px; text-align: center; }
   .stage-card .name { font-size: 13px; opacity: .7; margin-bottom: 4px; }
   .stage-card .pct { font-size: 20px; font-weight: bold; color: #e8a020; }
@@ -50,12 +57,13 @@
 <body>
 <div class="wrap">
   <h1>🍗 cookout bingo</h1>
-  <p class="sub">saturday oct 10, 10pm edt. load your card, the balls mark themselves.</p>
+  <p class="sub">saturday oct 10, 10pm edt. load your cards, the balls mark themselves.</p>
 
   <div class="lookup">
-    <input id="token-id" type="number" min="1" placeholder="your token id" inputmode="numeric">
-    <button onclick="loadCard()">load my card</button>
+    <input id="token-id" type="text" placeholder="token ids, comma separated" inputmode="numeric">
+    <button onclick="addCards()">load cards</button>
   </div>
+  <p class="hint">got multiple passes? enter them like: 4, 7, 12</p>
   <div id="error"></div>
 
   <div class="game-area" id="game-area">
@@ -67,10 +75,9 @@
     <div class="recent-balls" id="recent-balls"></div>
     <div id="bingo-banner">🎉 BINGO! 🎉</div>
 
-    <div class="bingo-card">
-      <div class="bingo-header"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
-      <div class="bingo-grid" id="bingo-grid"></div>
-    </div>
+    <div class="card-tabs" id="card-tabs"></div>
+
+    <div id="cards-container"></div>
 
     <div class="stages">
       <div class="stage-card" id="stage-single"><div class="name">single</div><div class="pct">10%</div></div>
@@ -81,19 +88,13 @@
   </div>
 
   <p class="how">
-    your card auto-marks as balls are called. the draw order comes from a committed Base blockhash, Fisher-Yates shuffled, publicly verifiable. game 1 · 80% of mints to the prize pool · winners paid in USDC.
+    your cards auto-mark as balls are called. the draw order comes from a committed Base blockhash, Fisher-Yates shuffled, publicly verifiable. game 1 · 80% of mints to the prize pool · winners paid in USDC.
   </p>
 </div>
 
 <script>
-const COLS = ['B','I','N','G','O'];
-let cardNumbers = null;  // grid[col][row]
-let calledSet = new Set();
-let pollTimer = null;
-
 // layout: metadata numbers are col-major, N skips center
 function numbersToGrid(nums) {
-  // build col-major grid
   const g = [];
   for (let c = 0; c < 5; c++) { g.push([null,null,null,null,null]); }
   let idx = 0;
@@ -106,44 +107,116 @@ function numbersToGrid(nums) {
   return g;
 }
 
-async function loadCard() {
-  const id = document.getElementById('token-id').value.trim();
+const cards = new Map(); // tokenId -> { grid, element, hasBingo }
+let activeCardId = null;
+let calledSet = new Set();
+let pollTimer = null;
+
+async function addCards() {
+  const input = document.getElementById('token-id').value.trim();
   const err = document.getElementById('error');
   err.style.display = 'none';
-  if (!id || id < 1) { err.textContent = 'enter a valid token id.'; err.style.display = 'block'; return; }
-  try {
-    // fetch card metadata and called balls in parallel
-    const [metaRes, calledRes] = await Promise.all([
-      fetch('metadata/' + id),
-      fetch('called.json', { cache: 'no-cache' }).catch(() => null)
-    ]);
-    if (!metaRes.ok) throw new Error('not found');
-    const meta = await metaRes.json();
-    const numsAttr = meta.attributes.find(a => a.trait_type === 'Numbers');
-    if (!numsAttr) throw new Error('no numbers');
-    const nums = numsAttr.value.split(',').map(n => parseInt(n.trim(), 10));
-    if (nums.length !== 24 || nums.some(isNaN)) throw new Error('bad numbers');
-    cardNumbers = numbersToGrid(nums);
-    // apply called balls if we got them
-    if (calledRes && calledRes.ok) {
-      const data = await calledRes.json();
-      calledSet = new Set(data.called || []);
-      document.getElementById('call-count').textContent = calledSet.size;
-      renderRecentBalls(data.called || []);
-    }
-    renderCard();
-    document.getElementById('game-area').classList.add('show');
-    history.replaceState(null, '', '?token=' + id);
-    startPolling();
-  } catch (e) {
-    err.textContent = 'could not load card #' + id + '. check the token id.';
+  if (!input) { err.textContent = 'enter at least one token id.'; err.style.display = 'block'; return; }
+
+  const ids = [...new Set(
+    input.split(',').map(s => parseInt(s.trim(), 10)).filter(n => n >= 1 && !isNaN(n))
+  )].filter(id => !cards.has(id));
+
+  if (!ids.length) { err.textContent = 'those cards are already loaded.'; err.style.display = 'block'; return; }
+
+  // fetch all new cards in parallel
+  const results = await Promise.all(ids.map(async (id) => {
+    try {
+      const r = await fetch('metadata/' + id);
+      if (!r.ok) return { id, error: true };
+      const meta = await r.json();
+      const numsAttr = meta.attributes.find(a => a.trait_type === 'Numbers');
+      if (!numsAttr) return { id, error: true };
+      const nums = numsAttr.value.split(',').map(n => parseInt(n.trim(), 10));
+      if (nums.length !== 24 || nums.some(isNaN)) return { id, error: true };
+      return { id, grid: numbersToGrid(nums) };
+    } catch { return { id, error: true }; }
+  }));
+
+  const failed = results.filter(r => r.error).map(r => r.id);
+  const loaded = results.filter(r => !r.error);
+
+  for (const { id, grid } of loaded) {
+    cards.set(id, { grid, hasBingo: false });
+  }
+
+  if (failed.length) {
+    err.textContent = 'could not load: ' + failed.join(', ');
     err.style.display = 'block';
+  }
+
+  if (loaded.length) {
+    if (!activeCardId) activeCardId = loaded[0].id;
+    renderTabs();
+    renderCards();
+    document.getElementById('game-area').classList.add('show');
+    updateUrl();
+    startPolling();
+    fetchCalled();
+  }
+  document.getElementById('token-id').value = '';
+}
+
+function removeCard(id) {
+  cards.delete(id);
+  if (activeCardId === id) {
+    activeCardId = cards.size ? [...cards.keys()][0] : null;
+  }
+  if (!cards.size) {
+    document.getElementById('game-area').classList.remove('show');
+    stopPolling();
+  } else {
+    renderTabs();
+    renderCards();
+  }
+  updateUrl();
+}
+
+function updateUrl() {
+  const ids = [...cards.keys()].join(',');
+  history.replaceState(null, '', ids ? '?tokens=' + ids : location.pathname);
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('card-tabs');
+  tabs.innerHTML = '';
+  for (const [id, card] of cards) {
+    const t = document.createElement('button');
+    t.className = 'card-tab' + (id === activeCardId ? ' active' : '') + (card.hasBingo ? ' has-bingo' : '');
+    t.innerHTML = '#' + id + (card.hasBingo ? ' 🎉' : '') + '<span class="remove" data-id="' + id + '">✕</span>';
+    t.onclick = (e) => {
+      if (e.target.classList.contains('remove')) {
+        e.stopPropagation();
+        removeCard(parseInt(e.target.dataset.id, 10));
+      } else {
+        activeCardId = id;
+        renderTabs();
+        renderCards();
+      }
+    };
+    tabs.appendChild(t);
   }
 }
 
-function renderCard() {
-  const grid = document.getElementById('bingo-grid');
-  grid.innerHTML = '';
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  if (!activeCardId || !cards.has(activeCardId)) return;
+  const card = cards.get(activeCardId);
+
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'bingo-card';
+  cardDiv.innerHTML = '<div class="bingo-card-title">pass #' + activeCardId + '</div>' +
+    '<div class="bingo-header"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
+    '<div class="bingo-grid" id="bingo-grid-' + activeCardId + '"></div>';
+  container.appendChild(cardDiv);
+
+  const grid = cardDiv.querySelector('.bingo-grid');
   for (let row = 0; row < 5; row++) {
     for (let col = 0; col < 5; col++) {
       const d = document.createElement('div');
@@ -153,8 +226,8 @@ function renderCard() {
         d.dataset.free = '1';
       } else {
         d.className = 'cell';
-        d.textContent = cardNumbers[col][row];
-        d.dataset.num = cardNumbers[col][row];
+        d.textContent = card.grid[col][row];
+        d.dataset.num = card.grid[col][row];
       }
       grid.appendChild(d);
     }
@@ -163,8 +236,10 @@ function renderCard() {
 }
 
 function updateMarks() {
-  if (!cardNumbers) return;
-  document.querySelectorAll('#bingo-grid .cell').forEach(cell => {
+  if (!activeCardId || !cards.has(activeCardId)) return;
+  const gridEl = document.querySelector('#cards-container .bingo-grid');
+  if (!gridEl) return;
+  gridEl.querySelectorAll('.cell').forEach(cell => {
     if (cell.dataset.free) return;
     const n = parseInt(cell.dataset.num, 10);
     cell.classList.toggle('marked', calledSet.has(n));
@@ -172,47 +247,63 @@ function updateMarks() {
   checkBingo();
 }
 
-function checkBingo() {
-  // build marked grid[row][col]
+function getMarkedGrid(grid) {
   const marked = [];
   for (let r = 0; r < 5; r++) { marked.push([false,false,false,false,false]); }
-  document.querySelectorAll('#bingo-grid .cell').forEach((cell, i) => {
-    const row = Math.floor(i / 5), col = i % 5;
-    marked[row][col] = cell.dataset.free ? true : cell.classList.contains('marked');
-  });
-  const lines = [];
-  for (let r = 0; r < 5; r++) if (marked[r].every(Boolean)) lines.push('row'+r);
-  for (let c = 0; c < 5; c++) if (marked.every(row => row[c])) lines.push('col'+c);
-  if (marked[0][0] && marked[1][1] && marked[2][2] && marked[3][3] && marked[4][4]) lines.push('diag1');
-  if (marked[0][4] && marked[1][3] && marked[2][2] && marked[3][1] && marked[4][0]) lines.push('diag2');
+  for (let row = 0; row < 5; row++) {
+    for (let col = 0; col < 5; col++) {
+      if (col === 2 && row === 2) { marked[row][col] = true; continue; }
+      marked[row][col] = calledSet.has(grid[col][row]);
+    }
+  }
+  return marked;
+}
 
-  const frameCells = [];
-  for (let i = 0; i < 5; i++) { frameCells.push(marked[0][i], marked[4][i], marked[i][0], marked[i][4]); }
-  const frame = [...new Set(frameCells)].every(Boolean) && frameCells.every(Boolean);
-  // simpler: all edge cells marked
+function checkCardBingo(grid) {
+  const marked = getMarkedGrid(grid);
+  let lines = 0;
+  for (let r = 0; r < 5; r++) if (marked[r].every(Boolean)) lines++;
+  for (let c = 0; c < 5; c++) if (marked.every(row => row[c])) lines++;
+  if (marked[0][0] && marked[1][1] && marked[2][2] && marked[3][3] && marked[4][4]) lines++;
+  if (marked[0][4] && marked[1][3] && marked[2][2] && marked[3][1] && marked[4][0]) lines++;
   let isFrame = true;
   for (let i = 0; i < 5; i++) {
     if (!marked[0][i] || !marked[4][i] || !marked[i][0] || !marked[i][4]) { isFrame = false; break; }
   }
   const coverall = marked.flat().every(Boolean);
+  return { lines, isFrame, coverall };
+}
 
-  const banner = document.getElementById('bingo-banner');
-  if (lines.length > 0 || isFrame || coverall) {
-    banner.classList.add('show');
-  } else {
-    banner.classList.remove('show');
+function checkBingo() {
+  let anyBingo = false;
+  let best = { lines: 0, isFrame: false, coverall: false };
+
+  for (const [id, card] of cards) {
+    const result = checkCardBingo(card.grid);
+    const hadBingo = card.hasBingo;
+    card.hasBingo = result.lines > 0 || result.isFrame || result.coverall;
+    if (card.hasBingo && !hadBingo) {
+      // newly bingod — update tab
+      renderTabs();
+    }
+    if (card.hasBingo) anyBingo = true;
+    // track best across cards for the stage display
+    if (id === activeCardId) best = result;
   }
 
-  document.getElementById('stage-single').classList.toggle('done', lines.length >= 1);
-  document.getElementById('stage-double').classList.toggle('done', lines.length >= 2);
-  document.getElementById('stage-frame').classList.toggle('done', isFrame);
-  document.getElementById('stage-coverall').classList.toggle('done', coverall);
+  const banner = document.getElementById('bingo-banner');
+  banner.classList.toggle('show', anyBingo);
+
+  document.getElementById('stage-single').classList.toggle('done', best.lines >= 1);
+  document.getElementById('stage-double').classList.toggle('done', best.lines >= 2);
+  document.getElementById('stage-frame').classList.toggle('done', best.isFrame);
+  document.getElementById('stage-coverall').classList.toggle('done', best.coverall);
 
   const stageEl = document.getElementById('game-stage');
-  if (coverall) stageEl.textContent = 'coverall complete!';
-  else if (isFrame) stageEl.textContent = 'picture frame complete!';
-  else if (lines.length >= 2) stageEl.textContent = 'double bingo!';
-  else if (lines.length >= 1) stageEl.textContent = 'single bingo!';
+  if (best.coverall) stageEl.textContent = 'coverall complete!';
+  else if (best.isFrame) stageEl.textContent = 'picture frame complete!';
+  else if (best.lines >= 2) stageEl.textContent = 'double bingo!';
+  else if (best.lines >= 1) stageEl.textContent = 'single bingo!';
   else stageEl.textContent = calledSet.size > 0 ? 'no bingo yet — keep watching' : 'waiting for first ball…';
 }
 
@@ -222,12 +313,18 @@ async function fetchCalled() {
     if (!r.ok) return;
     const data = await r.json();
     const newCalled = new Set(data.called || []);
-    // only update if something changed
     if (newCalled.size !== calledSet.size) {
       calledSet = newCalled;
       document.getElementById('call-count').textContent = calledSet.size;
       renderRecentBalls(data.called || []);
       updateMarks();
+      // re-check all cards for bingo (not just active)
+      for (const [id, card] of cards) {
+        const result = checkCardBingo(card.grid);
+        card.hasBingo = result.lines > 0 || result.isFrame || result.coverall;
+      }
+      renderTabs();
+      checkBingo();
     }
   } catch (e) { /* game hasn't started or network hiccup */ }
 }
@@ -235,12 +332,10 @@ async function fetchCalled() {
 function renderRecentBalls(called) {
   const el = document.getElementById('recent-balls');
   el.innerHTML = '';
-  // show last 8, most recent first
   const recent = called.slice(-8).reverse();
   recent.forEach((ball, i) => {
     const d = document.createElement('div');
     d.className = 'ball' + (i === 0 ? ' latest' : (i > 4 ? ' old' : ''));
-    // prefix letter
     const letter = ball <= 15 ? 'B' : ball <= 30 ? 'I' : ball <= 45 ? 'N' : ball <= 60 ? 'G' : 'O';
     d.textContent = letter + ball;
     d.title = 'Ball ' + ball;
@@ -253,13 +348,18 @@ function startPolling() {
   pollTimer = setInterval(fetchCalled, 5000);
 }
 
-// deep link support
-const params = new URLSearchParams(location.search);
-if (params.get('token')) {
-  document.getElementById('token-id').value = params.get('token');
-  loadCard();
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
-document.getElementById('token-id').addEventListener('keydown', e => { if (e.key === 'Enter') loadCard(); });
+
+// deep link support: ?tokens=4,7,12 (also legacy ?token=4)
+const params = new URLSearchParams(location.search);
+const tokensParam = params.get('tokens') || params.get('token');
+if (tokensParam) {
+  document.getElementById('token-id').value = tokensParam;
+  addCards();
+}
+document.getElementById('token-id').addEventListener('keydown', e => { if (e.key === 'Enter') addCards(); });
 </script>
 </body>
 </html>
