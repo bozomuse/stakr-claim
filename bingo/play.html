@@ -29,12 +29,6 @@
   .ball { width: 48px; height: 48px; border-radius: 50%; background: #e8a020; color: #1a1a1a; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; }
   .ball.latest { background: #c8342a; color: #faf3e7; transform: scale(1.15); box-shadow: 0 0 16px rgba(200,52,42,.6); }
   .ball.old { opacity: .45; transform: scale(.85); }
-  .card-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-  .card-tab { padding: 10px 18px; border-radius: 10px; background: #2a2a2a; border: 2px solid transparent; cursor: pointer; font-size: 15px; font-weight: bold; color: #faf3e7; }
-  .card-tab.active { border-color: #e8a020; background: #3a3a3a; }
-  .card-tab.has-bingo { border-color: #4caf50; }
-  .card-tab .remove { margin-left: 8px; opacity: .5; font-size: 13px; }
-  .card-tab .remove:hover { opacity: 1; color: #e04a3a; }
   .bingo-card { background: #faf3e7; border-radius: 16px; padding: 16px; max-width: 520px; margin: 0 auto 20px; }
   .bingo-card-title { text-align: center; font-size: 18px; font-weight: bold; color: #1a1a1a; margin-bottom: 12px; }
   .bingo-header { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
@@ -75,8 +69,6 @@
     <div class="recent-balls" id="recent-balls"></div>
     <div id="bingo-banner">🎉 BINGO! 🎉</div>
 
-    <div class="card-tabs" id="card-tabs"></div>
-
     <div id="cards-container"></div>
 
     <div class="stages">
@@ -107,8 +99,7 @@ function numbersToGrid(nums) {
   return g;
 }
 
-const cards = new Map(); // tokenId -> { grid, element, hasBingo }
-let activeCardId = null;
+const cards = new Map(); // tokenId -> { grid, hasBingo }
 let calledSet = new Set();
 let pollTimer = null;
 
@@ -120,7 +111,7 @@ async function addCards() {
 
   const ids = [...new Set(
     input.split(',').map(s => parseInt(s.trim(), 10)).filter(n => n >= 1 && !isNaN(n))
-  )].filter(id => !cards.has(id));
+  )].filter(id => !cards.has(id)).sort((a, b) => b - a);
 
   if (!ids.length) { err.textContent = 'those cards are already loaded.'; err.style.display = 'block'; return; }
 
@@ -151,8 +142,6 @@ async function addCards() {
   }
 
   if (loaded.length) {
-    if (!activeCardId) activeCardId = loaded[0].id;
-    renderTabs();
     renderCards();
     document.getElementById('game-area').classList.add('show');
     updateUrl();
@@ -162,87 +151,59 @@ async function addCards() {
   document.getElementById('token-id').value = '';
 }
 
-function removeCard(id) {
-  cards.delete(id);
-  if (activeCardId === id) {
-    activeCardId = cards.size ? [...cards.keys()][0] : null;
-  }
-  if (!cards.size) {
-    document.getElementById('game-area').classList.remove('show');
-    stopPolling();
-  } else {
-    renderTabs();
-    renderCards();
-  }
-  updateUrl();
-}
-
 function updateUrl() {
-  const ids = [...cards.keys()].join(',');
+  const ids = [...cards.keys()].sort((a, b) => b - a).join(',');
   history.replaceState(null, '', ids ? '?tokens=' + ids : location.pathname);
-}
-
-function renderTabs() {
-  const tabs = document.getElementById('card-tabs');
-  tabs.innerHTML = '';
-  for (const [id, card] of cards) {
-    const t = document.createElement('button');
-    t.className = 'card-tab' + (id === activeCardId ? ' active' : '') + (card.hasBingo ? ' has-bingo' : '');
-    t.innerHTML = '#' + id + (card.hasBingo ? ' 🎉' : '') + '<span class="remove" data-id="' + id + '">✕</span>';
-    t.onclick = (e) => {
-      if (e.target.classList.contains('remove')) {
-        e.stopPropagation();
-        removeCard(parseInt(e.target.dataset.id, 10));
-      } else {
-        activeCardId = id;
-        renderTabs();
-        renderCards();
-      }
-    };
-    tabs.appendChild(t);
-  }
 }
 
 function renderCards() {
   const container = document.getElementById('cards-container');
   container.innerHTML = '';
-  if (!activeCardId || !cards.has(activeCardId)) return;
-  const card = cards.get(activeCardId);
+  // show all cards stacked, descending by token id
+  const sorted = [...cards.entries()].sort((a, b) => b[0] - a[0]);
+  for (const [id, card] of sorted) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'bingo-card';
+    cardDiv.dataset.cardId = id;
+    const result = checkCardBingo(card.grid);
+    const status = result.coverall ? ' 🎉 COVERALL!' :
+                   result.isFrame ? ' 🎉 FRAME!' :
+                   result.lines >= 2 ? ' 🎉 DOUBLE!' :
+                   result.lines >= 1 ? ' 🎉 BINGO!' : '';
+    cardDiv.innerHTML = '<div class="bingo-card-title">pass #' + id + status + '</div>' +
+      '<div class="bingo-header"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
+      '<div class="bingo-grid"></div>';
+    container.appendChild(cardDiv);
 
-  const cardDiv = document.createElement('div');
-  cardDiv.className = 'bingo-card';
-  cardDiv.innerHTML = '<div class="bingo-card-title">pass #' + activeCardId + '</div>' +
-    '<div class="bingo-header"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
-    '<div class="bingo-grid" id="bingo-grid-' + activeCardId + '"></div>';
-  container.appendChild(cardDiv);
-
-  const grid = cardDiv.querySelector('.bingo-grid');
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
-      const d = document.createElement('div');
-      if (col === 2 && row === 2) {
-        d.className = 'cell free';
-        d.textContent = 'FREE';
-        d.dataset.free = '1';
-      } else {
-        d.className = 'cell';
-        d.textContent = card.grid[col][row];
-        d.dataset.num = card.grid[col][row];
+    const grid = cardDiv.querySelector('.bingo-grid');
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 5; col++) {
+        const d = document.createElement('div');
+        if (col === 2 && row === 2) {
+          d.className = 'cell free';
+          d.textContent = 'FREE';
+          d.dataset.free = '1';
+        } else {
+          d.className = 'cell';
+          d.textContent = card.grid[col][row];
+          d.dataset.num = card.grid[col][row];
+          if (calledSet.has(card.grid[col][row])) d.classList.add('marked');
+        }
+        grid.appendChild(d);
       }
-      grid.appendChild(d);
     }
   }
-  updateMarks();
+  checkBingo();
 }
 
 function updateMarks() {
-  if (!activeCardId || !cards.has(activeCardId)) return;
-  const gridEl = document.querySelector('#cards-container .bingo-grid');
-  if (!gridEl) return;
-  gridEl.querySelectorAll('.cell').forEach(cell => {
-    if (cell.dataset.free) return;
-    const n = parseInt(cell.dataset.num, 10);
-    cell.classList.toggle('marked', calledSet.has(n));
+  document.querySelectorAll('#cards-container .bingo-card').forEach(cardDiv => {
+    const id = parseInt(cardDiv.dataset.cardId, 10);
+    cardDiv.querySelectorAll('.cell').forEach(cell => {
+      if (cell.dataset.free) return;
+      const n = parseInt(cell.dataset.num, 10);
+      cell.classList.toggle('marked', calledSet.has(n));
+    });
   });
   checkBingo();
 }
@@ -276,19 +237,17 @@ function checkCardBingo(grid) {
 
 function checkBingo() {
   let anyBingo = false;
+  // best across all cards for the stage display
   let best = { lines: 0, isFrame: false, coverall: false };
 
   for (const [id, card] of cards) {
     const result = checkCardBingo(card.grid);
-    const hadBingo = card.hasBingo;
     card.hasBingo = result.lines > 0 || result.isFrame || result.coverall;
-    if (card.hasBingo && !hadBingo) {
-      // newly bingod — update tab
-      renderTabs();
-    }
     if (card.hasBingo) anyBingo = true;
-    // track best across cards for the stage display
-    if (id === activeCardId) best = result;
+    if (result.coverall || (result.isFrame && !best.coverall) ||
+        (result.lines > best.lines && !best.isFrame && !best.coverall)) {
+      best = result;
+    }
   }
 
   const banner = document.getElementById('bingo-banner');
@@ -305,6 +264,20 @@ function checkBingo() {
   else if (best.lines >= 2) stageEl.textContent = 'double bingo!';
   else if (best.lines >= 1) stageEl.textContent = 'single bingo!';
   else stageEl.textContent = calledSet.size > 0 ? 'no bingo yet — keep watching' : 'waiting for first ball…';
+
+  // update card titles with bingo status
+  document.querySelectorAll('#cards-container .bingo-card').forEach(cardDiv => {
+    const id = parseInt(cardDiv.dataset.cardId, 10);
+    const card = cards.get(id);
+    if (!card) return;
+    const result = checkCardBingo(card.grid);
+    const status = result.coverall ? ' 🎉 COVERALL!' :
+                   result.isFrame ? ' 🎉 FRAME!' :
+                   result.lines >= 2 ? ' 🎉 DOUBLE!' :
+                   result.lines >= 1 ? ' 🎉 BINGO!' : '';
+    const titleEl = cardDiv.querySelector('.bingo-card-title');
+    if (titleEl) titleEl.textContent = 'pass #' + id + status;
+  });
 }
 
 async function fetchCalled() {
@@ -318,13 +291,6 @@ async function fetchCalled() {
       document.getElementById('call-count').textContent = calledSet.size;
       renderRecentBalls(data.called || []);
       updateMarks();
-      // re-check all cards for bingo (not just active)
-      for (const [id, card] of cards) {
-        const result = checkCardBingo(card.grid);
-        card.hasBingo = result.lines > 0 || result.isFrame || result.coverall;
-      }
-      renderTabs();
-      checkBingo();
     }
   } catch (e) { /* game hasn't started or network hiccup */ }
 }
