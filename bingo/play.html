@@ -115,8 +115,8 @@ async function loadCard() {
   try {
     // fetch card metadata and called balls in parallel
     const [metaRes, calledRes] = await Promise.all([
-      fetch('bingo/metadata/' + id),
-      fetch('bingo/called.json', { cache: 'no-cache' }).catch(() => null)
+      fetch('metadata/' + id),
+      fetch('called.json', { cache: 'no-cache' }).catch(() => null)
     ]);
     if (!metaRes.ok) throw new Error('not found');
     const meta = await metaRes.json();
@@ -219,7 +219,7 @@ function checkBingo() {
 
 async function fetchCalled() {
   try {
-    const r = await fetch('bingo/called.json', { cache: 'no-cache' });
+    const r = await fetch('called.json', { cache: 'no-cache' });
     if (!r.ok) return;
     const data = await r.json();
     const newCalled = new Set(data.called || []);
