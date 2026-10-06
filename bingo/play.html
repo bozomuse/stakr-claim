@@ -113,19 +113,29 @@ async function loadCard() {
   err.style.display = 'none';
   if (!id || id < 1) { err.textContent = 'enter a valid token id.'; err.style.display = 'block'; return; }
   try {
-    const r = await fetch('bingo/metadata/' + id);
-    if (!r.ok) throw new Error('not found');
-    const meta = await r.json();
+    // fetch card metadata and called balls in parallel
+    const [metaRes, calledRes] = await Promise.all([
+      fetch('bingo/metadata/' + id),
+      fetch('bingo/called.json', { cache: 'no-cache' }).catch(() => null)
+    ]);
+    if (!metaRes.ok) throw new Error('not found');
+    const meta = await metaRes.json();
     const numsAttr = meta.attributes.find(a => a.trait_type === 'Numbers');
     if (!numsAttr) throw new Error('no numbers');
     const nums = numsAttr.value.split(',').map(n => parseInt(n.trim(), 10));
     if (nums.length !== 24 || nums.some(isNaN)) throw new Error('bad numbers');
     cardNumbers = numbersToGrid(nums);
+    // apply called balls if we got them
+    if (calledRes && calledRes.ok) {
+      const data = await calledRes.json();
+      calledSet = new Set(data.called || []);
+      document.getElementById('call-count').textContent = calledSet.size;
+      renderRecentBalls(data.called || []);
+    }
     renderCard();
     document.getElementById('game-area').classList.add('show');
     history.replaceState(null, '', '?token=' + id);
     startPolling();
-    fetchCalled(); // immediate
   } catch (e) {
     err.textContent = 'could not load card #' + id + '. check the token id.';
     err.style.display = 'block';
@@ -209,7 +219,7 @@ function checkBingo() {
 
 async function fetchCalled() {
   try {
-    const r = await fetch('bingo/called.json?t=' + Date.now());
+    const r = await fetch('bingo/called.json', { cache: 'no-cache' });
     if (!r.ok) return;
     const data = await r.json();
     const newCalled = new Set(data.called || []);
