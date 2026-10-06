@@ -662,8 +662,8 @@ const KICK_RPCS = [
 ];
 let kickRpcIdx = 0;
 const KICK_MIN = 1000000n * 10n ** 18n;
-// public RPC caps eth_getLogs at 2,000 blocks per call — chunk below that
-const KICK_LOG_CHUNK = 1800;
+// public RPC caps eth_getLogs at 500 blocks per call — chunk below that
+const KICK_LOG_CHUNK = 480;
 const KICK_CACHE_KEY = 'stakr-kicks-v2'; // v2: force full rescan (v1 could cache an empty kick list)
 /* grill master counts every burn to dead, not just kicker kicks.
    direct transfers to dead bypass the kicker contract, so the crown
