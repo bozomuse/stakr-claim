@@ -1,0 +1,15 @@
+{
+  "name": "Cookout Bingo Pass #2",
+  "description": "One $1.50 mint plays the full cookout bingo game: single, double, picture frame, then coverall. 70% of mint proceeds fund the USDC prize pool, 30% market-buys STAKR for the deep freezer.",
+  "image": "https://bozomuse.github.io/stakr-claim/bingo/cards/2.png",
+  "attributes": [
+    {
+      "trait_type": "Game",
+      "value": "1"
+    },
+    {
+      "trait_type": "Numbers",
+      "value": "8,6,7,1,9,28,26,21,20,27,32,44,43,35,60,58,52,53,50,64,62,68,63,61"
+    }
+  ]
+}
