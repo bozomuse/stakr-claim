@@ -154,7 +154,7 @@ Notes:
 
 ## Cookout bingo
 
-Classic 75-ball cookout bingo. $1.50 USDC mints a pass NFT (CookoutBingoPass `0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9` on Base) through the x402 mint flow. 80% of every mint goes to the USDC prize pool, 20% market-buys $STAKR for the deep freezer. Prize split per game: 10% single line, 15% double line, 25% picture frame, 50% coverall. Ties split the stage evenly. Winners paid in USDC.
+Classic 75-ball cookout bingo. $1.50 USDC mints a pass NFT (CookoutBingoPass `0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9` on Base) through the x402 mint flow. 90% of every mint goes to the USDC prize pool, 10% market-buys $STAKR for the deep freezer. Prize split per game: 10% single line, 15% double line, 25% picture frame, 50% coverall. Ties split the stage evenly. Winners paid in USDC.
 
 - Game 1: Sat Oct 10 2026, 10pm EDT. Mint cutoff 9pm EDT. The draw order comes from a Base blockhash committed before the cutoff (Fisher-Yates, publicly verifiable), balls revealed live at 10pm.
 - Look up your card: `https://bozomuse.github.io/stakr-claim/bingo.html` — enter the token id (Bankr hides the card image, the site doesn't).
