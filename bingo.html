@@ -8,11 +8,7 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #faf3e7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 32px 20px;
-    background:
-      radial-gradient(120% 55% at 50% 112%, rgba(232,160,32,.13), rgba(232,160,32,0) 60%),
-      repeating-linear-gradient(0deg, rgba(200,52,42,.06) 0 28px, transparent 28px 56px),
-      repeating-linear-gradient(90deg, rgba(200,52,42,.06) 0 28px, transparent 28px 56px),
-      #161011; }
+    background: #170d09; }
   h1 { font-size: clamp(28px, 6vw, 48px); margin-bottom: 8px; text-align: center; }
   p.sub { opacity: .7; margin-bottom: 24px; text-align: center; max-width: 500px; }
   .lookup { display: flex; gap: 8px; margin-bottom: 24px; width: 100%; max-width: 400px; }
@@ -24,9 +20,92 @@
   #card-img { width: 100%; height: auto; border-radius: 12px; border: 3px solid #e8a020; }
   #card-name { text-align: center; margin-top: 12px; font-size: 20px; font-weight: bold; }
   #error { color: #e04a3a; margin-top: 12px; display: none; }
+.scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .scene svg { width: 100%; height: 100%; display: block; }
+  @keyframes smokeRise { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: .45; } 100% { transform: translateY(-110px); opacity: 0; } }
+  .smoke { animation: smokeRise 7s ease-in-out infinite; }
+  .smoke.s2 { animation-delay: -2.4s; } .smoke.s3 { animation-delay: -4.8s; }
+  @keyframes twinkle { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  .bulbs use { animation: twinkle 2.8s ease-in-out infinite; }
+  @keyframes emberFloat { 0% { transform: translate(0,0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(26px,-170px); opacity: 0; } }
+  .ember { animation: emberFloat 9s linear infinite; }
+  @keyframes coalGlow { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+  .coals { animation: coalGlow 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .scene * { animation: none !important; } }
+  body > :not(.scene) { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+<div class="scene" aria-hidden="true">
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#170d09"/><stop offset=".45" stop-color="#3d1c0e"/>
+<stop offset=".75" stop-color="#8a3d14"/><stop offset="1" stop-color="#c9722a"/>
+</linearGradient>
+<radialGradient id="sunglow" cx=".5" cy=".5" r=".5">
+<stop offset="0" stop-color="#f7c948" stop-opacity=".5"/><stop offset="1" stop-color="#f7c948" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="bulbglow" cx=".5" cy=".5" r=".5">
+<stop offset="0" stop-color="#ffd98a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#0c0705" stop-opacity=".62"/><stop offset=".35" stop-color="#0c0705" stop-opacity=".16"/>
+<stop offset=".7" stop-color="#0c0705" stop-opacity=".1"/><stop offset="1" stop-color="#0c0705" stop-opacity=".45"/>
+</linearGradient>
+<g id="bulb"><circle r="13" fill="url(#bulbglow)"/><circle r="6" fill="#ffe1a1"/></g>
+</defs>
+<rect width="1440" height="900" fill="url(#sky)"/>
+<circle cx="1100" cy="640" r="150" fill="url(#sunglow)"/>
+<circle cx="1100" cy="640" r="78" fill="#f7c948"/>
+<ellipse cx="300" cy="180" rx="120" ry="26" fill="#2a140c" opacity=".8"/>
+<ellipse cx="750" cy="120" rx="160" ry="30" fill="#2a140c" opacity=".8"/>
+<ellipse cx="1250" cy="230" rx="140" ry="24" fill="#2a140c" opacity=".75"/>
+<path d="M -20,90 Q 360,190 740,110 T 1460,150" stroke="#0d0805" stroke-width="3" fill="none"/>
+<path d="M -20,200 Q 400,300 800,220 T 1460,260" stroke="#0d0805" stroke-width="3" fill="none"/>
+<g class="bulbs">
+<use href="#bulb" x="60" y="112"/><use href="#bulb" x="150" y="130" style="animation-delay:-.7s"/>
+<use href="#bulb" x="240" y="142" style="animation-delay:-1.4s"/><use href="#bulb" x="330" y="146" style="animation-delay:-2.1s"/>
+<use href="#bulb" x="420" y="140"/><use href="#bulb" x="510" y="128" style="animation-delay:-.7s"/>
+<use href="#bulb" x="600" y="116" style="animation-delay:-1.4s"/><use href="#bulb" x="690" y="108" style="animation-delay:-2.1s"/>
+<use href="#bulb" x="780" y="106"/><use href="#bulb" x="870" y="112" style="animation-delay:-.7s"/>
+<use href="#bulb" x="960" y="122" style="animation-delay:-1.4s"/><use href="#bulb" x="1050" y="132" style="animation-delay:-2.1s"/>
+<use href="#bulb" x="1140" y="140"/><use href="#bulb" x="1230" y="146" style="animation-delay:-.7s"/>
+<use href="#bulb" x="1320" y="149" style="animation-delay:-1.4s"/><use href="#bulb" x="1410" y="148" style="animation-delay:-2.1s"/>
+<use href="#bulb" x="70" y="222" style="animation-delay:-.7s"/><use href="#bulb" x="170" y="242" style="animation-delay:-1.4s"/>
+<use href="#bulb" x="270" y="256" style="animation-delay:-2.1s"/><use href="#bulb" x="370" y="262"/>
+<use href="#bulb" x="470" y="258" style="animation-delay:-.7s"/><use href="#bulb" x="570" y="248" style="animation-delay:-1.4s"/>
+<use href="#bulb" x="670" y="238" style="animation-delay:-2.1s"/><use href="#bulb" x="770" y="232"/>
+<use href="#bulb" x="870" y="234" style="animation-delay:-.7s"/><use href="#bulb" x="970" y="240" style="animation-delay:-1.4s"/>
+<use href="#bulb" x="1070" y="248" style="animation-delay:-2.1s"/><use href="#bulb" x="1170" y="254"/>
+<use href="#bulb" x="1270" y="258" style="animation-delay:-.7s"/><use href="#bulb" x="1370" y="259" style="animation-delay:-1.4s"/>
+</g>
+<path d="M0,720 Q360,660 720,700 T1440,680 L1440,900 L0,900 Z" fill="#100a06"/>
+<g stroke="#0a0605" stroke-width="9" stroke-linecap="round">
+<line x1="390" y1="760" x2="370" y2="850"/><line x1="470" y1="760" x2="490" y2="850"/><line x1="430" y1="765" x2="430" y2="852"/>
+</g>
+<path d="M340,700 A90,72 0 0 0 520,700 Z" fill="#1c1512"/>
+<ellipse cx="430" cy="700" rx="90" ry="16" fill="#241a15"/>
+<ellipse class="coals" cx="430" cy="696" rx="62" ry="9" fill="#e8641e"/>
+<g stroke="#241a15" stroke-width="4"><line x1="352" y1="698" x2="508" y2="698"/><line x1="368" y1="690" x2="492" y2="690"/></g>
+<rect x="424" y="560" width="12" height="26" rx="6" fill="#0a0605"/>
+<path class="smoke s1" d="M430,620 C410,570 450,540 430,490 C410,440 445,410 430,360" stroke="#cfc4bb" stroke-width="11" fill="none" stroke-linecap="round" opacity="0"/>
+<path class="smoke s2" d="M445,625 C465,575 425,545 445,495 C465,445 430,415 448,365" stroke="#cfc4bb" stroke-width="9" fill="none" stroke-linecap="round" opacity="0"/>
+<path class="smoke s3" d="M415,625 C395,580 435,550 418,500 C400,450 432,425 418,375" stroke="#cfc4bb" stroke-width="8" fill="none" stroke-linecap="round" opacity="0"/>
+<g fill="#160f0a">
+<rect x="980" y="716" width="230" height="20" rx="6"/><rect x="950" y="762" width="120" height="14" rx="6"/><rect x="1120" y="762" width="120" height="14" rx="6"/>
+<rect x="1000" y="736" width="12" height="120"/><rect x="1178" y="736" width="12" height="120"/>
+<rect x="990" y="776" width="10" height="80"/><rect x="1140" y="776" width="10" height="80"/>
+</g>
+<ellipse cx="1050" cy="708" rx="26" ry="12" fill="#3a2415"/><ellipse cx="1120" cy="708" rx="26" ry="12" fill="#3a2415"/>
+<g fill="#ffb347">
+<circle class="ember" cx="400" cy="660" r="2.6"/><circle class="ember" cx="430" cy="650" r="2.2" style="animation-delay:-2s"/>
+<circle class="ember" cx="460" cy="660" r="2.8" style="animation-delay:-4s"/><circle class="ember" cx="415" cy="640" r="2" style="animation-delay:-6s"/>
+<circle class="ember" cx="445" cy="635" r="2.4" style="animation-delay:-1s"/><circle class="ember" cx="430" cy="620" r="2.2" style="animation-delay:-5s"/>
+</g>
+<rect width="1440" height="900" fill="url(#scrim)"/>
+</svg>
+</div>
   <h1>🍗 cookout bingo</h1>
   <p class="sub">bankr won't show your card image, so look it up here. enter your bingo pass token id.</p>
   <div class="lookup">
