@@ -7,7 +7,12 @@
 <meta name="description" content="look up your cookout bingo pass. enter your token id and see your card.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1a1a1a; color: #faf3e7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 32px 20px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #faf3e7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 32px 20px;
+    background:
+      radial-gradient(120% 55% at 50% 112%, rgba(232,160,32,.13), rgba(232,160,32,0) 60%),
+      repeating-linear-gradient(0deg, rgba(200,52,42,.06) 0 28px, transparent 28px 56px),
+      repeating-linear-gradient(90deg, rgba(200,52,42,.06) 0 28px, transparent 28px 56px),
+      #161011; }
   h1 { font-size: clamp(28px, 6vw, 48px); margin-bottom: 8px; text-align: center; }
   p.sub { opacity: .7; margin-bottom: 24px; text-align: center; max-width: 500px; }
   .lookup { display: flex; gap: 8px; margin-bottom: 24px; width: 100%; max-width: 400px; }
