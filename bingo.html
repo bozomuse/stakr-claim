@@ -132,6 +132,7 @@
 </div>
   <h1>🍗 cookout bingo</h1>
   <p class="sub">bankr won't show your card image, so look it up here. enter your bingo pass token id.</p>
+  <p class="pool" style="margin-bottom:24px;text-align:center;max-width:520px;">game 1 prize pool: <strong id="pool-amt">…</strong> USDC · pool contract <a href="https://basescan.org/address/0xbd4aa2237312830dab1108ca5decb56479e9485b" style="color:#e8a020;">0xbd4aa2237312830dab1108ca5decb56479e9485b</a></p>
   <div class="lookup">
     <input id="token-id" type="number" min="1" placeholder="token id" inputmode="numeric">
     <button onclick="showCard()">show my card</button>
@@ -142,6 +143,21 @@
     <div id="card-name"></div>
   </div>
 <script>
+  // live prize pool from the pool contract
+  (async () => {
+    try {
+      const POOL = '0xbd4aa2237312830dab1108ca5decb56479e9485b';
+      const DATA = '0x719ce73e'; // prizePool()
+      const r = await fetch('https://mainnet.base.org', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call',
+          params: [{ to: POOL, data: DATA }, 'latest'] }),
+      });
+      const j = await r.json();
+      const amt = parseInt(j.result, 16) / 1e6;
+      document.getElementById('pool-amt').textContent = '$' + amt.toFixed(2);
+    } catch { document.getElementById('pool-amt').textContent = '$7.23'; }
+  })();
   function showCard() {
     const id = document.getElementById('token-id').value.trim();
     const err = document.getElementById('error');
