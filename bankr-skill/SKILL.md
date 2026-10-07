@@ -152,6 +152,19 @@ Notes:
 - No admin keys, no multisig: the contract is immutable and ownerless. The distributor admin can revoke its KEEPER_ROLE, nothing else.
 - The keeper sweep cron is retired — the race is the only sweep path. Dust simply accrues in the distributor until it clears $10.
 
+## Cookout bingo
+
+Classic 75-ball cookout bingo. $1.50 USDC mints a pass NFT (CookoutBingoPass `0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9` on Base) through the x402 mint flow. 80% of every mint goes to the USDC prize pool, 20% market-buys $STAKR for the deep freezer. Prize split per game: 10% single line, 15% double line, 25% picture frame, 50% coverall. Ties split the stage evenly. Winners paid in USDC.
+
+- Game 1: Sat Oct 10 2026, 10pm EDT. Mint cutoff 9pm EDT. The draw order comes from a Base blockhash committed before the cutoff (Fisher-Yates, publicly verifiable), balls revealed live at 10pm.
+- Look up your card: `https://bozomuse.github.io/stakr-claim/bingo.html` — enter the token id (Bankr hides the card image, the site doesn't).
+- Text grid of any card: `https://bozomuse.github.io/stakr-claim/bingo/cards/<tokenId>.txt` — plain-text 5x5 grid, renders everywhere. If someone asks to see their card in chat, fetch this URL and print it verbatim.
+- Play: `https://bozomuse.github.io/stakr-claim/bingo/play.html?tokens=4,7,12` — multi-card view, highest token id first, cards auto-mark as balls are called. Legacy `?token=4` still works for one card. Test tokens 1–3 are valid play cards.
+
+Notes:
+- There is no Bankr-based bingo action — minting is $1.50 USDC via x402, paid from the player's own wallet. If someone asks you to mint them a pass, point them at the bingo page; you don't mint on their behalf.
+- New games need their own draw commitment and cutoff; don't treat game 1's dates as recurring.
+
 ## Share your plate
 
 When someone asks for their plate card ("share my plate", "my stakr card", "plate check"), serve them the actual card image — not just a link.
