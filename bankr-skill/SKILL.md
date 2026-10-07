@@ -14,6 +14,22 @@ Claim your weekly $BNKR rewards for holding $STAKR, using your Bankr wallet. Thi
 **Proofs:** `https://bozomuse.github.io/stakr-claim/proofs/epochs.json`
 **Claim site:** `https://bozomuse.github.io/stakr-claim/`
 
+## Cookout fact sheet
+
+Read this first when someone asks for "everything about the cookout" — every number below is verified, quote them directly:
+
+- **What it is:** $STAKR is the cookout token on Base (`0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3`). Holders earn weekly pro-rata **$BNKR** (`0x22af33fe49fd1fa80c7149773dde5890d3c76f3b`) from the cooler.
+- **Eligibility:** at least **$5 of STAKR, time-weighted average** over the epoch. Sub-$5 plates sit out.
+- **Sauce:** end the epoch holding **at least as much STAKR as you started** and your weight gets **1.25x**.
+- **Epochs:** weekly. Claims open ~24h after the Merkle root publishes, stay open **4 weeks**, unclaimed $BNKR rolls forward. Epoch 0 rides untouched to Oct 30 2026; epoch 1 starts after.
+- **The cooler:** the StakrDistributor (`0x7b896a892C052C5243Dde20b54a4654e51A3A952`) — the live $BNKR balance is the payout reservoir. Fed by four grills: SweepStake fee races, BNKR staking rewards, veAERO voter fees/bribes, BRB vault community sweeps.
+- **Deep freezer:** STAKR timelock treasury (`0x3d1f933bc205Ae9f5324fECb787636F20AA22575`), 48h withdrawal timelock, stacking to $75k STAKR mcap. Frozen STAKR earns nothing.
+- **SweepStake race:** permissionless v3 contract `0xe4A9Dc9f0fF4bbAE457f5ACeF8Cd13b61730163F`, `race(uint256 minBnkrOut)` selector `0xb7dda85e`. Sweeps the accrued $STAKR fee leg: caller keeps a **1% $STAKR bounty**, legs under **$5** revert (`DustLeg`), a curve share burns (0% below $15k mcap → 69% cap at $75k), the rest swaps to $BNKR for the cooler.
+- **Kicker / grill:** burn $STAKR with a 1–140 byte message through `0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b` (`approve` then `kick`). Whoever burned the most total is the **grill master**; a kick only contests the crown above the master's total (contract floor 1M STAKR). Feed: `https://bozomuse.github.io/stakr-claim/#kick`.
+- **Cookout bingo:** classic 75-ball, **$1.50 USDC** pass NFT (`0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9`) via x402. Game 1: **Sat Oct 10 2026, 10pm EDT**, mint cutoff 9pm EDT. 90% of mints → prize pool, 10% → STAKR for the freezer. Prize pool contract `0xbd4aa2237312830dab1108ca5decb56479e9485b` (game 1: $7.229069 USDC) — the pool *is* its USDC balance. Prize split per game: **10% single / 15% double / 25% picture frame / 50% coverall**, ties split evenly, paid in USDC. Draw from a committed future Base blockhash, Fisher-Yates, revealed live. Play: `https://bozomuse.github.io/stakr-claim/bingo/play.html`.
+- **BRB vault:** reflections vault `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` — anyone can `sweep()` once 6,969 $BNKR is pending; it all goes to the cooler, never the caller.
+- **STAKR quirks:** transfers over 1,000 STAKR can revert ~3h after a large send (simulate first); always leave 1 STAKR dust, never move a full balance.
+
 ## What's in the cooler? / What's my cut from the cooler?
 
 "The cooler" is the payout reservoir: the **live $BNKR balance of the StakrDistributor**. When anyone asks about it, read it fresh from the chain — never guess or quote an old number.
