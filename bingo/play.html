@@ -30,7 +30,9 @@
   .ball.latest { background: #c8342a; color: #faf3e7; transform: scale(1.15); box-shadow: 0 0 16px rgba(200,52,42,.6); }
   .ball.old { opacity: .45; transform: scale(.85); }
   .bingo-card { background: #faf3e7; border-radius: 16px; padding: 16px; max-width: 520px; margin: 0 auto 20px; }
-  .bingo-card-title { text-align: center; font-size: 18px; font-weight: bold; color: #1a1a1a; margin-bottom: 12px; }
+  .bingo-card-title { position: relative; text-align: center; font-size: 18px; font-weight: bold; color: #1a1a1a; margin-bottom: 12px; }
+  .card-remove { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 26px; line-height: 1; color: #c8342a; opacity: .55; cursor: pointer; padding: 4px 8px; }
+  .card-remove:hover { opacity: 1; }
   .bingo-header { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
   .bingo-header span { text-align: center; font-size: 28px; font-weight: 900; color: #c8342a; }
   .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -170,7 +172,8 @@ function renderCards() {
                    result.isFrame ? ' 🎉 FRAME!' :
                    result.lines >= 2 ? ' 🎉 DOUBLE!' :
                    result.lines >= 1 ? ' 🎉 BINGO!' : '';
-    cardDiv.innerHTML = '<div class="bingo-card-title">pass #' + id + status + '</div>' +
+    cardDiv.innerHTML = '<div class="bingo-card-title"><span class="title-text">pass #' + id + status + '</span>' +
+      '<button class="card-remove" data-id="' + id + '" title="remove this card">×</button></div>' +
       '<div class="bingo-header"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
       '<div class="bingo-grid"></div>';
     container.appendChild(cardDiv);
@@ -275,10 +278,28 @@ function checkBingo() {
                    result.isFrame ? ' 🎉 FRAME!' :
                    result.lines >= 2 ? ' 🎉 DOUBLE!' :
                    result.lines >= 1 ? ' 🎉 BINGO!' : '';
-    const titleEl = cardDiv.querySelector('.bingo-card-title');
+    const titleEl = cardDiv.querySelector('.bingo-card-title .title-text');
     if (titleEl) titleEl.textContent = 'pass #' + id + status;
   });
 }
+
+function removeCard(id) {
+  if (!cards.has(id)) return;
+  cards.delete(id);
+  if (cards.size === 0) {
+    document.getElementById('game-area').classList.remove('show');
+    stopPolling();
+  } else {
+    renderCards();
+  }
+  updateUrl();
+}
+
+// delegated: cards re-render on every ball, so bind once on the container
+document.getElementById('cards-container').addEventListener('click', e => {
+  const btn = e.target.closest('.card-remove');
+  if (btn) removeCard(parseInt(btn.dataset.id, 10));
+});
 
 async function fetchCalled() {
   try {
