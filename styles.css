@@ -409,6 +409,7 @@ section h2 { font-size: clamp(1.9rem, 1.2rem + 3vw, 3rem); margin-bottom: 0.5rem
 .receipt-cut span { font-weight: 600; font-size: 0.95rem; }
 .receipt-cut strong { font-size: 1.75rem; color: var(--ketchup, #d43a2f); }
 .cut-fineprint { font-size: 0.8rem; color: var(--muted); margin: 0 0 0.5rem; }
+.telemetry { font-size: 0.85rem; margin: 0.25rem 0 0.75rem; line-height: 1.5; }
 .epoch-rows li {
   display: grid;
   grid-template-columns: 1fr auto;

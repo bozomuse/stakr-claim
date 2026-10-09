@@ -13,6 +13,50 @@ function plateCheckStatus(row) {
   }
 }
 
+/* sauce telemetry (epoch 1, live): the 1.25x multiplier applies when your
+   ending balance >= your starting balance — i.e. you didn't dump during
+   the epoch. we read your balance at the epoch-start block and compare. */
+const EPOCH1_START_BLOCK = '0x31a4bda'; // 52055002, oct 1 2026
+
+async function sauceStatus(addr, currentBal) {
+  // returns { sauced: bool, startBal: bigint, currentBal: bigint }
+  // or null when the historical read fails (don't block the plate check).
+  try {
+    const startHex = await rpcCall('eth_call', [
+      { to: CONFIG.stakr, data: SEL_BALANCEOF + encAddr(addr) },
+      EPOCH1_START_BLOCK,
+    ]);
+    const startBal = BigInt(startHex);
+    return { sauced: currentBal >= startBal, startBal, currentBal };
+  } catch {
+    return null;
+  }
+}
+
+/* throttle check: stakr throttles sends over 1,000 after a large send
+   (reverts for ~3h). simulate a 1,001 stakr transfer from the address —
+   if the eth_call reverts, the throttle is active. */
+const THROTTLE_LINE = 1000n * 10n ** 18n; // 1,000 stakr in wei
+const SEL_TRANSFER = '0xa9059cbb';
+
+async function throttleStatus(addr, balance) {
+  // returns { throttled: bool, applicable: bool } or null when the
+  // simulation can't run. only meaningful when the holder actually has
+  // more than 1,000 stakr to move — below that the throttle can't bite.
+  if (balance <= THROTTLE_LINE) return { throttled: false, applicable: false };
+  try {
+    const probeAmt = THROTTLE_LINE + 1n; // 1,001 stakr — just over the line
+    await rpcCall('eth_call', [{
+      from: addr,
+      to: CONFIG.stakr,
+      data: SEL_TRANSFER + encAddr(addr) + u256(probeAmt),
+    }, 'latest']);
+    return { throttled: false, applicable: true };
+  } catch {
+    return { throttled: true, applicable: true };
+  }
+}
+
 async function runPlateCheck(e) {
   e.preventDefault();
   const input = document.getElementById('plateCheckInput');
@@ -32,12 +76,35 @@ async function runPlateCheck(e) {
   try {
     const balRes = await ethCallRetry(CONFIG.stakr, SEL_BALANCEOF + encAddr(addr));
     const stakr = BigInt(balRes);
-    const [cut, rows] = await Promise.all([coolerCutEstimate(addr, stakr), claimsDetailFor(addr)]);
+    const [cut, rows, sauce, throttle] = await Promise.all([
+      coolerCutEstimate(addr, stakr),
+      claimsDetailFor(addr),
+      sauceStatus(addr, stakr),
+      throttleStatus(addr, stakr),
+    ]);
 
     document.getElementById('plateCheckWho').textContent =
       'plate for ' + cardName(addr) + ' — ' + fmtWhole(stakr) + ' stakr';
     document.getElementById('plateCheckCut').textContent =
       '~' + fmtBnkr(cut.toString()) + ' bnkr';
+
+    // sauce + throttle telemetry line
+    const tele = document.getElementById('plateCheckTelemetry');
+    if (tele) {
+      const bits = [];
+      if (sauce) {
+        bits.push(sauce.sauced
+          ? 'sauce: 1.25x active — holding strong since oct 1'
+          : 'sauce: off — balance dipped below your oct 1 mark (' + fmtWhole(sauce.startBal) + ' stakr)');
+      }
+      if (throttle && throttle.applicable) {
+        bits.push(throttle.throttled
+          ? 'transfers: throttled — sends over 1,000 stakr will revert for a bit, sit tight'
+          : 'transfers: clear — sends over 1,000 stakr will go through');
+      }
+      tele.textContent = bits.join(' · ');
+      tele.hidden = bits.length === 0;
+    }
 
     const list = document.getElementById('plateCheckRows');
     list.innerHTML = '';
