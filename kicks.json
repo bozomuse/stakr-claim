@@ -1,6 +1,6 @@
 {
- "updated": "2026-10-10T09:00:00.000Z",
- "latestBlock": 52416213,
+ "updated": "2026-10-10T12:27:33.607Z",
+ "latestBlock": 52422953,
  "kicker": "0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b",
  "master": {
   "addr": "0xe7ad68a354403660b4beb99068580431d5c72602",
@@ -10,8 +10,8 @@
   "block": 52056776
  },
  "crownMin": "267876659000000000000000000",
- "totalKicks": 1,
- "totalBurns": 0,
+ "totalKicks": 3,
+ "totalBurns": 3,
  "kicks": [
   {
    "kicker": "0xe7ad68a354403660b4beb99068580431d5c72602",
@@ -19,6 +19,20 @@
    "message": "cookouts on mfers, come eat",
    "tx": "0xd476d177645d1d44524ed695e0c29a520cd23568a334da1c13c6f1ad763ca36d",
    "block": 52056776
+  },
+  {
+   "kicker": "0xda641d4ff3a5ea3c8b5265db8701622a68998903",
+   "amount": "69000000000000000000000000",
+   "message": "its bnkr seasoning bitch",
+   "tx": "0xdb0055dcd992cebfdbc8f5e4b3f427a1eda7e24bcad5648e321af7f8ded7214d",
+   "block": 51878978
+  },
+  {
+   "kicker": "0xbd771a0071ca2833604257eef6d2de5d676d33e1",
+   "amount": "1000000000000000000000000",
+   "message": "i am the grill master now, it's $bnkr season",
+   "tx": "0x6f741c4ebc1aeff8e9797699ed02c55e2b2b188095739192f0b972c7d604dea5",
+   "block": 51875984
   }
  ],
  "burns": []
