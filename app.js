@@ -771,9 +771,10 @@ function saveKickCache(logs, lastBlock) {
 }
 
 async function fetchKicks() {
+  const cache = loadKickCache();
+  const cachedKicks = cache ? cache.logs.map(decodeKick).filter(kickAllowed) : [];
   try {
     const latest = parseInt(await rpcCall('eth_blockNumber', []), 16);
-    const cache = loadKickCache();
     let logs, from;
     if (cache && cache.lastBlock >= CONFIG.kickDeployBlock) {
       logs = cache.logs;
@@ -791,7 +792,10 @@ async function fetchKicks() {
     }
     return logs.map(decodeKick).filter(kickAllowed);
   } catch {
-    return null; // failure signal — caller keeps the last good feed
+    // failure signal — return the cached feed so the caller keeps the last
+    // good data instead of wiping to "no kicks yet". null only when there is
+    // no cache at all.
+    return cachedKicks.length ? cachedKicks : null;
   }
 }
 
@@ -833,9 +837,10 @@ function decodeBurn(log) {
 let directBurns = [];
 
 async function fetchDirectBurns() {
+  const cache = loadBurnCache();
+  const cachedBurns = cache ? cache.logs.map(decodeBurn).filter(Boolean) : [];
   try {
     const latest = parseInt(await rpcCall('eth_blockNumber', []), 16);
-    const cache = loadBurnCache();
     let logs, from;
     if (cache && cache.lastBlock >= BURN_FROM_BLOCK) {
       logs = cache.logs;
@@ -853,7 +858,9 @@ async function fetchDirectBurns() {
     }
     return logs.map(decodeBurn).filter(Boolean);
   } catch {
-    return null; // failure signal — caller keeps the last good feed
+    // failure signal — return the cached feed so the caller keeps the last
+    // good data instead of wiping it. null only when there is no cache at all.
+    return cachedBurns.length ? cachedBurns : null;
   }
 }
 
@@ -1011,12 +1018,53 @@ async function kickAllowance(holder) {
   return BigInt(res);
 }
 
+/* Indexed kick feed: the server-side indexer (vault/sync-kicks.mjs, every ~30m)
+   scans Kick events + direct burns with a reliable RPC and publishes kicks.json.
+   The client-side log scan below is the fallback — public RPCs rate-limit
+   eth_getLogs, so prefer the indexed file. */
+async function fetchKicksJson() {
+  try {
+    const r = await fetch('./kicks.json', { cache: 'no-store' });
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || !Array.isArray(j.kicks)) return null;
+    return j;
+  } catch {
+    return null;
+  }
+}
+
+function applyKicksJson(j) {
+  // shapes match the client scan: amounts back to BigInt, then the shared
+  // grillMaster()/renderKick() logic runs unchanged.
+  kicks = j.kicks.map((k) => ({ ...k, amount: BigInt(k.amount) }));
+  directBurns = (j.burns || []).map((b) => ({ ...b, amount: BigInt(b.amount) }));
+}
+
 async function initKicker() {
-  kicks = (await fetchKicks()) || [];
-  directBurns = (await fetchDirectBurns()) || [];
+  const indexed = await fetchKicksJson();
+  if (indexed) {
+    applyKicksJson(indexed);
+  } else {
+    kicks = (await fetchKicks()) || [];
+    directBurns = (await fetchDirectBurns()) || [];
+  }
   renderKick();
+  let lastKicksSig = '';
+  const kicksSig = (j) => (j.updated || '') + ':' + j.totalKicks + ':' + j.totalBurns;
+  if (indexed) lastKicksSig = kicksSig(indexed);
   setInterval(async () => {
-    // refetch every minute — the crown moves when someone out-burns the master
+    // refetch the indexed feed every minute — the crown moves when someone out-burns the master
+    const j = await fetchKicksJson();
+    if (j) {
+      if (kicksSig(j) !== lastKicksSig) {
+        lastKicksSig = kicksSig(j);
+        applyKicksJson(j);
+        renderKick();
+      }
+      return;
+    }
+    // fallback: client-side scan when the indexed feed is unavailable
     const fresh = await fetchKicks();
     if (fresh) {
       if (fresh.length !== kicks.length ||

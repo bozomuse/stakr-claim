@@ -1,0 +1,25 @@
+{
+ "updated": "2026-10-10T09:00:00.000Z",
+ "latestBlock": 52416213,
+ "kicker": "0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b",
+ "master": {
+  "addr": "0xe7ad68a354403660b4beb99068580431d5c72602",
+  "total": "267876659000000000000000000",
+  "message": "cookouts on mfers, come eat",
+  "tx": "0xd476d177645d1d44524ed695e0c29a520cd23568a334da1c13c6f1ad763ca36d",
+  "block": 52056776
+ },
+ "crownMin": "267876659000000000000000000",
+ "totalKicks": 1,
+ "totalBurns": 0,
+ "kicks": [
+  {
+   "kicker": "0xe7ad68a354403660b4beb99068580431d5c72602",
+   "amount": "267876659000000000000000000",
+   "message": "cookouts on mfers, come eat",
+   "tx": "0xd476d177645d1d44524ed695e0c29a520cd23568a334da1c13c6f1ad763ca36d",
+   "block": 52056776
+  }
+ ],
+ "burns": []
+}
