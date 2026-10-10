@@ -90,10 +90,25 @@
       <li><b>$brb reflections</b> — the vault's $brb picks up $bnkr on every $brb trade; anyone can sweep it past 6,969.</li>
       <li><b>$bnkr staking</b> — bozo's staked $bnkr streams its rewards into the cooler.</li>
       <li><b>veAERO</b> — locks voting on aerodrome sweep $bnkr fees and bribes into the cooler weekly.</li>
-      <li><b>bnkr/weth lp</b> — a concentrated position on aerodrome slipstream, staked in the gauge for aero emissions. harvests buy $stakr for the deep freezer while the market cap is under $75k; past $75k they buy $bnkr for the cooler.</li>
+      <li><b>bnkr/weth lp</b> — a concentrated position on aerodrome slipstream, staked in the gauge for aero emissions. the aero gets locked into the veaero locks to grow them; fee proceeds buy $stakr for the deep freezer under $75k market cap, $bnkr for the cooler past it. <a href="#lpengine">how it works</a>.</li>
     </ul>
     <p class="seasoning">the seasoning pile: <b class="mono" id="seasoningAmt">…</b> $stakr in the distributor, waiting on a race.</p>
     <p class="seasoning">the deep freezer: <b class="mono" id="fridgeNote">…</b> $stakr in timelock (<code>0x3d1f933bc205Ae9f5324fECb787636F20AA22575</code>), stacking until $75k market cap — then the harvest flips to feeding the cooler.</p>
+  </section>
+
+  <section class="lpengine" id="lpengine" aria-labelledby="lpengineTitle">
+    <p class="eyebrow">under the hood</p>
+    <h2 id="lpengineTitle">the lp engine</h2>
+    <p class="lede">the cookout runs its own concentrated bnkr/weth position on aerodrome slipstream — nft 77822581, range [-161000, -156400], about ±25% around the price when it was minted. it's staked in the aerodrome gauge, which changes how it pays: a staked position earns aero emissions, and the swap fees it would have kept go to the pool's veaero voters instead. bozo's locks vote for this exact pool, so those fees loop straight back through the weekly voter sweep into the cooler. the position farms its own votes.</p>
+    <h3>where the yield goes</h3>
+    <ul class="grills">
+      <li><b>aero emissions</b> — claimed on the monthly harvest (first run nov 1) and locked straight into the veaero locks to grow them. bigger locks, more vote weight, more emissions. that's the loop.</li>
+      <li><b>voter $bnkr</b> — the locks' weekly voter rewards keep sweeping into the cooler, same as always.</li>
+      <li><b>voter $weth</b> — accumulates in the wallet and gets compounded back into the lp on the monthly batch, growing the position instead of sitting as dust.</li>
+      <li><b>fee proceeds</b> — whatever the position itself collects follows the market-cap gate: under $75k $stakr mcap it buys $stakr for the deep freezer; past $75k it buys $bnkr for the cooler.</li>
+    </ul>
+    <p class="honest">the honest part: it's about $86 and earns single-digit aero a month. the loop is real but slow at this size — it compounds, it doesn't print.</p>
+    <p class="muted">pool <code>0xCDD442e2De893c07146B2F1072f8e077559f9aa4</code> · gauge <code>0x28dCF4ABc65a3E0971602BdBaa95f14CEEC09a2a</code> · rebalanced oct 9, comfortably in range. the oct 21 aero migration redesigns the voting half of this loop — this section gets rewritten when the official guide lands.</p>
   </section>
 
   <section class="grill" id="grill" aria-label="bozo on the grill">
