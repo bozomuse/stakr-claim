@@ -56,10 +56,23 @@
     if (sub) sub.textContent = 'the vault is simmering — check back shortly.';
   }
 
-  // seasoning pile: $stakr fee leg waiting in the distributor for a race
+  // seasoning pile: $stakr creator fees sitting in the pool hook awaiting claim.
+  // FeesManager accounting (token1 = STAKR): owed = (cumulated1 - lastCumulated1) * shares / WAD.
+  const HOOK = '0xBDF938149ac6a781F94FAa0ed45E6A0e984c6544';
+  const POOL_ID = '0x3059a617cfd2c3b49c7ddab7b4ff947bef76846494e648fc9b9130621439f515';
+  const SEL_SHARES = '0x5ebb58fb'; // getShares(bytes32,address)
+  const SEL_CUM1 = '0x5a302347';   // getCumulatedFees1(bytes32)
+  const SEL_LAST1 = '0x1564cf6c';  // getLastCumulatedFees1(bytes32,address)
   try {
-    const hex = await rpcCall('eth_call', [{ to: STAKR, data: BAL_SEL + encAddr(DISTRIBUTOR) }, 'latest']);
-    const amt = Number(BigInt(hex)) / 1e18;
+    const poolEnc = POOL_ID.slice(2).toLowerCase();
+    const distEnc = encAddr(DISTRIBUTOR);
+    const [sharesHex, cumHex, lastHex] = await Promise.all([
+      rpcCall('eth_call', [{ to: HOOK, data: SEL_SHARES + poolEnc + distEnc }, 'latest']),
+      rpcCall('eth_call', [{ to: HOOK, data: SEL_CUM1 + poolEnc }, 'latest']),
+      rpcCall('eth_call', [{ to: HOOK, data: SEL_LAST1 + poolEnc + distEnc }, 'latest']),
+    ]);
+    const owed = ((BigInt(cumHex) - BigInt(lastHex)) * BigInt(sharesHex)) / (10n ** 18n);
+    const amt = Number(owed) / 1e18;
     const el = document.getElementById('seasoningAmt');
     if (el) el.textContent = amt.toLocaleString('en-US', { maximumFractionDigits: 0 });
   } catch (e) { /* leave the placeholder */ }
