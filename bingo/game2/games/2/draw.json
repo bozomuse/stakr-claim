@@ -1,0 +1,118 @@
+{
+  "game_id": 2,
+  "note": "FIXTURE: coherent fake draw for site preview only. Production file is generated from the committed blockhash via draw.py.",
+  "draw_order_commit": {
+    "block_number": 52500000,
+    "block_hash": "0x3732763bca2af3801d252c3009183b4a20cd25f8ce5e7483df246444c7e81171",
+    "algorithm": "Fisher-Yates over balls 1..75 (see draw.py)"
+  },
+  "draw_order": [
+    63,
+    45,
+    64,
+    44,
+    36,
+    8,
+    6,
+    46,
+    62,
+    5,
+    2,
+    74,
+    14,
+    61,
+    43,
+    39,
+    34,
+    55,
+    9,
+    31,
+    65,
+    1,
+    15,
+    16,
+    10,
+    13,
+    24,
+    68,
+    30,
+    40,
+    19,
+    58,
+    57,
+    17,
+    27,
+    23,
+    50,
+    20,
+    53,
+    48,
+    33,
+    7,
+    11,
+    29,
+    3,
+    28,
+    52,
+    35,
+    47,
+    12,
+    51,
+    41,
+    4,
+    18,
+    21,
+    22,
+    25,
+    26,
+    32,
+    37,
+    38,
+    42,
+    49,
+    54,
+    56,
+    59,
+    60,
+    66,
+    67,
+    69,
+    70,
+    71,
+    72,
+    73,
+    75
+  ],
+  "stage_hits": {
+    "single": {
+      "winning_ball": 68,
+      "balls_drawn": 28,
+      "winners": [
+        {
+          "token_id": 1001,
+          "owner": "0x1111111111111111111111111111111111111111"
+        }
+      ]
+    },
+    "double": {
+      "winning_ball": 3,
+      "balls_drawn": 45,
+      "winners": [
+        {
+          "token_id": 1002,
+          "owner": "0x1111111111111111111111111111111111111111"
+        }
+      ]
+    },
+    "frame": {
+      "winning_ball": 41,
+      "balls_drawn": 52,
+      "winners": [
+        {
+          "token_id": 1003,
+          "owner": "0x1111111111111111111111111111111111111111"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cookout bingo · night 2</title>
+<meta name="description" content="Watch cookout bingo night 2 live. Load your passes by wallet, follow every ball, cards mark themselves.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e8a020'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' text-anchor='middle' fill='%23170d09'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #170d09;
+    --surface: #241511;
+    --surface-2: #2e1c14;
+    --text: #faf3e7;
+    --muted: #c9b8a6;
+    --accent: #e8a020;
+    --accent-ink: #1a1208;
+    --red: #c8342a;
+    --line: #4a2f1f;
+    --win: #ffd700;
+    --green: #4caf50;
+    --radius: 8px;
+    --radius-card: 12px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 80px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  /* ---------- header ---------- */
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 12px; color: var(--muted); margin-bottom: 8px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600; letter-spacing: -0.02em; line-height: 1.05;
+    font-size: clamp(2.4rem, 1.5rem + 6vw, 4rem);
+    margin-bottom: 8px;
+  }
+  h1 .night { color: var(--accent); }
+  .lede { color: var(--muted); max-width: 60ch; margin-bottom: 24px; }
+  .lede strong { color: var(--text); font-weight: 600; }
+  .preview-note { display: inline-block; font-size: 13px; color: #1a1a1a; background: #e8a020; border-radius: 8px; padding: 8px 14px; margin-bottom: 20px; font-weight: 600; }
+
+  .statusbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-card); padding: 12px 18px; margin-bottom: 24px;
+  }
+  .live-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green); flex: none;
+    animation: pulse 2s var(--ease) infinite;
+  }
+  .live-dot.paused { background: var(--accent); }
+  .live-dot.done { background: var(--muted); animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .ball-count { font-variant-numeric: tabular-nums; font-size: 18px; }
+  .ball-count strong { color: var(--accent); font-size: 22px; }
+  .game-state { margin-left: auto; font-size: 14px; color: var(--muted); }
+  .game-state strong { color: var(--text); }
+
+  /* ---------- wallet ---------- */
+  .panel {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-card); padding: 20px; margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 500;
+    font-size: 1.35rem; letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .panel p { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+  .wallet-row { display: flex; gap: 8px; }
+  .wallet-row input {
+    flex: 1; min-width: 0; padding: 12px 14px; font-size: 15px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    border: 2px solid var(--line); border-radius: var(--radius);
+    background: var(--bg); color: var(--text);
+  }
+  .wallet-row input:focus { outline: none; border-color: var(--accent); }
+  .btn {
+    padding: 12px 20px; font-size: 15px; font-weight: 600; min-height: 48px;
+    background: var(--red); color: var(--text); border: none;
+    border-radius: var(--radius); cursor: pointer; white-space: nowrap;
+    transition: background 200ms var(--ease), transform 200ms var(--ease);
+  }
+  .btn:hover { background: #e04a3a; }
+  .btn:active { transform: scale(0.97); }
+  .btn.secondary { background: var(--surface-2); border: 1px solid var(--line); }
+  .btn.secondary:hover { border-color: var(--accent); }
+  .form-msg { font-size: 14px; margin-top: 10px; display: none; }
+  .form-msg.show { display: block; }
+  .form-msg.error { color: #ef9a94; }
+  .form-msg.ok { color: var(--muted); }
+  .form-msg.ok strong { color: var(--accent); }
+  .wallet-loaded { display: none; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .wallet-loaded.show { display: flex; }
+  .addr {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 8px 12px;
+  }
+  .copy-btn {
+    background: none; border: 1px solid var(--line); color: var(--muted);
+    border-radius: var(--radius); padding: 8px 12px; font-size: 13px;
+    cursor: pointer; min-height: 44px;
+    transition: border-color 200ms var(--ease), color 200ms var(--ease);
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--text); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+  /* ---------- board ---------- */
+  .section-title {
+    font-family: "Fraunces", Georgia, serif; font-weight: 500;
+    font-size: 1.25rem; margin: 32px 0 4px; letter-spacing: -0.01em;
+  }
+  .section-sub { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+  .board {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-card); padding: 14px 10px; margin-bottom: 8px;
+  }
+  .bcol { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .bcol-h {
+    font-family: "Fraunces", Georgia, serif; font-weight: 600;
+    color: var(--red); font-size: 20px; margin-bottom: 2px;
+  }
+  .bball {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
+    background: var(--surface-2); color: #6f5f52; border: 1px solid var(--line);
+    transition: background 300ms var(--ease), color 300ms var(--ease), transform 300ms var(--ease);
+  }
+  .bball.called { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .bball.latest {
+    background: var(--red); color: var(--text); border-color: var(--red);
+    transform: scale(1.18);
+    box-shadow: 0 0 14px rgba(200, 52, 42, 0.55);
+    animation: latestPulse 1.6s var(--ease) infinite;
+  }
+  @keyframes latestPulse {
+    0%,100% { box-shadow: 0 0 8px rgba(200, 52, 42, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(200, 52, 42, 0.8); }
+  }
+
+  /* ---------- stages ---------- */
+  .stages { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 8px; }
+  @media (min-width: 720px) { .stages { grid-template-columns: repeat(4, 1fr); } }
+  .stage {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-card); padding: 14px 12px;
+  }
+  .stage .s-name { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .stage .s-share { font-family: "Fraunces", Georgia, serif; font-size: 1.6rem; font-weight: 600; }
+  .stage .s-status { font-size: 13px; margin-top: 6px; color: var(--muted); }
+  .stage.hit { border-color: var(--accent); }
+  .stage.hit .s-status { color: var(--accent); font-weight: 600; }
+  .stage.paid { border-color: var(--green); }
+  .stage.paid .s-status { color: var(--green); font-weight: 600; }
+  .stage .s-winners { font-size: 13px; margin-top: 8px; line-height: 1.7; }
+  .stage .s-winners .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  .tx-link { color: var(--accent); font-size: 12px; text-decoration: none; border-bottom: 1px dotted var(--accent); }
+  .tx-link:hover { border-bottom-style: solid; }
+
+  #banner {
+    display: none; text-align: center; margin: 20px 0 4px;
+    font-family: "Fraunces", Georgia, serif; font-weight: 600;
+    font-size: clamp(1.4rem, 1rem + 4vw, 2.2rem); letter-spacing: -0.01em;
+  }
+  #banner.show { display: block; }
+  #banner.pending { color: var(--win); }
+  #banner.done { color: var(--green); }
+
+  /* ---------- cards ---------- */
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px; margin-top: 14px;
+  }
+  .card {
+    background: var(--text); color: #1a1a1a; border-radius: var(--radius-card);
+    padding: 10px 10px 12px; border: 3px solid transparent;
+    transition: border-color 300ms var(--ease), box-shadow 300ms var(--ease);
+  }
+  .card.winner {
+    border-color: var(--win);
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.45);
+  }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .card-head h3 { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .card-tag {
+    display: none; font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #7a5c00; background: var(--win);
+    border-radius: 4px; padding: 2px 6px;
+  }
+  .card.winner .card-tag { display: inline-block; }
+  .mini-head {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    margin-bottom: 4px; text-align: center;
+  }
+  .mini-head span { font-size: 11px; font-weight: 800; color: var(--red); }
+  .mini-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+  .cell {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
+    background: #fff; border: 1px solid #e3d5be; border-radius: 4px;
+    transition: background 250ms var(--ease);
+  }
+  .cell.free { background: var(--red); color: var(--text); font-size: 8px; border-color: var(--red); }
+  .cell.marked { background: var(--accent); border-color: #b97a12; }
+  .cell.winning { background: var(--win); border-color: #a88400; box-shadow: 0 0 8px rgba(255, 215, 0, 0.8); }
+  .cards-empty {
+    color: var(--muted); text-align: center; padding: 32px 16px;
+    border: 1px dashed var(--line); border-radius: var(--radius-card); margin-top: 14px;
+  }
+
+  /* ---------- footer ---------- */
+  .proof {
+    margin-top: 40px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-card); padding: 18px;
+  }
+  .proof h2 { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 1.15rem; margin-bottom: 6px; }
+  .proof p { color: var(--muted); font-size: 14px; margin-bottom: 10px; max-width: 65ch; }
+  .proof .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .proof .k { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); min-width: 110px; }
+  .fineprint { margin-top: 28px; color: var(--muted); font-size: 13px; text-align: center; max-width: 65ch; margin-left: auto; margin-right: auto; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  /* ---------- grill-night scene ---------- */
+  .scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .scene svg { width: 100%; height: 100%; display: block; }
+  @keyframes smokeRise { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 0.4; } 100% { transform: translateY(-110px); opacity: 0; } }
+  .smoke { animation: smokeRise 7s ease-in-out infinite; }
+  .smoke.s2 { animation-delay: -2.4s; } .smoke.s3 { animation-delay: -4.8s; }
+  @keyframes twinkle { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+  .bulbs use { animation: twinkle 2.8s ease-in-out infinite; }
+  @keyframes emberFloat { 0% { transform: translate(0,0); opacity: 0; } 15% { opacity: 0.9; } 100% { transform: translate(26px,-170px); opacity: 0; } }
+  .ember { animation: emberFloat 9s linear infinite; }
+  @keyframes coalGlow { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+  .coals { animation: coalGlow 2.4s ease-in-out infinite; }
+  .wrap { position: relative; z-index: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (min-width: 720px) {
+    .bball { width: 44px; height: 44px; font-size: 15px; }
+    .cards-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<div class="scene" aria-hidden="true">
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#100a07"/><stop offset=".5" stop-color="#33180c"/>
+<stop offset=".78" stop-color="#7c3413"/><stop offset="1" stop-color="#b85c1e"/>
+</linearGradient>
+<radialGradient id="sunglow" cx=".5" cy=".5" r=".5">
+<stop offset="0" stop-color="#f7c948" stop-opacity=".5"/><stop offset="1" stop-color="#f7c948" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="bulbglow" cx=".5" cy=".5" r=".5">
+<stop offset="0" stop-color="#ffd98a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="lawn" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#26331b"/><stop offset="1" stop-color="#0c1107"/>
+</linearGradient>
+<linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#0c0705" stop-opacity=".62"/><stop offset=".35" stop-color="#0c0705" stop-opacity=".16"/>
+<stop offset=".7" stop-color="#0c0705" stop-opacity=".1"/><stop offset="1" stop-color="#0c0705" stop-opacity=".45"/>
+</linearGradient>
+<g id="bulb"><circle r="13" fill="url(#bulbglow)"/><circle r="6" fill="#ffe1a1"/></g>
+</defs>
+<rect width="1440" height="900" fill="url(#sky)"/>
+<circle cx="1150" cy="612" r="150" fill="url(#sunglow)"/>
+<circle cx="1150" cy="612" r="72" fill="#f7c948"/>
+<g class="bulbs">
+<use href="#bulb" x="120" y="120"/><use href="#bulb" x="300" y="140" style="animation-delay:-.7s"/>
+<use href="#bulb" x="480" y="146" style="animation-delay:-1.4s"/><use href="#bulb" x="660" y="140" style="animation-delay:-2.1s"/>
+<use href="#bulb" x="840" y="128"/><use href="#bulb" x="1020" y="122" style="animation-delay:-.7s"/>
+<use href="#bulb" x="1200" y="132" style="animation-delay:-1.4s"/><use href="#bulb" x="1380" y="142" style="animation-delay:-2.1s"/>
+</g>
+<rect x="0" y="700" width="1440" height="200" fill="url(#lawn)"/>
+<path d="M300,712 A90,72 0 0 0 480,712 Z" fill="#1c1512"/>
+<ellipse cx="390" cy="712" rx="90" ry="16" fill="#241a15"/>
+<ellipse class="coals" cx="390" cy="708" rx="62" ry="9" fill="#e8641e"/>
+<path class="smoke s1" d="M390,632 C370,582 410,552 390,502 C370,452 405,422 390,372" stroke="#cfc4bb" stroke-width="11" fill="none" stroke-linecap="round" opacity="0"/>
+<path class="smoke s2" d="M405,637 C425,587 385,557 405,507 C425,457 390,427 408,377" stroke="#cfc4bb" stroke-width="9" fill="none" stroke-linecap="round" opacity="0"/>
+<path class="smoke s3" d="M375,637 C355,592 395,562 378,512 C360,462 392,437 378,387" stroke="#cfc4bb" stroke-width="8" fill="none" stroke-linecap="round" opacity="0"/>
+<g fill="#ffb347">
+<circle class="ember" cx="360" cy="672" r="2.6"/><circle class="ember" cx="390" cy="662" r="2.2" style="animation-delay:-2s"/>
+<circle class="ember" cx="420" cy="672" r="2.8" style="animation-delay:-4s"/><circle class="ember" cx="405" cy="647" r="2.4" style="animation-delay:-1s"/>
+</g>
+<rect width="1440" height="900" fill="url(#scrim)"/>
+</svg>
+</div>
+
+<div class="wrap">
+  <p class="eyebrow">bozo's cookout · bingo night 2</p>
+  <h1>Bingo <span class="night">night 2</span></h1>
+  <p class="lede">75 balls, four stages, winners paid in USDC on Base. <strong>92.5%</strong> of every entry feeds the prize pool, <strong>7.5%</strong> buys STAKR for the deep freezer. Load your passes below and the cards mark themselves as the balls drop.</p>
+  <p class="preview-note">Preview build. Night 2 has no date yet and the mint is not open. Cards and balls shown are sample data.</p>
+
+  <div class="statusbar" aria-live="polite">
+    <span class="live-dot" id="live-dot"></span>
+    <span class="ball-count"><strong id="call-count">0</strong> / 75 balls</span>
+    <span class="game-state" id="game-state-line">connecting to the game…</span>
+  </div>
+
+  <section class="panel" aria-labelledby="wallet-h">
+    <h2 id="wallet-h">Find my passes</h2>
+    <p>Paste your Base wallet address. Every bingo pass in the mint-close snapshot loads automatically.</p>
+    <div id="wallet-form">
+      <div class="wallet-row">
+        <input id="wallet-input" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+               placeholder="0x…" aria-label="Base wallet address">
+        <button class="btn" id="wallet-btn" type="button">load my passes</button>
+      </div>
+      <p class="form-msg" id="wallet-msg" role="status"></p>
+    </div>
+    <div class="wallet-loaded" id="wallet-loaded">
+      <span class="addr" id="wallet-addr"></span>
+      <button class="copy-btn" id="wallet-copy" type="button">copy</button>
+      <button class="btn secondary" id="wallet-clear" type="button">use a different wallet</button>
+    </div>
+  </section>
+
+  <div id="banner" role="status"></div>
+
+  <h2 class="section-title">Called balls</h2>
+  <p class="section-sub">The full board. Lit balls are called, the pulsing one just dropped.</p>
+  <div class="board" id="board" role="img" aria-label="75-ball bingo board"></div>
+
+  <h2 class="section-title">Stages</h2>
+  <p class="section-sub">Official results only. A winner stays highlighted until the prize is paid.</p>
+  <div class="stages" id="stages"></div>
+
+  <h2 class="section-title">My cards</h2>
+  <p class="section-sub" id="cards-sub">Load your wallet above to see your cards here.</p>
+  <div class="cards-grid" id="cards"></div>
+  <div class="cards-empty" id="cards-empty">No wallet loaded yet. Your passes will appear here, marked live as balls are called.</div>
+
+  <section class="proof" aria-labelledby="proof-h">
+    <h2 id="proof-h">Fair draw</h2>
+    <p>The draw order is committed before the first ball, shuffled by Fisher-Yates from a Base blockhash. Anyone can re-run it and get the same order.</p>
+    <div class="row"><span class="k">block</span><span class="addr" id="proof-block">…</span></div>
+    <div class="row"><span class="k">block hash</span><span class="addr" id="proof-hash">…</span>
+      <button class="copy-btn" id="proof-copy" type="button">copy</button></div>
+  </section>
+
+  <p class="fineprint">Pass ownership is read from the mint-close snapshot. Selling a pass mid-game sells your shot with it. Payouts follow the onchain holder when each stage is paid.</p>
+</div>
+
+<script>
+"use strict";
+/* ============ config ============ */
+const GAME_ID = 2;
+const PASS_CONTRACT = "0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9";
+const CARDOF_SELECTOR = "0xc22b8d82"; // keccak256("cardOf(uint256)") first 4 bytes, computed 2026-10-11
+const BASE_RPC = "https://mainnet.base.org";
+const POLL_MS = 5000;
+const STAGE_ORDER = ["single", "double", "frame", "coverall"];
+const STAGE_SHARE = { single: "10%", double: "15%", frame: "25%", coverall: "50%" };
+const STAGE_NAME = { single: "single", double: "double", frame: "picture frame", coverall: "coverall" };
+const COL_LETTER = n => n <= 15 ? "B" : n <= 30 ? "I" : n <= 45 ? "N" : n <= 60 ? "G" : "O";
+
+/* ============ state ============ */
+const passes = new Map(); // tokenId -> { nums: [24 numbers, slot order] }
+let calledArr = [];
+let calledSet = new Set();
+let gameState = null;
+let viewerAddress = null;
+let pollTimer = null;
+let lastStateKey = "";
+
+/* ============ card numbers ============ */
+// slot order matches CookoutBingoPass packing: B rows 0-4, I rows 0-4,
+// N rows 0,1,3,4 (row 2 is FREE), G rows 0-4, O rows 0-4
+function numsToGrid(nums) {
+  const g = [];
+  for (let c = 0; c < 5; c++) g.push([null, null, null, null, null]);
+  let i = 0;
+  for (let col = 0; col < 5; col++) {
+    for (let row = 0; row < 5; row++) {
+      if (col === 2 && row === 2) continue;
+      g[col][row] = nums[i++];
+    }
+  }
+  return g;
+}
+function unpackPacked(hex) {
+  let p;
+  try { p = BigInt(hex); } catch { return null; }
+  if (p === 0n) return null;
+  const nums = [];
+  for (let i = 0; i < 24; i++) nums.push(Number((p >> BigInt(i * 7)) & 0x7Fn));
+  return nums;
+}
+function validChainNums(nums) {
+  if (!nums || nums.length !== 24) return false;
+  const ranges = [[1, 15], [16, 30], [31, 45], [46, 60], [61, 75]];
+  const colOf = i => i < 5 ? 0 : i < 10 ? 1 : i < 14 ? 2 : i < 19 ? 3 : 4;
+  const seen = new Set();
+  for (let i = 0; i < 24; i++) {
+    const [lo, hi] = ranges[colOf(i)];
+    if (!(nums[i] >= lo && nums[i] <= hi)) return false;
+    const key = colOf(i) + ":" + nums[i];
+    if (seen.has(key)) return false;
+    seen.add(key);
+  }
+  return true;
+}
+async function readCardOf(tokenId) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const data = "0x" + CARDOF_SELECTOR.slice(2) + BigInt(tokenId).toString(16).padStart(64, "0");
+    const r = await fetch(BASE_RPC, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0", id: 1, method: "eth_call",
+        params: [{ to: PASS_CONTRACT, data }, "latest"]
+      }),
+      signal: ctrl.signal
+    });
+    const j = await r.json();
+    if (!j || typeof j.result !== "string") throw new Error("bad rpc result");
+    return j.result;
+  } finally { clearTimeout(t); }
+}
+async function loadCard(tokenId) {
+  // 1. onchain packed card
+  try {
+    const nums = unpackPacked(await readCardOf(tokenId));
+    if (validChainNums(nums)) return { tokenId, nums, source: "chain" };
+  } catch { /* fall through to metadata */ }
+  // 2. published metadata fallback
+  try {
+    const r = await fetch("metadata/" + tokenId + ".json", { cache: "no-cache" });
+    if (r.ok) {
+      const meta = await r.json();
+      const attr = (meta.attributes || []).find(a => a.trait_type === "Numbers");
+      if (attr) {
+        const nums = String(attr.value).split(",").map(s => parseInt(s.trim(), 10));
+        if (nums.length === 24 && nums.every(n => n >= 1 && n <= 75)) {
+          return { tokenId, nums, source: "metadata" };
+        }
+      }
+    }
+  } catch { /* no card */ }
+  return { tokenId, nums: null, error: true };
+}
+
+/* ============ wallet lookup ============ */
+const walletInput = document.getElementById("wallet-input");
+const walletBtn = document.getElementById("wallet-btn");
+const walletMsg = document.getElementById("wallet-msg");
+const walletForm = document.getElementById("wallet-form");
+const walletLoaded = document.getElementById("wallet-loaded");
+
+function showMsg(text, kind) {
+  walletMsg.textContent = text;
+  walletMsg.className = "form-msg show " + kind;
+}
+function shortAddr(a) { return a.slice(0, 6) + "…" + a.slice(-4); }
+
+async function loadWallet(addr) {
+  const clean = addr.trim().toLowerCase();
+  if (!/^0x[0-9a-f]{40}$/.test(clean)) {
+    showMsg("That does not look like a wallet address. It should start with 0x and be 42 characters.", "error");
+    return;
+  }
+  walletBtn.disabled = true;
+  walletBtn.textContent = "loading…";
+  try {
+    const r = await fetch("wallets.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error("wallets.json missing");
+    const wallets = await r.json();
+    const ids = wallets[clean];
+    if (!ids || !ids.length) {
+      showMsg("No passes found for this address in the game 2 mint snapshot.", "error");
+      return;
+    }
+    viewerAddress = clean;
+    const results = await Promise.all(ids.map(loadCard));
+    const failed = results.filter(x => x.error).map(x => x.tokenId);
+    passes.clear();
+    for (const c of results) if (!c.error) passes.set(c.tokenId, c);
+    walletForm.style.display = "none";
+    walletLoaded.classList.add("show");
+    document.getElementById("wallet-addr").textContent = shortAddr(clean);
+    document.getElementById("cards-sub").textContent =
+      passes.size + (passes.size === 1 ? " pass" : " passes") + " loaded. Cards mark themselves as balls are called.";
+    renderCards();
+    updateMarks();
+    updateHighlights();
+    if (failed.length) showMsg("Loaded " + passes.size + " passes. Could not load: " + failed.join(", ") + ".", "error");
+  } catch (e) {
+    showMsg("Could not reach the pass list. Check your connection and try again.", "error");
+  } finally {
+    walletBtn.disabled = false;
+    walletBtn.textContent = "load my passes";
+  }
+}
+function clearWallet() {
+  viewerAddress = null;
+  passes.clear();
+  walletForm.style.display = "";
+  walletLoaded.classList.remove("show");
+  walletInput.value = "";
+  walletMsg.className = "form-msg";
+  document.getElementById("cards-sub").textContent = "Load your wallet above to see your cards here.";
+  renderCards();
+  history.replaceState(null, "", location.pathname);
+}
+walletBtn.addEventListener("click", () => {
+  const addr = walletInput.value;
+  loadWallet(addr).then(() => {
+    if (viewerAddress) history.replaceState(null, "", "?wallet=" + viewerAddress);
+  });
+});
+walletInput.addEventListener("keydown", e => { if (e.key === "Enter") walletBtn.click(); });
+document.getElementById("wallet-clear").addEventListener("click", clearWallet);
+
+/* ============ game state ============ */
+async function fetchState() {
+  try {
+    const r = await fetch("games/" + GAME_ID + "/state.json", { cache: "no-cache" });
+    if (!r.ok) return;
+    const data = await r.json();
+    const key = (data.balls_called || 0) + "|" + (data.status || "") + "|" + JSON.stringify(data.stages || []);
+    if (key === lastStateKey) return;
+    lastStateKey = key;
+    gameState = data;
+    calledArr = Array.isArray(data.called) ? data.called : [];
+    calledSet = new Set(calledArr);
+    renderStatus();
+    renderBoard();
+    renderStages();
+    renderProof();
+    updateMarks();
+    updateHighlights();
+  } catch { /* game file not published yet */ }
+}
+function startPolling() {
+  fetchState();
+  if (!pollTimer) pollTimer = setInterval(fetchState, POLL_MS);
+}
+
+/* ============ status / banner (official state only) ============ */
+function unpaidStages() {
+  if (!gameState || !Array.isArray(gameState.stages)) return [];
+  return gameState.stages.filter(s => !s.paid);
+}
+function renderStatus() {
+  const dot = document.getElementById("live-dot");
+  const line = document.getElementById("game-state-line");
+  const banner = document.getElementById("banner");
+  document.getElementById("call-count").textContent = calledArr.length;
+  if (!gameState) {
+    line.innerHTML = "waiting for the game file…";
+    return;
+  }
+  const unpaid = unpaidStages();
+  dot.className = "live-dot" + (gameState.status === "complete" ? " done" : unpaid.length ? " paused" : "");
+  if (gameState.status === "complete") {
+    line.innerHTML = "<strong>game complete.</strong> All four stages paid.";
+    banner.textContent = "Game complete. Every stage paid.";
+    banner.className = "show done";
+  } else if (unpaid.length) {
+    const names = unpaid.map(s => STAGE_NAME[s.stage]).join(" and ");
+    line.innerHTML = "<strong>paused:</strong> " + names + " hit, prize pending.";
+    banner.textContent = STAGE_NAME[unpaid[unpaid.length - 1].stage] + " hit. Prize pending.";
+    banner.className = "show pending";
+  } else {
+    line.innerHTML = "<strong>draw is live.</strong> No stage hit yet, keep watching.";
+    banner.className = "";
+    banner.textContent = "";
+  }
+}
+
+/* ============ ball board ============ */
+const boardEl = document.getElementById("board");
+const boardCells = new Map(); // ball -> element
+(function buildBoard() {
+  const ranges = [[1, 15, "B"], [16, 30, "I"], [31, 45, "N"], [46, 60, "G"], [61, 75, "O"]];
+  for (const [lo, hi, letter] of ranges) {
+    const col = document.createElement("div");
+    col.className = "bcol";
+    const h = document.createElement("div");
+    h.className = "bcol-h";
+    h.textContent = letter;
+    col.appendChild(h);
+    for (let n = lo; n <= hi; n++) {
+      const d = document.createElement("div");
+      d.className = "bball";
+      d.textContent = n;
+      d.dataset.ball = n;
+      d.title = letter + n;
+      col.appendChild(d);
+      boardCells.set(n, d);
+    }
+    boardEl.appendChild(col);
+  }
+})();
+function renderBoard() {
+  const latest = calledArr.length ? calledArr[calledArr.length - 1] : null;
+  for (const [n, el] of boardCells) {
+    const isCalled = calledSet.has(n);
+    el.classList.toggle("called", isCalled);
+    el.classList.toggle("latest", n === latest);
+  }
+  boardEl.setAttribute("aria-label", calledArr.length + " of 75 balls called" +
+    (latest ? ", latest " + COL_LETTER(latest) + latest : ""));
+}
+
+/* ============ stages (official state only, never local cards) ============ */
+function renderStages() {
+  const wrap = document.getElementById("stages");
+  wrap.innerHTML = "";
+  const byName = {};
+  if (gameState && Array.isArray(gameState.stages)) {
+    for (const s of gameState.stages) byName[s.stage] = s;
+  }
+  for (const stage of STAGE_ORDER) {
+    const s = byName[stage];
+    const card = document.createElement("div");
+    card.className = "stage" + (s ? (s.paid ? " paid" : " hit") : "");
+    let status, winners = "";
+    if (!s) {
+      status = "not hit yet";
+    } else {
+      status = s.paid ? "paid" : "prize pending";
+      winners = '<div class="s-winners">' + s.winners.map(w =>
+        '<div><span class="mono">pass #' + w.token_id + "</span> · " +
+        '<span class="mono">' + shortAddr(String(w.owner).toLowerCase()) + "</span></div>"
+      ).join("") + "</div>";
+      if (s.paid && s.paid_tx) {
+        winners += '<div style="margin-top:6px"><a class="tx-link" href="https://basescan.org/tx/' +
+          s.paid_tx + '" target="_blank" rel="noopener">payout tx</a> ' +
+          '<button class="copy-btn" data-copy="' + s.paid_tx + '" type="button" aria-label="copy payout transaction hash">copy</button></div>';
+      }
+    }
+    card.innerHTML =
+      '<div class="s-name">' + STAGE_NAME[stage] + '</div>' +
+      '<div class="s-share">' + STAGE_SHARE[stage] + '</div>' +
+      '<div class="s-status">' + status + '</div>' + winners;
+    wrap.appendChild(card);
+  }
+  wrap.querySelectorAll("[data-copy]").forEach(btn =>
+    btn.addEventListener("click", () => copyText(btn.dataset.copy, btn)));
+}
+
+/* ============ cards ============ */
+function getMarkedGrid(grid) {
+  const marked = [];
+  for (let r = 0; r < 5; r++) marked.push([false, false, false, false, false]);
+  for (let row = 0; row < 5; row++)
+    for (let col = 0; col < 5; col++)
+      marked[row][col] = (col === 2 && row === 2) || calledSet.has(grid[col][row]);
+  return marked;
+}
+function getWinningCellKeys(grid, stage) {
+  const marked = getMarkedGrid(grid);
+  const keys = new Set();
+  const add = (r, c) => keys.add(r + "," + c);
+  if (stage === "coverall") {
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) add(r, c);
+    return keys;
+  }
+  if (stage === "frame") {
+    for (let i = 0; i < 5; i++) { add(0, i); add(4, i); add(i, 0); add(i, 4); }
+    return keys;
+  }
+  for (let r = 0; r < 5; r++) if (marked[r].every(Boolean)) for (let c = 0; c < 5; c++) add(r, c);
+  for (let c = 0; c < 5; c++) if (marked.every(row => row[c])) for (let r = 0; r < 5; r++) add(r, c);
+  if (marked[0][0] && marked[1][1] && marked[2][2] && marked[3][3] && marked[4][4])
+    for (let i = 0; i < 5; i++) add(i, i);
+  if (marked[0][4] && marked[1][3] && marked[2][2] && marked[3][1] && marked[4][0])
+    for (let i = 0; i < 5; i++) add(i, 4 - i);
+  return keys;
+}
+function renderCards() {
+  const grid = document.getElementById("cards");
+  const empty = document.getElementById("cards-empty");
+  grid.innerHTML = "";
+  const sorted = [...passes.entries()].sort((a, b) => a[0] - b[0]);
+  empty.style.display = sorted.length ? "none" : "";
+  for (const [tokenId, card] of sorted) {
+    const g = numsToGrid(card.nums);
+    const el = document.createElement("article");
+    el.className = "card";
+    el.dataset.tokenId = tokenId;
+    let cells = "";
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 5; col++) {
+        if (col === 2 && row === 2) {
+          cells += '<div class="cell free" data-free="1">FREE</div>';
+        } else {
+          const n = g[col][row];
+          const marked = calledSet.has(n) ? " marked" : "";
+          cells += '<div class="cell' + marked + '" data-num="' + n + '">' + n + "</div>";
+        }
+      }
+    }
+    el.innerHTML =
+      '<div class="card-head"><h3>pass #' + tokenId + '</h3><span class="card-tag">prize pending</span></div>' +
+      '<div class="mini-head"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
+      '<div class="mini-grid">' + cells + "</div>";
+    grid.appendChild(el);
+  }
+}
+function updateMarks() {
+  document.querySelectorAll("#cards .card").forEach(cardEl => {
+    cardEl.querySelectorAll(".cell").forEach(cell => {
+      if (cell.dataset.free) return;
+      cell.classList.toggle("marked", calledSet.has(parseInt(cell.dataset.num, 10)));
+    });
+  });
+}
+function updateHighlights() {
+  // Official winners only: highlight while the stage prize is unpaid.
+  // The moment paid=true arrives in state.json, the highlight clears.
+  document.querySelectorAll("#cards .card.winner").forEach(el => el.classList.remove("winner"));
+  document.querySelectorAll("#cards .cell.winning").forEach(el => el.classList.remove("winning"));
+  for (const s of unpaidStages()) {
+    for (const w of (s.winners || [])) {
+      const card = passes.get(w.token_id);
+      const cardEl = document.querySelector('#cards .card[data-token-id="' + w.token_id + '"]');
+      if (!card || !cardEl) continue;
+      cardEl.classList.add("winner");
+      const keys = getWinningCellKeys(numsToGrid(card.nums), s.stage);
+      const cells = cardEl.querySelectorAll(".mini-grid .cell");
+      keys.forEach(k => {
+        const [r, c] = k.split(",").map(Number);
+        const cell = cells[r * 5 + c];
+        if (cell) cell.classList.add("winning");
+      });
+    }
+  }
+}
+
+/* ============ fairness proof ============ */
+function renderProof() {
+  const c = gameState && gameState.draw_order_commit;
+  document.getElementById("proof-block").textContent = c ? "#" + c.block_number : "not committed yet";
+  const hashEl = document.getElementById("proof-hash");
+  hashEl.textContent = c ? shortAddr(c.block_hash) : "not committed yet";
+  hashEl.title = c ? c.block_hash : "";
+  document.getElementById("proof-copy").dataset.full = c ? c.block_hash : "";
+}
+
+/* ============ copy buttons ============ */
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+  const orig = btn.textContent;
+  btn.textContent = "copied";
+  btn.classList.add("copied");
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove("copied"); }, 1400);
+}
+document.getElementById("wallet-copy").addEventListener("click", function () {
+  if (viewerAddress) copyText(viewerAddress, this);
+});
+document.getElementById("proof-copy").addEventListener("click", function () {
+  if (this.dataset.full) copyText(this.dataset.full, this);
+});
+
+/* ============ boot ============ */
+startPolling();
+const params = new URLSearchParams(location.search);
+const wParam = params.get("wallet");
+if (wParam) {
+  walletInput.value = wParam;
+  loadWallet(wParam);
+}
+</script>
+</body>
+</html>
