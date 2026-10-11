@@ -1,7 +1,8 @@
 {
   "called": [
     16,
-    19
+    19,
+    9
   ],
   "draw_order_commit": {
     "block_number": 52446794,
@@ -11,6 +12,6 @@
   "game_id": 1,
   "note": "balls appear here live during bingo night. game starts sat oct 10, 10pm edt.",
   "status": "live",
-  "total_called": 2,
-  "updated_at": "2026-10-11T02:03:37.686841+00:00"
+  "total_called": 3,
+  "updated_at": "2026-10-11T02:03:56.804983+00:00"
 }
