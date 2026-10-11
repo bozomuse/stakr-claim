@@ -60,9 +60,9 @@
   },
   "game_id": 1,
   "note": "balls appear here live during bingo night. game starts sat oct 10, 10pm edt.",
-  "status": "live",
+  "status": "paused",
   "total_called": 52,
-  "updated_at": "2026-10-11T02:36:28.036099+00:00",
+  "updated_at": "2026-10-11T02:42:39.132853+00:00",
   "paused_for": {
     "stages": [
       {
