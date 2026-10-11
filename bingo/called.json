@@ -65,7 +65,9 @@
     74,
     72,
     8,
-    21
+    21,
+    43,
+    3
   ],
   "draw_order_commit": {
     "block_number": 52446794,
@@ -74,19 +76,7 @@
   },
   "game_id": 1,
   "note": "balls appear here live during bingo night. game starts sat oct 10, 10pm edt.",
-  "status": "paused",
-  "total_called": 66,
-  "updated_at": "2026-10-11T03:06:16.363797+00:00",
-  "paused_for": {
-    "stages": [
-      {
-        "stage": "frame",
-        "winners": [
-          4
-        ],
-        "winning_ball": 21,
-        "balls_drawn": 66
-      }
-    ]
-  }
+  "status": "live",
+  "total_called": 68,
+  "updated_at": "2026-10-11T03:19:56.536382+00:00"
 }
