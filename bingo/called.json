@@ -33,7 +33,8 @@
     18,
     24,
     5,
-    28
+    28,
+    63
   ],
   "draw_order_commit": {
     "block_number": 52446794,
@@ -43,8 +44,8 @@
   "game_id": 1,
   "note": "balls appear here live during bingo night. game starts sat oct 10, 10pm edt.",
   "status": "live",
-  "total_called": 34,
-  "updated_at": "2026-10-11T02:31:12.567907+00:00",
+  "total_called": 35,
+  "updated_at": "2026-10-11T02:31:30.498231+00:00",
   "paused_for": {
     "stages": [
       {
