@@ -40,6 +40,11 @@
   .cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 4vw, 26px); font-weight: bold; color: #1a1a1a; background: #fff; border-radius: 10px; border: 2px solid #e3d5be; transition: all .3s; }
   .cell.free { background: #c8342a; color: #faf3e7; font-size: clamp(12px, 3vw, 16px); border-color: #c8342a; }
   .cell.marked { background: #e8a020; border-color: #c8342a; transform: scale(.94); box-shadow: inset 0 0 0 3px #c8342a; }
+  .bingo-card.winner { border: 3px solid #ffd700; animation: winnerGlow 1.2s infinite alternate; }
+  .bingo-card.winner .bingo-card-title { color: #b8860b; }
+  .cell.winning { background: #ffd700 !important; border-color: #b8860b !important; box-shadow: 0 0 14px rgba(255,215,0,.9), inset 0 0 0 3px #b8860b !important; animation: winPulse .8s infinite alternate; }
+  @keyframes winnerGlow { from { box-shadow: 0 0 10px rgba(255,215,0,.35); } to { box-shadow: 0 0 26px rgba(255,215,0,.75); } }
+  @keyframes winPulse { from { transform: scale(.96); } to { transform: scale(1.04); } }
   .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; max-width: 520px; margin-left: auto; margin-right: auto; }
   .stage-card { background: #2a2a2a; border-radius: 10px; padding: 12px 8px; text-align: center; }
   .stage-card .name { font-size: 13px; opacity: .7; margin-bottom: 4px; }
@@ -391,6 +396,53 @@ function checkBingo() {
   });
 }
 
+function getWinningCellKeys(grid, stage) {
+  const marked = getMarkedGrid(grid);
+  const keys = new Set();
+  const add = (r, c) => keys.add(r + ',' + c);
+  if (stage === 'coverall') {
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) add(r, c);
+    return keys;
+  }
+  if (stage === 'frame') {
+    for (let i = 0; i < 5; i++) { add(0, i); add(4, i); add(i, 0); add(i, 4); }
+    return keys;
+  }
+  // single / double: every completed line on the winner's card
+  for (let r = 0; r < 5; r++) if (marked[r].every(Boolean)) for (let c = 0; c < 5; c++) add(r, c);
+  for (let c = 0; c < 5; c++) if (marked.every(row => row[c])) for (let r = 0; r < 5; r++) add(r, c);
+  if (marked[0][0] && marked[1][1] && marked[2][2] && marked[3][3] && marked[4][4])
+    for (let i = 0; i < 5; i++) add(i, i);
+  if (marked[0][4] && marked[1][3] && marked[2][2] && marked[3][1] && marked[4][0])
+    for (let i = 0; i < 5; i++) add(i, 4 - i);
+  return keys;
+}
+
+function updateHighlights(data) {
+  // Clear everything first.
+  document.querySelectorAll('#cards-container .bingo-card.winner').forEach(el => el.classList.remove('winner'));
+  document.querySelectorAll('#cards-container .cell.winning').forEach(el => el.classList.remove('winning'));
+  // Highlight only while the game is paused for a stage (prize pending).
+  // The moment the prize is paid and the draw resumes, status flips back to
+  // "live" and the highlight clears on its own.
+  if (data.status !== 'paused' || !data.paused_for || !data.paused_for.stages) return;
+  for (const s of data.paused_for.stages) {
+    for (const wid of (s.winners || [])) {
+      const card = cards.get(wid);
+      const cardDiv = document.querySelector('#cards-container .bingo-card[data-card-id="' + wid + '"]');
+      if (!card || !cardDiv) continue;
+      cardDiv.classList.add('winner');
+      const keys = getWinningCellKeys(card.grid, s.stage);
+      const cells = cardDiv.querySelectorAll('.bingo-grid .cell');
+      keys.forEach(k => {
+        const [r, c] = k.split(',').map(Number);
+        const cell = cells[r * 5 + c];
+        if (cell) cell.classList.add('winning');
+      });
+    }
+  }
+}
+
 function removeCard(id) {
   if (!cards.has(id)) return;
   cards.delete(id);
@@ -421,6 +473,7 @@ async function fetchCalled() {
       renderRecentBalls(data.called || []);
       updateMarks();
     }
+    updateHighlights(data);
   } catch (e) { /* game hasn't started or network hiccup */ }
 }
 
