@@ -217,6 +217,7 @@ function numbersToGrid(nums) {
 const cards = new Map(); // tokenId -> { grid, hasBingo }
 let calledSet = new Set();
 let pollTimer = null;
+let gameState = null; // latest called.json: official status / paused_for winners
 
 async function addCards() {
   const input = document.getElementById('token-id').value.trim();
@@ -381,16 +382,23 @@ function checkBingo() {
   else if (best.lines >= 1) stageEl.textContent = 'single bingo!';
   else stageEl.textContent = calledSet.size > 0 ? 'no bingo yet — keep watching' : 'waiting for first ball…';
 
+  // Card titles: ONLY the official winner(s) of the stage the game is
+  // currently paused for (prize pending) get a title. The frontend never
+  // declares a winner on its own — otherwise every card with 2+ lines
+  // shows "DOUBLE!" after the stage is already paid and closed.
+  const pausedWinners = new Map();
+  if (typeof gameState !== 'undefined' && gameState &&
+      gameState.status === 'paused' && gameState.paused_for && gameState.paused_for.stages) {
+    const labels = {single: 'BINGO!', double: 'DOUBLE!', frame: 'FRAME!', coverall: 'COVERALL!'};
+    for (const s of gameState.paused_for.stages) {
+      const label = labels[s.stage] || (String(s.stage).toUpperCase() + '!');
+      for (const wid of (s.winners || [])) pausedWinners.set(wid, label);
+    }
+  }
   // update card titles with bingo status
   document.querySelectorAll('#cards-container .bingo-card').forEach(cardDiv => {
     const id = parseInt(cardDiv.dataset.cardId, 10);
-    const card = cards.get(id);
-    if (!card) return;
-    const result = checkCardBingo(card.grid);
-    const status = result.coverall ? ' 🎉 COVERALL!' :
-                   result.isFrame ? ' 🎉 FRAME!' :
-                   result.lines >= 2 ? ' 🎉 DOUBLE!' :
-                   result.lines >= 1 ? ' 🎉 BINGO!' : '';
+    const status = pausedWinners.has(id) ? ' 🎉 ' + pausedWinners.get(id) : '';
     const titleEl = cardDiv.querySelector('.bingo-card-title .title-text');
     if (titleEl) titleEl.textContent = 'pass #' + id + status;
   });
@@ -466,6 +474,7 @@ async function fetchCalled() {
     const r = await fetch('called.json', { cache: 'no-cache' });
     if (!r.ok) return;
     const data = await r.json();
+    gameState = data;
     const newCalled = new Set(data.called || []);
     if (newCalled.size !== calledSet.size) {
       calledSet = newCalled;
