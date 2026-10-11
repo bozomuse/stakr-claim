@@ -1,1 +1,15 @@
-{"called":[],"draw_order_commit":null,"game_id":1,"note":"balls appear here live during bingo night. game starts sat oct 10, 10pm edt.","status":"waiting","total_called":0,"updated_at":null}
+{
+  "called": [
+    16
+  ],
+  "draw_order_commit": {
+    "block_number": 52446794,
+    "block_hash": "0x46b58a00b8b35b7379598187514e0d7e43248bccded62b35c50ed4414f791060",
+    "algorithm": "Fisher-Yates over balls 1..75; for i in 74..1, j = keccak256(blockhash || uint8(i)) mod (i+1), swap(i, j)"
+  },
+  "game_id": 1,
+  "note": "balls appear here live during bingo night. game starts sat oct 10, 10pm edt.",
+  "status": "live",
+  "total_called": 1,
+  "updated_at": "2026-10-11T02:03:20.738859+00:00"
+}
