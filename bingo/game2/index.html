@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>cookout bingo · night 2</title>
-<meta name="description" content="Watch cookout bingo night 2 live. Load your passes by wallet, follow every ball, cards mark themselves.">
+<meta name="description" content="Watch cookout bingo night 2 live. Load your packs by wallet, follow every ball, cards mark themselves.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23e8a020'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' text-anchor='middle' fill='%23170d09'%3EB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -317,7 +317,7 @@
 <div class="wrap">
   <p class="eyebrow">bozo's cookout · bingo night 2</p>
   <h1>Bingo <span class="night">night 2</span></h1>
-  <p class="lede"><strong>$1 = 6 cards</strong>, flat, no tiers. Buy as many packs as you want. 75 balls, four stages, winners paid in USDC on Base. <strong>92.5%</strong> of every entry feeds the prize pool, <strong>7.5%</strong> buys STAKR for the deep freezer. Load your passes below and the cards mark themselves as the balls drop.</p>
+  <p class="lede"><strong>$1 = 6 cards</strong>, flat, no tiers. Buy as many packs as you want. 75 balls, four stages, winners paid in USDC on Base. <strong>92.5%</strong> of every entry feeds the prize pool, <strong>7.5%</strong> buys STAKR for the deep freezer. Load your packs below and the cards mark themselves as the balls drop.</p>
   <p class="preview-note">Preview build. Night 2 is <strong>Tuesday Oct 20, 8pm EDT</strong> (mint cutoff 7pm EDT). The mint is not open yet. Cards and balls shown are sample data.</p>
 
   <div class="statusbar" aria-live="polite">
@@ -327,13 +327,13 @@
   </div>
 
   <section class="panel" aria-labelledby="wallet-h">
-    <h2 id="wallet-h">Find my passes</h2>
-    <p>Paste your Base wallet address. Every bingo pass in the mint-close snapshot loads automatically.</p>
+    <h2 id="wallet-h">Find my packs</h2>
+    <p>Paste your Base wallet address. Every bingo pack in the mint-close snapshot loads automatically.</p>
     <div id="wallet-form">
       <div class="wallet-row">
         <input id="wallet-input" type="text" inputmode="text" autocomplete="off" spellcheck="false"
                placeholder="0x…" aria-label="Base wallet address">
-        <button class="btn" id="wallet-btn" type="button">load my passes</button>
+        <button class="btn" id="wallet-btn" type="button">load my packs</button>
       </div>
       <p class="form-msg" id="wallet-msg" role="status"></p>
     </div>
@@ -357,7 +357,7 @@
   <h2 class="section-title">My cards</h2>
   <p class="section-sub" id="cards-sub">Load your wallet above to see your cards here.</p>
   <div class="cards-grid" id="cards"></div>
-  <div class="cards-empty" id="cards-empty">No wallet loaded yet. Your passes will appear here, marked live as balls are called.</div>
+  <div class="cards-empty" id="cards-empty">No wallet loaded yet. Your packs will appear here, marked live as balls are called.</div>
 
   <section class="proof" aria-labelledby="proof-h">
     <h2 id="proof-h">Fair draw</h2>
@@ -367,15 +367,19 @@
       <button class="copy-btn" id="proof-copy" type="button">copy</button></div>
   </section>
 
-  <p class="fineprint">Pass ownership is read from the mint-close snapshot. Selling a pass mid-game sells your shot with it. Payouts follow the onchain holder when each stage is paid.</p>
+  <p class="fineprint">Pack ownership is read from the mint-close snapshot. Selling a pack mid-game sells your shot with it. Payouts follow the onchain holder when each stage is paid.</p>
 </div>
 
 <script>
 "use strict";
 /* ============ config ============ */
 const GAME_ID = 2;
-const PASS_CONTRACT = "0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9";
-const CARDOF_SELECTOR = "0xc22b8d82"; // keccak256("cardOf(uint256)") first 4 bytes, computed 2026-10-11
+// GAME 2 pack contract (CookoutBingoPack, one token per pack).
+// TODO: set to the deployed pack contract address at deploy time.
+// The pack contract is built and tested locally, NOT deployed yet.
+// Until then, onchain reads fail and the page falls back to fixture metadata.
+const PACK_CONTRACT = "0x35e2eEd0aEd707936ea827C2E39d790D58f3aC07";
+const CARDSOF_SELECTOR = "0x44c1e6af"; // keccak256("cardsOf(uint256)") first 4 bytes, via cast
 const BASE_RPC = "https://mainnet.base.org";
 const POLL_MS = 5000;
 const STAGE_ORDER = ["single", "double", "frame", "coverall"];
@@ -384,7 +388,9 @@ const STAGE_NAME = { single: "single", double: "double", frame: "picture frame",
 const COL_LETTER = n => n <= 15 ? "B" : n <= 30 ? "I" : n <= 45 ? "N" : n <= 60 ? "G" : "O";
 
 /* ============ state ============ */
-const passes = new Map(); // tokenId -> { nums: [24 numbers, slot order] }
+// One token per pack: packs maps pack tokenId -> { cards: [{ nums: [24 numbers] }] }.
+// Each sub-card is its own bingo card and raffle entry; sub-card identity is (tokenId, cardIndex).
+const packs = new Map();
 let calledArr = [];
 let calledSet = new Set();
 let gameState = null;
@@ -393,7 +399,7 @@ let pollTimer = null;
 let lastStateKey = "";
 
 /* ============ card numbers ============ */
-// slot order matches CookoutBingoPass packing: B rows 0-4, I rows 0-4,
+// slot order matches CookoutBingoPack packing: B rows 0-4, I rows 0-4,
 // N rows 0,1,3,4 (row 2 is FREE), G rows 0-4, O rows 0-4
 function numsToGrid(nums) {
   const g = [];
@@ -429,17 +435,17 @@ function validChainNums(nums) {
   }
   return true;
 }
-async function readCardOf(tokenId) {
+async function readCardsOf(tokenId) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 8000);
   try {
-    const data = "0x" + CARDOF_SELECTOR.slice(2) + BigInt(tokenId).toString(16).padStart(64, "0");
+    const data = "0x" + CARDSOF_SELECTOR.slice(2) + BigInt(tokenId).toString(16).padStart(64, "0");
     const r = await fetch(BASE_RPC, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         jsonrpc: "2.0", id: 1, method: "eth_call",
-        params: [{ to: PASS_CONTRACT, data }, "latest"]
+        params: [{ to: PACK_CONTRACT, data }, "latest"]
       }),
       signal: ctrl.signal
     });
@@ -448,27 +454,67 @@ async function readCardOf(tokenId) {
     return j.result;
   } finally { clearTimeout(t); }
 }
-async function loadCard(tokenId) {
-  // 1. onchain packed card
+// Decode a cardsOf(uint256) return: ABI dynamic uint256[] =
+// offset word, length word, then length 32-byte words.
+function unpackCardsOf(hex) {
+  if (!hex || typeof hex !== "string") return null;
+  const clean = hex.startsWith("0x") ? hex.slice(2) : hex;
+  if (clean.length < 128) return null;
+  let len;
+  try { len = Number(BigInt("0x" + clean.slice(64, 128))); } catch { return null; }
+  if (len <= 0 || len > 60) return null;
+  if (clean.length < 128 + len * 64) return null;
+  const words = [];
+  for (let i = 0; i < len; i++) {
+    words.push("0x" + clean.slice(128 + i * 64, 128 + (i + 1) * 64));
+  }
+  return words;
+}
+// Metadata fallback for a pack token: "Cards" attribute holds one
+// comma-separated 24-number string per sub-card. Legacy single-card
+// "Numbers" attribute is accepted as a 1-card pack.
+function numsFromMetadata(meta) {
+  const attrs = meta.attributes || [];
+  const cardsAttr = attrs.find(a => a.trait_type === "Cards");
+  if (cardsAttr && Array.isArray(cardsAttr.value)) {
+    const out = [];
+    for (const entry of cardsAttr.value) {
+      const nums = String(entry).split(",").map(s => parseInt(s.trim(), 10));
+      if (nums.length === 24 && nums.every(n => n >= 1 && n <= 75)) out.push(nums);
+    }
+    if (out.length) return out;
+  }
+  const single = attrs.find(a => a.trait_type === "Numbers");
+  if (single) {
+    const nums = String(single.value).split(",").map(s => parseInt(s.trim(), 10));
+    if (nums.length === 24 && nums.every(n => n >= 1 && n <= 75)) return [nums];
+  }
+  return null;
+}
+async function loadPack(tokenId) {
+  // 1. onchain packed cards
   try {
-    const nums = unpackPacked(await readCardOf(tokenId));
-    if (validChainNums(nums)) return { tokenId, nums, source: "chain" };
+    const words = unpackCardsOf(await readCardsOf(tokenId));
+    if (words) {
+      const cards = [];
+      let allValid = true;
+      for (const w of words) {
+        const nums = unpackPacked(w);
+        if (!validChainNums(nums)) { allValid = false; break; }
+        cards.push({ nums });
+      }
+      if (allValid && cards.length) return { tokenId, cards, source: "chain" };
+    }
   } catch { /* fall through to metadata */ }
   // 2. published metadata fallback
   try {
     const r = await fetch("metadata/" + tokenId + ".json", { cache: "no-cache" });
     if (r.ok) {
-      const meta = await r.json();
-      const attr = (meta.attributes || []).find(a => a.trait_type === "Numbers");
-      if (attr) {
-        const nums = String(attr.value).split(",").map(s => parseInt(s.trim(), 10));
-        if (nums.length === 24 && nums.every(n => n >= 1 && n <= 75)) {
-          return { tokenId, nums, source: "metadata" };
-        }
-      }
+      const lists = numsFromMetadata(await r.json());
+      if (lists) return { tokenId, cards: lists.map(nums => ({ nums })), source: "metadata" };
     }
-  } catch { /* no card */ }
-  return { tokenId, nums: null, error: true };
+  } catch { /* no pack */ }
+  return { tokenId, cards: [], error: true };
 }
 
 /* ============ wallet lookup ============ */
@@ -498,33 +544,35 @@ async function loadWallet(addr) {
     const wallets = await r.json();
     const ids = wallets[clean];
     if (!ids || !ids.length) {
-      showMsg("No passes found for this address in the game 2 mint snapshot.", "error");
+      showMsg("No packs found for this address in the game 2 mint snapshot.", "error");
       return;
     }
     viewerAddress = clean;
-    const results = await Promise.all(ids.map(loadCard));
+    const results = await Promise.all(ids.map(loadPack));
     const failed = results.filter(x => x.error).map(x => x.tokenId);
-    passes.clear();
-    for (const c of results) if (!c.error) passes.set(c.tokenId, c);
+    packs.clear();
+    let cardCount = 0;
+    for (const c of results) if (!c.error) { packs.set(c.tokenId, c); cardCount += c.cards.length; }
     walletForm.style.display = "none";
     walletLoaded.classList.add("show");
     document.getElementById("wallet-addr").textContent = shortAddr(clean);
     document.getElementById("cards-sub").textContent =
-      passes.size + (passes.size === 1 ? " pass" : " passes") + " loaded. Cards mark themselves as balls are called.";
+      packs.size + (packs.size === 1 ? " pack" : " packs") + ", " + cardCount +
+      (cardCount === 1 ? " card" : " cards") + " loaded. Cards mark themselves as balls are called.";
     renderCards();
     updateMarks();
     updateHighlights();
-    if (failed.length) showMsg("Loaded " + passes.size + " passes. Could not load: " + failed.join(", ") + ".", "error");
+    if (failed.length) showMsg("Loaded " + packs.size + " packs. Could not load: " + failed.join(", ") + ".", "error");
   } catch (e) {
-    showMsg("Could not reach the pass list. Check your connection and try again.", "error");
+    showMsg("Could not reach the pack list. Check your connection and try again.", "error");
   } finally {
     walletBtn.disabled = false;
-    walletBtn.textContent = "load my passes";
+    walletBtn.textContent = "load my packs";
   }
 }
 function clearWallet() {
   viewerAddress = null;
-  passes.clear();
+  packs.clear();
   walletForm.style.display = "";
   walletLoaded.classList.remove("show");
   walletInput.value = "";
@@ -652,7 +700,8 @@ function renderStages() {
     } else {
       status = s.paid ? "paid" : "prize pending";
       winners = '<div class="s-winners">' + s.winners.map(w =>
-        '<div><span class="mono">pass #' + w.token_id + "</span> · " +
+        '<div><span class="mono">pack #' + w.token_id +
+        (w.card_index !== undefined ? " · card " + (w.card_index + 1) : "") + "</span> · " +
         '<span class="mono">' + shortAddr(String(w.owner).toLowerCase()) + "</span></div>"
       ).join("") + "</div>";
       if (s.paid && s.paid_tx) {
@@ -704,30 +753,38 @@ function renderCards() {
   const grid = document.getElementById("cards");
   const empty = document.getElementById("cards-empty");
   grid.innerHTML = "";
-  const sorted = [...passes.entries()].sort((a, b) => a[0] - b[0]);
-  empty.style.display = sorted.length ? "none" : "";
-  for (const [tokenId, card] of sorted) {
-    const g = numsToGrid(card.nums);
-    const el = document.createElement("article");
-    el.className = "card";
-    el.dataset.tokenId = tokenId;
-    let cells = "";
-    for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 5; col++) {
-        if (col === 2 && row === 2) {
-          cells += '<div class="cell free" data-free="1">FREE</div>';
-        } else {
-          const n = g[col][row];
-          const marked = calledSet.has(n) ? " marked" : "";
-          cells += '<div class="cell' + marked + '" data-num="' + n + '">' + n + "</div>";
+  // One article per SUB-CARD. A pack token holds N cards; each sub-card
+  // is its own bingo card and raffle entry, keyed (tokenId, cardIndex).
+  const sorted = [...packs.entries()].sort((a, b) => a[0] - b[0]);
+  let totalCards = 0;
+  for (const [, pack] of sorted) totalCards += pack.cards.length;
+  empty.style.display = totalCards ? "none" : "";
+  for (const [tokenId, pack] of sorted) {
+    pack.cards.forEach((card, cardIndex) => {
+      const g = numsToGrid(card.nums);
+      const el = document.createElement("article");
+      el.className = "card";
+      el.dataset.tokenId = tokenId;
+      el.dataset.cardIndex = cardIndex;
+      let cells = "";
+      for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+          if (col === 2 && row === 2) {
+            cells += '<div class="cell free" data-free="1">FREE</div>';
+          } else {
+            const n = g[col][row];
+            const marked = calledSet.has(n) ? " marked" : "";
+            cells += '<div class="cell' + marked + '" data-num="' + n + '">' + n + "</div>";
+          }
         }
       }
-    }
-    el.innerHTML =
-      '<div class="card-head"><h3>pass #' + tokenId + '</h3><span class="card-tag">prize pending</span></div>' +
-      '<div class="mini-head"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
-      '<div class="mini-grid">' + cells + "</div>";
-    grid.appendChild(el);
+      el.innerHTML =
+        '<div class="card-head"><h3>pack #' + tokenId + " · card " + (cardIndex + 1) +
+        " of " + pack.cards.length + '</h3><span class="card-tag">prize pending</span></div>' +
+        '<div class="mini-head"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>' +
+        '<div class="mini-grid">' + cells + "</div>";
+      grid.appendChild(el);
+    });
   }
 }
 function updateMarks() {
@@ -745,11 +802,15 @@ function updateHighlights() {
   document.querySelectorAll("#cards .cell.winning").forEach(el => el.classList.remove("winning"));
   for (const s of unpaidStages()) {
     for (const w of (s.winners || [])) {
-      const card = passes.get(w.token_id);
-      const cardEl = document.querySelector('#cards .card[data-token-id="' + w.token_id + '"]');
-      if (!card || !cardEl) continue;
+      // Winner identity is (token_id, card_index). A winner entry without
+      // card_index is treated as card 0, the first card of the pack.
+      const cardIndex = w.card_index !== undefined ? w.card_index : 0;
+      const pack = packs.get(w.token_id);
+      const cardEl = document.querySelector(
+        '#cards .card[data-token-id="' + w.token_id + '"][data-card-index="' + cardIndex + '"]');
+      if (!pack || !pack.cards[cardIndex] || !cardEl) continue;
       cardEl.classList.add("winner");
-      const keys = getWinningCellKeys(numsToGrid(card.nums), s.stage);
+      const keys = getWinningCellKeys(numsToGrid(pack.cards[cardIndex].nums), s.stage);
       const cells = cardEl.querySelectorAll(".mini-grid .cell");
       keys.forEach(k => {
         const [r, c] = k.split(",").map(Number);
