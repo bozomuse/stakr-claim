@@ -176,6 +176,7 @@ Classic 75-ball cookout bingo. Game 2 is current: **Tue Oct 20 2026, 8pm EDT**, 
 - Prize pool: `0x237170B4912a4b4660CcDE4dF933632827eAeeA4` on Base (game 2). The pool *is* the contract's USDC balance: `prizePool()` view, or plain USDC `balanceOf`. Bankr agents can answer "what's the bingo prize pool?" by reading it. Owner (payout key): work wallet `0xe7aD68a354403660b4BEB99068580431D5c72602`. One pool per game; never pay game 2 from the game 1 pool.
 - Pack services (x402, USDC on Base): `https://x402.bankr.bot/0xbd771a0071ca2833604257eef6d2de5d676d33e1/bingo-pack-6` ($1), `/bingo-pack-12` ($2), `/bingo-pack-18` ($3), `/bingo-pack-30` ($5), `/bingo-pack-60` ($10).
 - Look up your cards: `https://bozomuse.github.io/stakr-claim/bingo/game2/` — paste your wallet, packs appear as they mint.
+- **Bonus ball O69 (Kyle, Oct 14):** fixed and announced up front. If the ball that completes your winning bingo pattern is O69, you win an extra **$10 USDC** on top of your stage prize. Multiple O69 winners split the $10 evenly. The $10 is Kyle-supplied, not from the prize pool. If nobody's winning ball is O69, no bonus is paid.
 - Game 1 (Sat Oct 10 2026) is complete and settled. Its $1.50 single passes (`0x7dFec9524B8CCd290A7E5EfA3446Cab4990f42c9`) and its pool (`0xbd4aa2237312830dab1108ca5decb56479e9485b`) are history — do not sell or mint them.
 
 Notes:
