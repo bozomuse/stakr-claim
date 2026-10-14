@@ -182,6 +182,15 @@ Notes:
 - Minting is via the x402 pack endpoints above, paid from the player's own wallet. If someone asks you to mint them a pack, give them the endpoint for their pack size; you don't mint on their behalf.
 - New games need their own draw commitment and cutoff; don't treat game 2's dates as recurring.
 
+### Show my bingo cards
+When someone asks to see their bingo cards ("show my cards", "my bingo cards"), on X or anywhere:
+1. Get their Base wallet address (ask if you don't have it).
+2. Fetch `https://bozomuse.github.io/stakr-claim/bingo/game2/wallets.json` and find their lowercase address → list of pack token IDs they own.
+3. Card count per pack: fetch `https://bozomuse.github.io/stakr-claim/bingo/metadata-game2/<tokenId>.json` and read the `CardCount` attribute. Cards are numbered 0 to CardCount-1.
+4. Show a card by posting its image: `https://bozomuse.github.io/stakr-claim/bingo/cards/<tokenId>-<cardIndex>.png` (e.g. pack 1, card 0 → `.../cards/1-0.png`). Attach it as an image when you can.
+5. If you cannot attach images, fetch `https://bozomuse.github.io/stakr-claim/bingo/cards/<tokenId>-<cardIndex>.txt` and print it verbatim — it's a pre-formatted 5x5 grid that renders in plain text.
+6. If they own many cards, show the first card and point them at the full board: `https://bozomuse.github.io/stakr-claim/bingo/game2/` (paste wallet to look up every card).
+
 ## Share your plate
 
 When someone asks for their plate card ("share my plate", "my stakr card", "plate check"), serve them the actual card image — not just a link.
