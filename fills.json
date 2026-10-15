@@ -1,16 +1,16 @@
 {
- "updated": "2026-10-15T08:31:25.600Z",
+ "updated": "2026-10-15T09:01:24.832Z",
  "vault": "0xe77ba6aA7CbdCc771FA24840fbC87D3d770408A0",
  "races": [
   "0x8ead4fd96d6a09f3af4ed5179c456a24a5058c58",
   "0xe4a9dc9f0ff4bbae457f5acef8cd13b61730163f"
  ],
- "totalFills": 2,
+ "totalFills": 3,
  "board": [
   {
    "caller": "0xfafe70b60908162956a5c1c6a16a1261dd183d30",
-   "fills": 2,
-   "totalBnkr": "13968125744576469446763"
+   "fills": 3,
+   "totalBnkr": "21407735351551434338807"
   }
  ]
 }
