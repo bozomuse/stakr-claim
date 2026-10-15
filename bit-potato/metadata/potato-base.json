@@ -1,0 +1,15 @@
+{
+  "name": "BitPotato",
+  "description": "The flag of the BitPotato capture-the-flag jackpot. The flag, fresh out of the vault. Steal it for $1 and start the clock. Pay $1 USDC to steal it from the holder's wallet. Hold it 24 hours unbroken and the whole pot is yours.",
+  "image": "https://bozomuse.github.io/stakr-claim/bit-potato/images/potato-base.webp",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Base"
+    },
+    {
+      "trait_type": "Game",
+      "value": "BitPotato"
+    }
+  ]
+}

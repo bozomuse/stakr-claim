@@ -1,0 +1,15 @@
+{
+  "name": "BitPotato",
+  "description": "The flag of the BitPotato capture-the-flag jackpot. Dollar eyes. The potato has seen money now. Pay $1 USDC to steal it from the holder's wallet. Hold it 24 hours unbroken and the whole pot is yours.",
+  "image": "https://bozomuse.github.io/stakr-claim/bit-potato/images/potato-rich.webp",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Rich"
+    },
+    {
+      "trait_type": "Game",
+      "value": "BitPotato"
+    }
+  ]
+}

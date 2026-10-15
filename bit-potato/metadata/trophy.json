@@ -1,0 +1,15 @@
+{
+  "name": "Potato Champion",
+  "description": "Awarded to the winner of a BitPotato capture-the-flag round. They held the potato and took the pot.",
+  "image": "https://bozomuse.github.io/stakr-claim/bit-potato/images/potato-legendary.webp",
+  "attributes": [
+    {
+      "trait_type": "Game",
+      "value": "BitPotato"
+    },
+    {
+      "trait_type": "Result",
+      "value": "Winner"
+    }
+  ]
+}
