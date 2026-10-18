@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>potato v2 — the living potato</title>
+<meta name="description" content="BitPotato v2 is coming. The potato lives, hungers, bakes, and sometimes leaves a baby.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #faf3e7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 48px 20px; background: #170d09; }
+  h1 { font-size: clamp(36px, 8vw, 64px); margin-bottom: 8px; text-align: center; }
+  p.sub { opacity: .7; margin-bottom: 36px; text-align: center; max-width: 560px; font-size: 18px; line-height: 1.5; }
+  .badge { display: inline-block; padding: 6px 16px; border: 2px solid #e8a020; border-radius: 20px; font-size: 14px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #e8a020; margin-bottom: 24px; }
+  .mechanics { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
+  .card { background: #241410; border: 1px solid #4a2c1a; border-radius: 12px; padding: 20px 24px; }
+  .card h2 { font-size: 20px; color: #e8a020; margin-bottom: 8px; }
+  .card p { opacity: .85; line-height: 1.6; font-size: 16px; }
+  .card p strong { color: #faf3e7; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+  .cta a { padding: 14px 28px; font-size: 17px; font-weight: bold; border-radius: 8px; text-decoration: none; }
+  .cta a.primary { background: #c8342a; color: #faf3e7; }
+  .cta a.primary:hover { background: #e04a3a; }
+  .cta a.secondary { border: 2px solid #e8a020; color: #e8a020; }
+  .cta a.secondary:hover { background: #e8a02022; }
+  p.fine { opacity: .5; font-size: 14px; text-align: center; max-width: 480px; }
+  .potato-art { width: 180px; height: 180px; margin-bottom: 24px; border-radius: 16px; border: 3px solid #e8a020; object-fit: cover; }
+</style>
+</head>
+<body>
+<div class="badge">coming soon</div>
+<img class="potato-art" src="images/potato-legendary.webp" alt="legendary potato">
+<h1>the living potato</h1>
+<p class="sub">BitPotato v2. The potato lives now. It hungers. It bakes. And sometimes, it leaves a baby.</p>
+
+<div class="mechanics">
+  <div class="card">
+    <h2>it hungers</h2>
+    <p>The potato starts with <strong>48 hours of life</strong>. Every $1 steal feeds it <strong>+4 hours</strong>. If Hunger hits zero, the potato starves, and the whole pot rolls into the next round. The dead potato feeds the next crop.</p>
+  </div>
+  <div class="card">
+    <h2>it bakes</h2>
+    <p>When the pot crosses the <strong>Bake Threshold</strong> ($50, climbing $25 every round), the potato evolves. <strong>70%</strong> pays out to the holder and everyone who ever held it. <strong>20%</strong> seeds the next round. <strong>10%</strong> goes to the baby pot.</p>
+  </div>
+  <div class="card">
+    <h2>it reproduces</h2>
+    <p>Every bake, there's a <strong>25% chance</strong> the potato leaves a baby. The baby pot keeps growing until it's born, then one random past holder takes the whole thing. The longer it goes unborn, the bigger it gets.</p>
+  </div>
+  <div class="card">
+    <h2>it sustains itself</h2>
+    <p><strong>$20 seed, once.</strong> After that the game feeds itself forever. Bake reserves and starvation rollovers mean the potato never needs another dollar from anyone but the players.</p>
+  </div>
+</div>
+
+<div class="cta">
+  <a class="primary" href="https://basescan.org/address/0x6B26Df0Fdae522748ABc7D1285E671eA51fa230B">play v1 on basescan</a>
+  <a class="secondary" href="../index.html">back to the cookout</a>
+</div>
+
+<p class="fine">Potato v2 is not deployed yet. This is a teaser. The $1 steal, the hunger, the bake, the baby, none of it exists onchain until it does.</p>
+</body>
+</html>
