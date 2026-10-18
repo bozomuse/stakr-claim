@@ -1,9 +1,10 @@
 {
- "updated": "2026-10-18T01:31:34.860Z",
+ "updated": "2026-10-18T01:35:24.967Z",
  "vault": "0xe77ba6aA7CbdCc771FA24840fbC87D3d770408A0",
  "races": [
   "0x8ead4fd96d6a09f3af4ed5179c456a24a5058c58",
-  "0xe4a9dc9f0ff4bbae457f5acef8cd13b61730163f"
+  "0xe4a9dc9f0ff4bbae457f5acef8cd13b61730163f",
+  "0x7AddD59c8Fb465B9a127A67152e495633C1f5066"
  ],
  "totalFills": 3,
  "board": [
