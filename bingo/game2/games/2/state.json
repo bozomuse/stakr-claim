@@ -1,1 +1,16 @@
-{"balls_called":0,"called":[],"draw_order_commit":null,"game_id":2,"note":"Pre-game state. Mint is open; the draw runner writes the live state on game night.","stages":[],"status":"waiting","updated_at":"2026-10-13T21:12:27-04:00"}
+{
+  "game_id": 2,
+  "status": "live",
+  "balls_called": 1,
+  "called": [
+    16
+  ],
+  "stages": [],
+  "draw_order_commit": {
+    "block_number": null,
+    "block_hash": "0xfb89afac818f6ce96cda91fb167b75b7a094e8d395f8b00e3368818d2eaeb022",
+    "algorithm": "Fisher-Yates over balls 1..75; for i in 74..1, j = keccak256(blockhash || uint8(i)) mod (i+1), swap(i, j)"
+  },
+  "note": "Game 2 live. The reveal loop walks the precomputed order.",
+  "updated_at": "2026-10-20T20:26:48.807233-04:00"
+}
