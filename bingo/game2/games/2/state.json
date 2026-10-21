@@ -1,7 +1,7 @@
 {
   "game_id": 2,
   "status": "live",
-  "balls_called": 33,
+  "balls_called": 35,
   "called": [
     16,
     25,
@@ -35,7 +35,9 @@
     18,
     23,
     66,
-    35
+    35,
+    5,
+    15
   ],
   "stages": [
     {
@@ -56,6 +58,25 @@
           "owner": "0xfafe70b60908162956a5c1c6a16a1261dd183d30"
         }
       ]
+    },
+    {
+      "stage": "double",
+      "paid": false,
+      "paid_tx": null,
+      "winning_ball": 15,
+      "balls_drawn": 35,
+      "bonus_o69": false,
+      "prize_usdc": 1.91625,
+      "per_winner_usdc": 1.91625,
+      "dust_micro_to_first_winner": 0,
+      "o69_bonus_per_winner_usdc": 0.0,
+      "winners": [
+        {
+          "token_id": 1,
+          "card_index": 1,
+          "owner": "0xda641d4ff3a5ea3c8b5265db8701622a68998903"
+        }
+      ]
     }
   ],
   "draw_order_commit": {
@@ -64,5 +85,5 @@
     "algorithm": "Fisher-Yates over balls 1..75; for i in 74..1, j = keccak256(blockhash || uint8(i)) mod (i+1), swap(i, j)"
   },
   "note": "Game 2 live. The reveal loop walks the precomputed order.",
-  "updated_at": "2026-10-20T20:35:17.991736-04:00"
+  "updated_at": "2026-10-20T20:35:41.994453-04:00"
 }
