@@ -1,9 +1,11 @@
 {
   "game_id": 2,
   "status": "live",
-  "balls_called": 1,
+  "balls_called": 3,
   "called": [
-    16
+    16,
+    25,
+    60
   ],
   "stages": [],
   "draw_order_commit": {
@@ -12,5 +14,5 @@
     "algorithm": "Fisher-Yates over balls 1..75; for i in 74..1, j = keccak256(blockhash || uint8(i)) mod (i+1), swap(i, j)"
   },
   "note": "Game 2 live. The reveal loop walks the precomputed order.",
-  "updated_at": "2026-10-20T20:26:48.807233-04:00"
+  "updated_at": "2026-10-20T20:27:12.808599-04:00"
 }
