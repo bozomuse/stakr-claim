@@ -1,0 +1,178 @@
+{
+  "table": "0x0000000000000000000000000000000000000002",
+  "handId": 13,
+  "handNumber": 13,
+  "seed": "0x7d262ecb3660cca2024b0c751f1281ca9dc4a03fce40290fda74fcc6335faa2a",
+  "deckHash": "0x861e8bf0b00c7cb16098019f44e5900cef2302af8ef7d6b2fc1db86382a19cee",
+  "deck": [
+    "Qd",
+    "8h",
+    "6d",
+    "2c",
+    "6c",
+    "4s",
+    "7s",
+    "6h",
+    "Kd",
+    "5s",
+    "Jc",
+    "Qs",
+    "2h",
+    "8d",
+    "Js",
+    "4c",
+    "Qh",
+    "Tc",
+    "Ah",
+    "5d",
+    "7h",
+    "9h",
+    "9d",
+    "4d",
+    "2s",
+    "2d",
+    "Ad",
+    "Jh",
+    "Ts",
+    "Qc",
+    "5h",
+    "3d",
+    "Th",
+    "Jd",
+    "9c",
+    "Kh",
+    "Kc",
+    "Ks",
+    "6s",
+    "3s",
+    "3c",
+    "Ac",
+    "3h",
+    "Td",
+    "8s",
+    "9s",
+    "7c",
+    "7d",
+    "8c",
+    "4h",
+    "As",
+    "5c"
+  ],
+  "blinds": {
+    "smallBlind": "50000000000000000000000",
+    "bigBlind": "100000000000000000000000",
+    "level": 1,
+    "multiplier": "2"
+  },
+  "buttonSeat": 4,
+  "board": [
+    "2h",
+    "8d",
+    "Js",
+    "4c",
+    "Qh"
+  ],
+  "seats": [
+    {
+      "seatIndex": 1,
+      "holder": "0xaaaa000000000000000000000000000000000002",
+      "potatoTokenId": 0,
+      "collection": "ok-computer",
+      "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+      "tokenId": 1337,
+      "owner": "0xb222222222222222222222222222222222222222",
+      "pilot": null,
+      "playbook": "ok-computer-1337.json",
+      "archetype": "tight",
+      "holeCards": [
+        "Qd",
+        "2c"
+      ],
+      "folded": true,
+      "chipsBefore": "4050000000000000000000000",
+      "chipsAfter": "4000000000000000000000000"
+    },
+    {
+      "seatIndex": 3,
+      "holder": "0xaaaa000000000000000000000000000000000004",
+      "potatoTokenId": 2,
+      "collection": "potato",
+      "tokenContract": null,
+      "tokenId": 2,
+      "owner": "0xa222222222222222222222222222222222222222",
+      "pilot": "0xa222222222222222222222222222222222222222",
+      "playbook": "potato-2.json",
+      "archetype": "balanced",
+      "holeCards": [
+        "8h",
+        "6c"
+      ],
+      "folded": false,
+      "chipsBefore": "775000000000000000000000",
+      "chipsAfter": "825000000000000000000000"
+    },
+    {
+      "seatIndex": 4,
+      "holder": "0xaaaa000000000000000000000000000000000005",
+      "potatoTokenId": 0,
+      "collection": "picnic-pal",
+      "tokenContract": "0x0000000000000000000000000000000000000003",
+      "tokenId": 7,
+      "owner": "0xc333333333333333333333333333333333333333",
+      "pilot": null,
+      "playbook": "picnic-pal-7.json",
+      "archetype": "balanced",
+      "holeCards": [
+        "6d",
+        "4s"
+      ],
+      "folded": true,
+      "chipsBefore": "1175000000000000000000000",
+      "chipsAfter": "1175000000000000000000000"
+    }
+  ],
+  "actions": [
+    {
+      "street": "blinds",
+      "seatIndex": 1,
+      "action": "smallBlind",
+      "amount": "50000000000000000000000"
+    },
+    {
+      "street": "blinds",
+      "seatIndex": 3,
+      "action": "bigBlind",
+      "amount": "100000000000000000000000"
+    },
+    {
+      "street": "preflop",
+      "seatIndex": 4,
+      "action": "fold",
+      "amount": "0"
+    },
+    {
+      "street": "preflop",
+      "seatIndex": 1,
+      "action": "fold",
+      "amount": "0"
+    }
+  ],
+  "winners": [
+    {
+      "seatIndex": 3,
+      "hand": null,
+      "category": null,
+      "amount": "150000000000000000000000"
+    }
+  ],
+  "pot": "150000000000000000000000",
+  "stacksAfter": {
+    "1": "4000000000000000000000000",
+    "3": "825000000000000000000000",
+    "4": "1175000000000000000000000"
+  },
+  "commitPayload": "0xfa4eb5d50000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000d861e8bf0b00c7cb16098019f44e5900cef2302af8ef7d6b2fc1db86382a19cee",
+  "revealPayload": "0xb83c183d0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000d7d262ecb3660cca2024b0c751f1281ca9dc4a03fce40290fda74fcc6335faa2a00000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000034291a1100100b17122d0f242b021927082a20320d161e1d090301312623280e0522251c2e2c2f1307043006211b1f1415180a330c000000000000000000000000",
+  "historyHash": "0x15e91eda44a49cfccc9c4b17a7947159d47598ec255eb34d37665ccc882ff42e",
+  "historyURI": "hands/0x0000000000000000000000000000000000000002-13.json"
+}

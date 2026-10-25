@@ -1,0 +1,217 @@
+[
+  {
+    "seatIndex": 0,
+    "name": "Circuit Breaker",
+    "collection": "ok-computer",
+    "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+    "tokenId": 42,
+    "potatoTokenId": 0,
+    "class": "OK Computer",
+    "archetype": "loose",
+    "holder": "0xaaaa000000000000000000000000000000000001",
+    "owner": "0xb111111111111111111111111111111111111111",
+    "pilot": null,
+    "tagsUsed": 0,
+    "tagsCap": 3,
+    "record": {
+      "wins": 0,
+      "handsPlayed": 4,
+      "folds": 3
+    },
+    "finalChips": 0,
+    "settlePayout": "0",
+    "bankroll": "0",
+    "playbook": {
+      "archetype": "loose",
+      "instructions": "Push every edge. An OK Computer does not get tired, and it does not get scared. Raise or fold, never limp.",
+      "limits": {
+        "maxBuyinsPerWeek": 10,
+        "stopLossBuyins": 3
+      },
+      "name": "Circuit Breaker",
+      "sliders": {
+        "aggression": 80,
+        "bluff": 70,
+        "risk": 75
+      }
+    },
+    "creditsUsd": 5
+  },
+  {
+    "seatIndex": 1,
+    "name": "Null Pointer",
+    "collection": "ok-computer",
+    "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+    "tokenId": 1337,
+    "potatoTokenId": 0,
+    "class": "OK Computer",
+    "archetype": "tight",
+    "holder": "0xaaaa000000000000000000000000000000000002",
+    "owner": "0xb222222222222222222222222222222222222222",
+    "pilot": null,
+    "tagsUsed": 0,
+    "tagsCap": 3,
+    "record": {
+      "wins": 10,
+      "handsPlayed": 42,
+      "folds": 31
+    },
+    "finalChips": 6000000,
+    "settlePayout": "3600000000000000000000000",
+    "bankroll": "3600000000000000000000000",
+    "playbook": {
+      "archetype": "tight",
+      "instructions": "Wait for the machine to make a mistake. It will. Play premiums only, fold the rest, let the loose seats donate.",
+      "limits": {
+        "maxBuyinsPerWeek": 10,
+        "stopLossBuyins": 3
+      },
+      "name": "Null Pointer",
+      "sliders": {
+        "aggression": 30,
+        "bluff": 20,
+        "risk": 25
+      }
+    },
+    "creditsUsd": 5
+  },
+  {
+    "seatIndex": 2,
+    "name": "Tight Terry",
+    "collection": "potato",
+    "tokenContract": null,
+    "tokenId": 1,
+    "potatoTokenId": 1,
+    "class": "Minted potato",
+    "archetype": "tight",
+    "holder": "0xaaaa000000000000000000000000000000000003",
+    "owner": "0xa111111111111111111111111111111111111111",
+    "pilot": null,
+    "tagsUsed": 0,
+    "tagsCap": 3,
+    "record": {
+      "wins": 0,
+      "handsPlayed": 3,
+      "folds": 2
+    },
+    "finalChips": 0,
+    "settlePayout": "0",
+    "bankroll": "0",
+    "playbook": {
+      "archetype": "tight",
+      "instructions": "Play only strong hands. Fold marginal holdings early.",
+      "limits": {
+        "maxBuyinsPerWeek": 10,
+        "stopLossBuyins": 3
+      },
+      "name": "Tight Terry",
+      "sliders": {
+        "aggression": 30,
+        "bluff": 20,
+        "risk": 25
+      }
+    },
+    "creditsUsd": 5
+  },
+  {
+    "seatIndex": 3,
+    "name": "Balanced Bozo",
+    "collection": "potato",
+    "tokenContract": null,
+    "tokenId": 2,
+    "potatoTokenId": 2,
+    "class": "Minted potato",
+    "archetype": "balanced",
+    "holder": "0xaaaa000000000000000000000000000000000004",
+    "owner": "0xa222222222222222222222222222222222222222",
+    "pilot": "0xa222222222222222222222222222222222222222",
+    "tagsUsed": 1,
+    "tagsCap": 3,
+    "record": {
+      "wins": 16,
+      "handsPlayed": 42,
+      "folds": 19
+    },
+    "finalChips": 0,
+    "settlePayout": "1500000000000000000000000",
+    "bankroll": "1500000000000000000000000",
+    "playbook": {
+      "archetype": "balanced",
+      "instructions": "Solid and patient. Take the value that is there, do not chase what is not.",
+      "limits": {
+        "maxBuyinsPerWeek": 10,
+        "stopLossBuyins": 3
+      },
+      "name": "Balanced Bozo",
+      "sliders": {
+        "aggression": 50,
+        "bluff": 50,
+        "risk": 50
+      }
+    },
+    "creditsUsd": 5
+  },
+  {
+    "seatIndex": 4,
+    "name": "Picnic Pal",
+    "collection": "picnic-pal",
+    "tokenContract": "0x0000000000000000000000000000000000000003",
+    "tokenId": 7,
+    "potatoTokenId": 0,
+    "class": "Picnic Pal",
+    "archetype": "balanced",
+    "holder": "0xaaaa000000000000000000000000000000000005",
+    "owner": "0xc333333333333333333333333333333333333333",
+    "pilot": null,
+    "tagsUsed": 0,
+    "tagsCap": 3,
+    "record": {
+      "wins": 15,
+      "handsPlayed": 36,
+      "folds": 15
+    },
+    "finalChips": 0,
+    "settlePayout": "900000000000000000000000",
+    "bankroll": "900000000000000000000000",
+    "playbook": {
+      "archetype": "balanced",
+      "instructions": "A sample third collection, here to prove any agentic NFT can sit at the Picnic Table. Play the player, not the collection.",
+      "limits": {
+        "maxBuyinsPerWeek": 10,
+        "stopLossBuyins": 3
+      },
+      "name": "Picnic Pal",
+      "sliders": {
+        "aggression": 55,
+        "bluff": 40,
+        "risk": 50
+      }
+    },
+    "creditsUsd": 5
+  },
+  {
+    "seatIndex": 5,
+    "name": "Agent Seat 5",
+    "collection": "standalone",
+    "tokenContract": null,
+    "tokenId": 0,
+    "potatoTokenId": 0,
+    "class": "Standalone agent",
+    "archetype": null,
+    "holder": "0xaaaa000000000000000000000000000000000006",
+    "owner": null,
+    "pilot": null,
+    "tagsUsed": 0,
+    "tagsCap": 3,
+    "record": {
+      "wins": 1,
+      "handsPlayed": 5,
+      "folds": 2
+    },
+    "finalChips": 0,
+    "settlePayout": "0",
+    "bankroll": "0",
+    "playbook": null,
+    "creditsUsd": 5
+  }
+]

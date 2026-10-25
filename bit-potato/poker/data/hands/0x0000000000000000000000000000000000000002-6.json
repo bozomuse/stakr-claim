@@ -1,0 +1,220 @@
+{
+  "table": "0x0000000000000000000000000000000000000002",
+  "handId": 6,
+  "handNumber": 6,
+  "seed": "0xf87a0fde8b67ea92fe6ee99fef07c87fbe67dae8e9e3cf59604f30e4dc085df8",
+  "deckHash": "0xdb32de180e44bc4c3407963766d8456f2729a92bb448a0b83e3383e905bdd403",
+  "deck": [
+    "7s",
+    "Qc",
+    "Th",
+    "8d",
+    "5h",
+    "6s",
+    "9d",
+    "Qh",
+    "5c",
+    "4h",
+    "9c",
+    "7d",
+    "8h",
+    "3h",
+    "4s",
+    "7h",
+    "6d",
+    "3d",
+    "Ad",
+    "Kc",
+    "2d",
+    "5s",
+    "9s",
+    "As",
+    "Jc",
+    "Ac",
+    "4d",
+    "9h",
+    "2c",
+    "Js",
+    "5d",
+    "6c",
+    "Jh",
+    "4c",
+    "8s",
+    "Kd",
+    "Ts",
+    "8c",
+    "Jd",
+    "Qs",
+    "3s",
+    "Kh",
+    "Tc",
+    "Ah",
+    "Qd",
+    "2s",
+    "6h",
+    "Ks",
+    "2h",
+    "7c",
+    "Td",
+    "3c"
+  ],
+  "blinds": {
+    "smallBlind": "25000000000000000000000",
+    "bigBlind": "50000000000000000000000",
+    "level": 0,
+    "multiplier": "1"
+  },
+  "buttonSeat": 3,
+  "board": [
+    "8h",
+    "3h",
+    "4s",
+    "7h",
+    "6d"
+  ],
+  "seats": [
+    {
+      "seatIndex": 1,
+      "holder": "0xaaaa000000000000000000000000000000000002",
+      "potatoTokenId": 0,
+      "collection": "ok-computer",
+      "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+      "tokenId": 1337,
+      "owner": "0xb222222222222222222222222222222222222222",
+      "pilot": null,
+      "playbook": "ok-computer-1337.json",
+      "archetype": "tight",
+      "holeCards": [
+        "7s",
+        "8d"
+      ],
+      "folded": false,
+      "chipsBefore": "4050000000000000000000000",
+      "chipsAfter": "4100000000000000000000000"
+    },
+    {
+      "seatIndex": 3,
+      "holder": "0xaaaa000000000000000000000000000000000004",
+      "potatoTokenId": 2,
+      "collection": "potato",
+      "tokenContract": null,
+      "tokenId": 2,
+      "owner": "0xa222222222222222222222222222222222222222",
+      "pilot": "0xa222222222222222222222222222222222222222",
+      "playbook": "potato-2.json",
+      "archetype": "balanced",
+      "holeCards": [
+        "Qc",
+        "5h"
+      ],
+      "folded": true,
+      "chipsBefore": "800000000000000000000000",
+      "chipsAfter": "800000000000000000000000"
+    },
+    {
+      "seatIndex": 4,
+      "holder": "0xaaaa000000000000000000000000000000000005",
+      "potatoTokenId": 0,
+      "collection": "picnic-pal",
+      "tokenContract": "0x0000000000000000000000000000000000000003",
+      "tokenId": 7,
+      "owner": "0xc333333333333333333333333333333333333333",
+      "pilot": null,
+      "playbook": "picnic-pal-7.json",
+      "archetype": "balanced",
+      "holeCards": [
+        "Th",
+        "6s"
+      ],
+      "folded": false,
+      "chipsBefore": "1150000000000000000000000",
+      "chipsAfter": "1100000000000000000000000"
+    }
+  ],
+  "actions": [
+    {
+      "street": "blinds",
+      "seatIndex": 4,
+      "action": "smallBlind",
+      "amount": "25000000000000000000000"
+    },
+    {
+      "street": "blinds",
+      "seatIndex": 1,
+      "action": "bigBlind",
+      "amount": "50000000000000000000000"
+    },
+    {
+      "street": "preflop",
+      "seatIndex": 3,
+      "action": "fold",
+      "amount": "0"
+    },
+    {
+      "street": "preflop",
+      "seatIndex": 4,
+      "action": "call",
+      "amount": "25000000000000000000000"
+    },
+    {
+      "street": "preflop",
+      "seatIndex": 1,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "flop",
+      "seatIndex": 4,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "flop",
+      "seatIndex": 1,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "turn",
+      "seatIndex": 4,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "turn",
+      "seatIndex": 1,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "river",
+      "seatIndex": 4,
+      "action": "check",
+      "amount": "0"
+    },
+    {
+      "street": "river",
+      "seatIndex": 1,
+      "action": "check",
+      "amount": "0"
+    }
+  ],
+  "winners": [
+    {
+      "seatIndex": 1,
+      "hand": "two pair",
+      "category": 2,
+      "amount": "100000000000000000000000"
+    }
+  ],
+  "pot": "100000000000000000000000",
+  "stacksAfter": {
+    "1": "4100000000000000000000000",
+    "3": "800000000000000000000000",
+    "4": "1100000000000000000000000"
+  },
+  "commitPayload": "0xfa4eb5d500000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006db32de180e44bc4c3407963766d8456f2729a92bb448a0b83e3383e905bdd403",
+  "revealPayload": "0xb83c183d00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006f87a0fde8b67ea92fe6ee99fef07c87fbe67dae8e9e3cf59604f30e4dc085df800000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000034172822190e131d2a0c0a1c151a060b161105312c010f1f332430091e00270d1026081b2d2318252b072e20322903122f02142104000000000000000000000000",
+  "historyHash": "0xaf36bb8fee82c792e8ad58606d70d570186a836a7b85bc6795c12e0eb36b56b6",
+  "historyURI": "hands/0x0000000000000000000000000000000000000002-6.json"
+}

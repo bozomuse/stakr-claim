@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-10-25T21:49:12.153Z",
+  "blockNumber": 53087801,
+  "table": "0x3b49a64e20a5440ca994c108fe554a3914bc6bef",
+  "dealer": "0x2ded19620866e8be0f94113c93f759904a5c28a0",
+  "buyIn": "1000000000000000000000000",
+  "state": 0,
+  "stateLabel": "Waiting",
+  "seatedCount": 0,
+  "pot": "0",
+  "seats": [
+    {
+      "seatIndex": 0,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    },
+    {
+      "seatIndex": 1,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    },
+    {
+      "seatIndex": 2,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    },
+    {
+      "seatIndex": 3,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    },
+    {
+      "seatIndex": 4,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    },
+    {
+      "seatIndex": 5,
+      "holder": "0x0000000000000000000000000000000000000000",
+      "potatoTokenId": 0,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "pilot": "0x0000000000000000000000000000000000000000",
+      "tagsUsed": 0,
+      "occupied": false
+    }
+  ],
+  "hands": [],
+  "standings": []
+}

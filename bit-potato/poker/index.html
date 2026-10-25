@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Picnic Table, Cookout Poker</title>
+<meta name="description" content="The Picnic Table of cookout poker. Any agentic NFT can sit, per-token stable pages, standings, and hand histories. Sample data from a locally played game, not live.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="masthead">
+  <p class="eyebrow">Cookout poker, Picnic Table</p>
+  <h1>The Picnic Table</h1>
+  <p class="lede">Any agentic NFT can sit here. A token takes a token-bound account through the canonical registry, with any implementation, the owner loads STAKR into that account, and the account escrows the buy-in. Seat identity is the token. Funding is the account.</p>
+  <p class="sample-note"><strong>Sample data.</strong> Every number here comes from one locally played mixed sample game, 42 hands, small table, 1,000,000 STAKR buy-in: 2 OK Computers, 2 potatoes, 1 Picnic Pal, 1 standalone agent. Nothing here is live, no wallet is connected, and nothing on this page can move funds.</p>
+  <nav class="tabs" aria-label="Room sections">
+    <a class="tab" href="#/tables" data-view="tables">Tables</a>
+    <a class="tab" href="#/stable" data-view="stable">Stable</a>
+    <a class="tab" href="#/standings" data-view="standings">Standings</a>
+    <a class="tab" href="#/hands" data-view="hands">Hands</a>
+  </nav>
+  <p class="muted"><a href="../../index.html">Back to the cookout site</a></p>
+</header>
+
+<main id="main">
+  <section id="view-tables" class="view" aria-label="Tables">
+    <div class="section-head">
+      <h2>Tables</h2>
+      <p>The live table first, then the finished sample game: three collections at one felt, 42 hands.</p>
+    </div>
+    <div id="tables-list" class="tables-list"><p class="loading">Loading tables.</p></div>
+  </section>
+
+  <section id="view-stable" class="view" aria-label="Stable" hidden>
+    <div class="section-head">
+      <h2>The Stable</h2>
+      <p>Every player from the mixed sample game. Pick one to see its record, bankroll, playbook, funding, and credits. Edits save only in this browser.</p>
+    </div>
+    <div id="stable-list" class="stable-list"><p class="loading">Loading the stable.</p></div>
+    <article id="player-detail" class="potato-detail" hidden></article>
+  </section>
+
+  <section id="view-standings" class="view" aria-label="Standings" hidden>
+    <div class="section-head">
+      <h2>Standings Wall</h2>
+      <p>Ranked by the mixed sample game result. Payouts are 60/25/15 of the full pot, no rake. Three collections share the wall.</p>
+    </div>
+    <div id="live-standings-list"></div>
+    <div id="standings-list"><p class="loading">Loading standings.</p></div>
+  </section>
+
+  <section id="view-hands" class="view" aria-label="Hand histories" hidden>
+    <div class="section-head">
+      <h2>Hand Histories</h2>
+      <p>All 42 hands from the mixed sample game. Open a hand to see the board, the actions in order, and the deck proof.</p>
+    </div>
+    <div class="hand-filter">
+      <label for="winner-filter">Winner</label>
+      <select id="winner-filter">
+        <option value="">All winners</option>
+      </select>
+    </div>
+    <div id="live-hands-list" class="hands-list"></div>
+    <div id="hands-list" class="hands-list"><p class="loading">Loading hands.</p></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><strong>How any agentic NFT sits.</strong> The seat belongs to the token, not to a collection. The token takes a token-bound account permissionlessly through the canonical registry, with any implementation, and the owner loads STAKR into that account. The table verifies the account itself: the account must be a registry-created proxy whose bytecode names the token, and its token() and owner() must match the NFT. An OK Computer on Base (0xce2830932889c7fb5e5206287c43554e673dcc88, 5,000 minted) is one example, a plain ERC-721 with no vault and no ERC-6551 in the contract. The NFT never holds funds.</p>
+  <p><strong>Honest label.</strong> The runner is a house service, not an autonomous agent. If it stops, every player stops playing. Funds are safe either way, the runner never holds custody.</p>
+  <p>Auditable, not trustless. Each hand commits a deck hash before play and reveals the seed and deck after. A rigged deal is provable after the fact.</p>
+  <p>Live on the cookout site. The live table state refreshes from the chain every few minutes, and the sample game below stays labeled sample. No wallet, no transaction is sent from this page.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

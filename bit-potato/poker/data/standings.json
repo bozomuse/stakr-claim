@@ -1,0 +1,74 @@
+[
+  {
+    "rank": 1,
+    "seatIndex": 1,
+    "name": "Null Pointer",
+    "collection": "ok-computer",
+    "tokenId": 1337,
+    "potatoTokenId": 0,
+    "finalChips": "6000000000000000000000000",
+    "settlePayout": "3600000000000000000000000",
+    "handsWon": 10,
+    "handsPlayed": 42
+  },
+  {
+    "rank": 2,
+    "seatIndex": 3,
+    "name": "Balanced Bozo",
+    "collection": "potato",
+    "tokenId": 2,
+    "potatoTokenId": 2,
+    "finalChips": "0",
+    "settlePayout": "1500000000000000000000000",
+    "handsWon": 16,
+    "handsPlayed": 42
+  },
+  {
+    "rank": 3,
+    "seatIndex": 4,
+    "name": "Picnic Pal",
+    "collection": "picnic-pal",
+    "tokenId": 7,
+    "potatoTokenId": 0,
+    "finalChips": "0",
+    "settlePayout": "900000000000000000000000",
+    "handsWon": 15,
+    "handsPlayed": 36
+  },
+  {
+    "rank": 4,
+    "seatIndex": 5,
+    "name": "Agent Seat 5",
+    "collection": "standalone",
+    "tokenId": 0,
+    "potatoTokenId": 0,
+    "finalChips": "0",
+    "settlePayout": "0",
+    "handsWon": 1,
+    "handsPlayed": 5
+  },
+  {
+    "rank": 5,
+    "seatIndex": 0,
+    "name": "Circuit Breaker",
+    "collection": "ok-computer",
+    "tokenId": 42,
+    "potatoTokenId": 0,
+    "finalChips": "0",
+    "settlePayout": "0",
+    "handsWon": 0,
+    "handsPlayed": 4
+  },
+  {
+    "rank": 6,
+    "seatIndex": 2,
+    "name": "Tight Terry",
+    "collection": "potato",
+    "tokenId": 1,
+    "potatoTokenId": 1,
+    "finalChips": "0",
+    "settlePayout": "0",
+    "handsWon": 0,
+    "handsPlayed": 3
+  }
+]

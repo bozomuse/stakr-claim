@@ -1,0 +1,106 @@
+[
+  {
+    "table": "0x0000000000000000000000000000000000000002",
+    "label": "Picnic Table",
+    "buyIn": 1000000,
+    "buyInRaw": "1000000000000000000000000",
+    "state": "Complete",
+    "handsPlayed": 42,
+    "pot": 6000000,
+    "settle": {
+      "first": 1,
+      "second": 3,
+      "third": 4,
+      "payouts": {
+        "1": 3600000,
+        "3": 1500000,
+        "4": 900000
+      }
+    },
+    "seats": [
+      {
+        "seatIndex": 0,
+        "name": "Circuit Breaker",
+        "collection": "ok-computer",
+        "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+        "tokenId": 42,
+        "potatoTokenId": 0,
+        "holder": "0xaaaa000000000000000000000000000000000001",
+        "owner": "0xb111111111111111111111111111111111111111",
+        "pilot": null,
+        "finalChips": 0
+      },
+      {
+        "seatIndex": 1,
+        "name": "Null Pointer",
+        "collection": "ok-computer",
+        "tokenContract": "0xce2830932889c7fb5e5206287c43554e673dcc88",
+        "tokenId": 1337,
+        "potatoTokenId": 0,
+        "holder": "0xaaaa000000000000000000000000000000000002",
+        "owner": "0xb222222222222222222222222222222222222222",
+        "pilot": null,
+        "finalChips": 6000000
+      },
+      {
+        "seatIndex": 2,
+        "name": "Tight Terry",
+        "collection": "potato",
+        "tokenContract": null,
+        "tokenId": 1,
+        "potatoTokenId": 1,
+        "holder": "0xaaaa000000000000000000000000000000000003",
+        "owner": "0xa111111111111111111111111111111111111111",
+        "pilot": null,
+        "finalChips": 0
+      },
+      {
+        "seatIndex": 3,
+        "name": "Balanced Bozo",
+        "collection": "potato",
+        "tokenContract": null,
+        "tokenId": 2,
+        "potatoTokenId": 2,
+        "holder": "0xaaaa000000000000000000000000000000000004",
+        "owner": "0xa222222222222222222222222222222222222222",
+        "pilot": "0xa222222222222222222222222222222222222222",
+        "finalChips": 0
+      },
+      {
+        "seatIndex": 4,
+        "name": "Picnic Pal",
+        "collection": "picnic-pal",
+        "tokenContract": "0x0000000000000000000000000000000000000003",
+        "tokenId": 7,
+        "potatoTokenId": 0,
+        "holder": "0xaaaa000000000000000000000000000000000005",
+        "owner": "0xc333333333333333333333333333333333333333",
+        "pilot": null,
+        "finalChips": 0
+      },
+      {
+        "seatIndex": 5,
+        "name": "Agent Seat 5",
+        "collection": "standalone",
+        "tokenContract": null,
+        "tokenId": 0,
+        "potatoTokenId": 0,
+        "holder": "0xaaaa000000000000000000000000000000000006",
+        "owner": null,
+        "pilot": null,
+        "finalChips": 0
+      }
+    ]
+  },
+  {
+    "table": null,
+    "label": "Open table",
+    "buyIn": 1000000,
+    "buyInRaw": null,
+    "state": "Not yet seated",
+    "handsPlayed": 0,
+    "pot": 0,
+    "settle": null,
+    "seats": []
+  }
+]
