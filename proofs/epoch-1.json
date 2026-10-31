@@ -1,0 +1,104 @@
+{
+  "epochId": 1,
+  "priceSource": "STAKR/BNKR 24h TWAP x BNKR/USDC 24h TWAP",
+  "stakrPriceUsd": 1.2204778881514407e-07,
+  "bnkrPriceUsd": 0.00027631829886473803,
+  "twap": {
+    "stakr_leg": {
+      "samples": 24,
+      "window_s": 82800,
+      "end_block": 53309284
+    },
+    "bnkr_leg": {
+      "samples": 24,
+      "window_s": 82800,
+      "end_block": 53309284
+    },
+    "stakr_per_bnkr": 0.00044169274824208546,
+    "bnkr_per_usdc": 0.00027631829886473803
+  },
+  "holdersEvaluated": 307,
+  "distributorBalance": "103827201250450076852849",
+  "totalReserved": "0",
+  "sweptEpochs": [
+    0
+  ],
+  "root": "5f9e90e655bbb41e7dd494e822c2624e669deefc564dd9e13a69d551f8bf47a6",
+  "totalAllocated": "61244087861889471372804",
+  "kyleRetention": {
+    "kyleRetention": "80/20",
+    "kyleWallet": "0xda641d4ff3a5ea3c8b5265db8701622a68998903",
+    "kyleShareWei": "53228891735700756850057",
+    "kyleRetainedWei": "42583113388560605480045",
+    "kyleLeafToBankrWalletWei": "10645778347140151370012",
+    "kyleLeafHolder": "0xbd771A0071CA2833604257eEF6d2de5d676d33e1"
+  },
+  "claims": {
+    "0xbd771A0071CA2833604257eEF6d2de5d676d33e1": {
+      "amount": "10645778347140151370012",
+      "proof": [
+        "4cec26bc8526b36d7cc66d5b91b4f75cea05b315fdb136d8ba4c0979d2203bf2",
+        "94ef6f9e050d1183b8466d2856e04d05687a0221ccdfcd9ceb5191372c501149",
+        "3822dd6316e7903bd6fc604f617c37122062202858ae2d92b11fa419f2286b3c"
+      ]
+    },
+    "0x9EB54e77Cfe0355D4ff30208C22823CbeCB6F219": {
+      "amount": "6866119654415208952724",
+      "proof": [
+        "1fa91a1c93524bae86f0941d7081e27d403ca740d29614f7275ea83984d60030",
+        "94ef6f9e050d1183b8466d2856e04d05687a0221ccdfcd9ceb5191372c501149",
+        "3822dd6316e7903bd6fc604f617c37122062202858ae2d92b11fa419f2286b3c"
+      ]
+    },
+    "0xD6Dab4691EE54FD06b3E834c90b78ff5cb633ee8": {
+      "amount": "15389756204934212672784",
+      "proof": [
+        "6dc8a0437281c8bf8e8f777b72f2f4982bfc587241720ec3908cab1b691ef271",
+        "5d525d005a27c86a8697a4111e0e9f4b062f5c1e4a8896cfc004dee2a9abdb36",
+        "3822dd6316e7903bd6fc604f617c37122062202858ae2d92b11fa419f2286b3c"
+      ]
+    },
+    "0x424505516B81F63fD609920176957C0F9eFDCC2d": {
+      "amount": "6351628596409942354791",
+      "proof": [
+        "5fa804f218cb65c6423f63f502c2f01624cf2cc5984a4ec7981625bdfa5faaa5",
+        "5d525d005a27c86a8697a4111e0e9f4b062f5c1e4a8896cfc004dee2a9abdb36",
+        "3822dd6316e7903bd6fc604f617c37122062202858ae2d92b11fa419f2286b3c"
+      ]
+    },
+    "0x16CAf4a8A3DEf5Da8d5BD1b69eaB7102863F6f08": {
+      "amount": "3004346227119620285554",
+      "proof": [
+        "87ada62e145214276f78ef8edaaa00e211bf129a90c3470e17b42a2155c19967",
+        "eca3dd74d98baba60f9e9c72cc27d34aae3b2251bac26ca4028813dde739f6ae",
+        "9e8bd07c204fd14a63c1e62019efe1afb2167fb920f78dd7e3254d1868fe9bfc"
+      ]
+    },
+    "0x8DbB3D5a852d1C1561E339d4a39118FE345321d2": {
+      "amount": "6227240778623486295086",
+      "proof": [
+        "7aa0ca987f2d5b6c1b92e75ca386734c63ab1a58937e53d37a4293fd3e7fc155",
+        "eca3dd74d98baba60f9e9c72cc27d34aae3b2251bac26ca4028813dde739f6ae",
+        "9e8bd07c204fd14a63c1e62019efe1afb2167fb920f78dd7e3254d1868fe9bfc"
+      ]
+    },
+    "0x0740C33baDFd78da04a6a76107363dCb893A428b": {
+      "amount": "2828401681689702858717",
+      "proof": [
+        "ff6fd3581a325b5fc11be266fe19e8a5324f632adaac21648a5da93839c646ca",
+        "405e093c34209c0e8fabc3732fd103713004308db3b988a1b906288ad061e189",
+        "9e8bd07c204fd14a63c1e62019efe1afb2167fb920f78dd7e3254d1868fe9bfc"
+      ]
+    },
+    "0xCd1aC3eFcAE0dC58163Ee538D666dC363d469802": {
+      "amount": "9930816371557146583136",
+      "proof": [
+        "f3693f54f5ba642234ec0f5a6a0367a396bb14049474f927c8f27eb06ded8c6a",
+        "405e093c34209c0e8fabc3732fd103713004308db3b988a1b906288ad061e189",
+        "9e8bd07c204fd14a63c1e62019efe1afb2167fb920f78dd7e3254d1868fe9bfc"
+      ]
+    }
+  },
+  "demo": false,
+  "published": "2026-10-31T00:54:32.714234+00:00"
+}
