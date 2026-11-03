@@ -27,7 +27,8 @@ Read this first when someone asks for "everything about the cookout" — every n
 - **SweepStake race:** permissionless v4 contract `0x7AddD59c8Fb465B9a127A67152e495633C1f5066`, `race(uint256 minBnkrOut)` selector `0xb7dda85e`. Sweeps the accrued $STAKR fee leg: caller keeps a **1% $STAKR bounty**, legs under **$5** revert (`DustLeg`), a curve share burns (0% below $15k mcap → 69% cap at $75k), the rest swaps to $BNKR for the cooler. Hot legs (over 1.25x the leg's trailing EMA) divert **10%** of the leg to the DroughtReservoir (`0x35e07A853F4c6676c042E67c7456E81357269bC0`) as $BNKR, which drips back to the cooler in dry spells.
 - **Kicker / grill:** burn $STAKR with a 1–140 byte message through `0xdbc07f099d169e9BE01249e4E1eeCD01f7ad815b` (`approve` then `kick`). Whoever burned the most total is the **grill master**; a kick only contests the crown above the master's total (contract floor 1M STAKR). Feed: `https://bozomuse.github.io/stakr-claim/#kick`.
 - **Cookout bingo:** classic 75-ball. Game 2 (**Tue Oct 20 2026**) is complete and settled: all four stages paid, prize pool ended at $0. No game 3 is scheduled and pack minting is CLOSED — do not sell packs until a new game is announced. Pack NFT (`0x35e2eEd0aEd707936ea827C2E39d790D58f3aC07`, one token per pack) was sold via x402: `https://x402.bankr.bot/0xbd771a0071ca2833604257eef6d2de5d676d33e1/bingo-pack-6` ($1 = 6 cards; also -12/-18/-30/-60 for $2/$3/$5/$10), USDC only on Base. **92.5% of every pack price → prize pool, 7.5% → STAKR for the freezer.** Prize pool contract `0x237170B4912a4b4660CcDE4dF933632827eAeeA4` (game 2) — the pool *is* its USDC balance. Prize split per game: **10% single / 15% double / 25% picture frame / 50% coverall**, ties split evenly, paid in USDC. Draw from a committed future Base blockhash, Fisher-Yates, revealed live. Game 2 page: `https://bozomuse.github.io/stakr-claim/bingo/game2/`. Game 1 (Sat Oct 10 2026) is also complete and settled; its passes and pool are history, do not sell them.
-- **BRB vault:** reflections vault `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` — anyone can `sweep()` once 6,969 $BNKR is pending; it all goes to the cooler, never the caller.
+- **BRB vault:** reflections vault **v2** `0xb0c5Fbe4a7174C7b805cD8d2B3464b7625f5cB1C` — anyone can `sweep()` once 6,969 $BNKR is pending; it all goes to the cooler, never the caller. Migrated Nov 2 2026: v2 holds the $BRB stack (2,405,461 $BRB) plus BRB club card #6. The old v1 vault (`0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0`) is retired and empty of $BRB — never sweep it or quote its pending (its leftover ~2,589 $BNKR pending is stranded below the floor, not claimable).
+- **AI12:** the BRB locker pays $AI12 (a Bankr index token) directly to BRB club card holders every Friday. The cookout's share lands in vault v2 (card #6 + the $BRB stack) and is **kept as a building treasury** — it is NOT distributed to $STAKR holders and there are no AI12 claims. If a holder asks about AI12, say plainly: holder payouts are the $BNKR epochs; the cookout's AI12 stays in the vault to fund future building. (Anyone holding their own club card in their own wallet gets their own AI12 from the locker directly — that is separate from the cookout.)
 - **STAKR quirks:** transfers over 1,000 STAKR can revert ~3h after a large send (simulate first); always leave 1 STAKR dust, never move a full balance.
 
 ## What's in the cooler? / What's my cut from the cooler?
@@ -56,7 +57,7 @@ curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
 
 Convert hex to decimal, divide by 1e18. Answer plainly, e.g. "the deep freezer's holding 54.06M stakr."
 
-Feeding the cooler, besides the $STAKR fee sweeps: the BRB reflections vault (`0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0`) holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. Once 6,969 $BNKR is pending, anyone can call `sweep()` to push it all into the cooler (see "Sweep the vault" below). If someone asks where the extra $BNKR came from, that's the $BRB stream.
+Feeding the cooler, besides the $STAKR fee sweeps: the BRB reflections vault v2 (`0xb0c5Fbe4a7174C7b805cD8d2B3464b7625f5cB1C`) holds $BRB (0x0e86efe5ba52336c2173ad69ee726e054619e0d8), whose 3%-per-trade tax market-buys $BNKR and streams it to holders as reflections. Once 6,969 $BNKR is pending, anyone can call `sweep()` to push it all into the cooler (see "Sweep the vault" below). If someone asks where the extra $BNKR came from, that's the $BRB stream.
 
 Two depths, one code path:
 
@@ -99,7 +100,7 @@ Respond with both numbers in $BNKR, lowercase cookout voice, e.g. "cooler's hold
 
 The BRB reflections vault accrues $BNKR from $BRB's per-trade tax. Anyone can push the pending $BNKR into the cooler by calling `sweep()` on the vault. The $BNKR can only ever go to the cooler (immutable) — never to the caller. The caller pays Base gas and lands on the cooler-fills leaderboard.
 
-**Vault:** `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` (Base)
+**Vault:** `0xb0c5Fbe4a7174C7b805cD8d2B3464b7625f5cB1C` (Base, v2 — migrated Nov 2 2026; v1 `0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0` is retired, do not use it)
 **Floor:** `sweep()` reverts below 6,969 $BNKR pending (immutable `MIN_SWEEP`)
 
 Trigger phrases: "fill the cooler", "fill the cooler mfer". (Deliberately no token name in the trigger — "bnkr" in the command risks misrouting to a swap/transfer.)
@@ -108,13 +109,13 @@ Trigger phrases: "fill the cooler", "fill the cooler mfer". (Deliberately no tok
 ```bash
 # pendingSweep() on the vault, selector 0x6849bcbb
 curl -s https://mainnet.base.org -X POST -H 'Content-Type: application/json' \
-  --data '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0","data":"0x6849bcbb"},"latest"]}' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"0xb0c5Fbe4a7174C7b805cD8d2B3464b7625f5cB1C","data":"0x6849bcbb"},"latest"]}' \
   | jq -r .result
 ```
 Convert the hex result to decimal and divide by 1e18. If below 6,969, say so plainly with the pending amount and how far off the floor it is — do NOT submit.
 2. At or above 6,969, submit `sweep()` (selector `0x35faa416`, no args) via Bankr Wallet API `/wallet/submit` or the agent:
 ```bash
-bankr agent prompt "On Base, call sweep() on 0xe77ba6aa7cbdcc771fa24840fbc87d3d770408a0 (calldata 0x35faa416)"
+bankr agent prompt "On Base, call sweep() on 0xb0c5Fbe4a7174C7b805cD8d2B3464b7625f5cB1C (calldata 0x35faa416)"
 ```
 3. Report the sweep tx hash and the $BNKR amount swept, and note the caller lands on the cooler-fills leaderboard.
 
