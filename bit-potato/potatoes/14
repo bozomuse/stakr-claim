@@ -1,0 +1,39 @@
+{
+  "name": "Poker Spud #14",
+  "description": "A poker-playing potato agent from the cookout. Unique 1/1 in the Poker Spuds roster, feeding the 1,000-spud CookoutPotato mint.",
+  "image": "https://bozomuse.github.io/stakr-claim/bit-potato/spuds/spud-006.jpg",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Desert night with lantern"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Classic bloodshot"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cowboy hat"
+    },
+    {
+      "trait_type": "Neckwear",
+      "value": "Bandana"
+    },
+    {
+      "trait_type": "Pose",
+      "value": "Cigar"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Heavily charred"
+    },
+    {
+      "trait_type": "Special",
+      "value": "Smoke/mist"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "1/1"
+    }
+  ]
+}
