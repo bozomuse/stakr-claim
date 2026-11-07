@@ -13,6 +13,13 @@
       "demo": false,
       "distributed": "61244087861889471372804",
       "holders": 8
+    },
+    {
+      "id": 2,
+      "file": "epoch-2.json",
+      "demo": false,
+      "distributed": "28317060561466325443169",
+      "holders": 7
     }
   ]
 }

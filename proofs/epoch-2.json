@@ -1,0 +1,94 @@
+{
+  "epochId": 2,
+  "priceSource": "STAKR/BNKR 2h TWAP x BNKR/USDC 2h TWAP",
+  "stakrPriceUsd": 1.1932517171700783e-07,
+  "bnkrPriceUsd": 0.00026928839773097865,
+  "twap": {
+    "stakr_leg": {
+      "samples": 24,
+      "window_s": 8280,
+      "end_block": 54310544
+    },
+    "bnkr_leg": {
+      "samples": 24,
+      "window_s": 8280,
+      "end_block": 54310544
+    },
+    "stakr_per_bnkr": 0.0004431129329092547,
+    "bnkr_per_usdc": 0.00026928839773097865
+  },
+  "holdersEvaluated": 307,
+  "distributorBalance": "79520792973223401692485",
+  "totalReserved": "35191038458026188494198",
+  "sweptEpochs": [],
+  "root": "a2254cf3cb6e10fb3d84294837d69f4db8d96b369d78d1d98456b8febec609ed",
+  "totalAllocated": "28317060561466325443169",
+  "kyleRetention": {
+    "kyleRetention": "80/20",
+    "kyleWallet": "0xda641d4ff3a5ea3c8b5265db8701622a68998903",
+    "kyleShareWei": "20015867442163609693898",
+    "kyleRetainedWei": "16012693953730887755118",
+    "kyleLeafToBankrWalletWei": "4003173488432721938780",
+    "kyleLeafHolder": "0xbd771A0071CA2833604257eEF6d2de5d676d33e1"
+  },
+  "claims": {
+    "0x8DbB3D5a852d1C1561E339d4a39118FE345321d2": {
+      "amount": "2030272332223626426010",
+      "proof": [
+        "1330fa5e649d1bc4eedd3d2ae808c168b78927d5a001791082734c113dd48bf4",
+        "6003af62773c629d02a7cf25de31f8140fad5a08641e4aa04b72b5db1954d7cc",
+        "116e2f55ef10e8f1cf2f79ff11bb1345dfaa9c964645ecfc8f9d1a14b7121c13"
+      ]
+    },
+    "0xbd771A0071CA2833604257eEF6d2de5d676d33e1": {
+      "amount": "4003173488432721938780",
+      "proof": [
+        "093014ddda1d1f3f7695ae344ed871e76e78d5de116783d004df6edf9f2a619f",
+        "6003af62773c629d02a7cf25de31f8140fad5a08641e4aa04b72b5db1954d7cc",
+        "116e2f55ef10e8f1cf2f79ff11bb1345dfaa9c964645ecfc8f9d1a14b7121c13"
+      ]
+    },
+    "0x424505516B81F63fD609920176957C0F9eFDCC2d": {
+      "amount": "2939633149799540294013",
+      "proof": [
+        "328fa4c775be5cd5272ca692792486341278e6cbcefc03a406aa19d9ba8ebacb",
+        "8f2eae894cd4b1b75a0802bccd48f89f9da60e06385cfd318669261fabe7c9a9",
+        "116e2f55ef10e8f1cf2f79ff11bb1345dfaa9c964645ecfc8f9d1a14b7121c13"
+      ]
+    },
+    "0xD6Dab4691EE54FD06b3E834c90b78ff5cb633ee8": {
+      "amount": "12090217401804117991983",
+      "proof": [
+        "1a47a5a53c8e5aeb0793d330a7820f896f61a53f904efb8fbb5275035a41a30a",
+        "8f2eae894cd4b1b75a0802bccd48f89f9da60e06385cfd318669261fabe7c9a9",
+        "116e2f55ef10e8f1cf2f79ff11bb1345dfaa9c964645ecfc8f9d1a14b7121c13"
+      ]
+    },
+    "0x0740C33baDFd78da04a6a76107363dCb893A428b": {
+      "amount": "858275243789663236298",
+      "proof": [
+        "b764764d251b231c7cbfe66123d0d546a0296ea008889998ab46309e895a7d9b",
+        "21cb7ad4ab239b0df5145dcb649a33be6e24ccdcb0fe4ff70e53a5cadcad3dca",
+        "cdd6ba2b857424bc46820706df8c4632d4da223abd8136d6c4312c9ab2fc6ca0"
+      ]
+    },
+    "0x9EB54e77Cfe0355D4ff30208C22823CbeCB6F219": {
+      "amount": "5358663967448653145421",
+      "proof": [
+        "7c8fcf169a448621e40ffc1e0b37d01b7ee9215dd7854cb60bfd0a0a0bd2036d",
+        "21cb7ad4ab239b0df5145dcb649a33be6e24ccdcb0fe4ff70e53a5cadcad3dca",
+        "cdd6ba2b857424bc46820706df8c4632d4da223abd8136d6c4312c9ab2fc6ca0"
+      ]
+    },
+    "0xCd1aC3eFcAE0dC58163Ee538D666dC363d469802": {
+      "amount": "1036824977968002410664",
+      "proof": [
+        "b96e3cef279bf3dae5f97579d2d702e4d0b23807065825e65b62f59529900a7c",
+        "0118bb1da8544c12881a1d4a151c968e935f32571151323355983b7bacb5d923",
+        "cdd6ba2b857424bc46820706df8c4632d4da223abd8136d6c4312c9ab2fc6ca0"
+      ]
+    }
+  },
+  "demo": false,
+  "published": "2026-11-07T11:56:15.181918+00:00"
+}
