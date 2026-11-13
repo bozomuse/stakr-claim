@@ -1,0 +1,61 @@
+{
+  "seasonId": "season-1-local",
+  "ticksPlayed": 168,
+  "winner": 6,
+  "standings": [
+    {
+      "tokenId": 6,
+      "territories": 18,
+      "armies": 606,
+      "eliminated": false
+    },
+    {
+      "tokenId": 4,
+      "territories": 11,
+      "armies": 290,
+      "eliminated": false
+    },
+    {
+      "tokenId": 5,
+      "territories": 9,
+      "armies": 82,
+      "eliminated": false
+    },
+    {
+      "tokenId": 3,
+      "territories": 3,
+      "armies": 149,
+      "eliminated": false
+    },
+    {
+      "tokenId": 2,
+      "territories": 1,
+      "armies": 10,
+      "eliminated": false
+    },
+    {
+      "tokenId": 1,
+      "territories": 0,
+      "armies": 0,
+      "eliminated": true
+    }
+  ],
+  "payouts": {
+    "1": "0",
+    "2": "142142857142857142857142",
+    "3": "426428571428571428571428",
+    "4": "1563571428571428571428571",
+    "5": "1279285714285714285714285",
+    "6": "26438571428571428571428574"
+  },
+  "rakeWei": "150000000000000000000000",
+  "remainderWei": "29850000000000000000000000",
+  "dividendPoolWei": "5970000000000000000000000",
+  "winnerShareWei": "23880000000000000000000000",
+  "dustWei": "3",
+  "totalHeld": 42,
+  "finalStateHash": "8cd835a624531ff428ea791664d50eded99f1c0ba6958c569de61cbb39b074f5",
+  "logHash": "d1c567050cb83a91c1b0d87b7def9bf97f110dccae8e400a96623d3dbcea9005",
+  "seasonSeedCommit": "677c20db6be812852ee27d46bf7290a464d251946be85f861ea6308fbc798902",
+  "revealedSecret": "local-season-1-secret"
+}

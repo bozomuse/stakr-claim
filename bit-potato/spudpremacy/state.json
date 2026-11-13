@@ -1,0 +1,327 @@
+{
+  "game": "SPUDPREMACY",
+  "seasonId": "season-1-local",
+  "ticksPlayed": 168,
+  "winner": 6,
+  "standings": [
+    {
+      "tokenId": 6,
+      "territories": 18,
+      "armies": 606,
+      "eliminated": false
+    },
+    {
+      "tokenId": 4,
+      "territories": 11,
+      "armies": 290,
+      "eliminated": false
+    },
+    {
+      "tokenId": 5,
+      "territories": 9,
+      "armies": 82,
+      "eliminated": false
+    },
+    {
+      "tokenId": 3,
+      "territories": 3,
+      "armies": 149,
+      "eliminated": false
+    },
+    {
+      "tokenId": 2,
+      "territories": 1,
+      "armies": 10,
+      "eliminated": false
+    },
+    {
+      "tokenId": 1,
+      "territories": 0,
+      "armies": 0,
+      "eliminated": true
+    }
+  ],
+  "finalStateHash": "8cd835a624531ff428ea791664d50eded99f1c0ba6958c569de61cbb39b074f5",
+  "settlement": {
+    "seasonId": "season-1-local",
+    "ticksPlayed": 168,
+    "winner": 6,
+    "standings": [
+      {
+        "tokenId": 6,
+        "territories": 18,
+        "armies": 606,
+        "eliminated": false
+      },
+      {
+        "tokenId": 4,
+        "territories": 11,
+        "armies": 290,
+        "eliminated": false
+      },
+      {
+        "tokenId": 5,
+        "territories": 9,
+        "armies": 82,
+        "eliminated": false
+      },
+      {
+        "tokenId": 3,
+        "territories": 3,
+        "armies": 149,
+        "eliminated": false
+      },
+      {
+        "tokenId": 2,
+        "territories": 1,
+        "armies": 10,
+        "eliminated": false
+      },
+      {
+        "tokenId": 1,
+        "territories": 0,
+        "armies": 0,
+        "eliminated": true
+      }
+    ],
+    "payouts": {
+      "1": "0",
+      "2": "142142857142857142857142",
+      "3": "426428571428571428571428",
+      "4": "1563571428571428571428571",
+      "5": "1279285714285714285714285",
+      "6": "26438571428571428571428574"
+    },
+    "rakeWei": "150000000000000000000000",
+    "remainderWei": "29850000000000000000000000",
+    "dividendPoolWei": "5970000000000000000000000",
+    "winnerShareWei": "23880000000000000000000000",
+    "dustWei": "3",
+    "totalHeld": 42,
+    "finalStateHash": "8cd835a624531ff428ea791664d50eded99f1c0ba6958c569de61cbb39b074f5",
+    "logHash": "d1c567050cb83a91c1b0d87b7def9bf97f110dccae8e400a96623d3dbcea9005",
+    "seasonSeedCommit": "677c20db6be812852ee27d46bf7290a464d251946be85f861ea6308fbc798902",
+    "revealedSecret": "local-season-1-secret"
+  },
+  "territories": {
+    "alaska": {
+      "owner": 4,
+      "armies": 16
+    },
+    "northwest-territory": {
+      "owner": 4,
+      "armies": 31
+    },
+    "greenland": {
+      "owner": 4,
+      "armies": 30
+    },
+    "alberta": {
+      "owner": 4,
+      "armies": 29
+    },
+    "ontario": {
+      "owner": 6,
+      "armies": 53
+    },
+    "quebec": {
+      "owner": 4,
+      "armies": 28
+    },
+    "western-united-states": {
+      "owner": 6,
+      "armies": 53
+    },
+    "eastern-united-states": {
+      "owner": 6,
+      "armies": 49
+    },
+    "central-america": {
+      "owner": 6,
+      "armies": 7
+    },
+    "venezuela": {
+      "owner": 6,
+      "armies": 7
+    },
+    "peru": {
+      "owner": 6,
+      "armies": 10
+    },
+    "brazil": {
+      "owner": 6,
+      "armies": 17
+    },
+    "argentina": {
+      "owner": 6,
+      "armies": 11
+    },
+    "iceland": {
+      "owner": 4,
+      "armies": 27
+    },
+    "great-britain": {
+      "owner": 4,
+      "armies": 26
+    },
+    "scandinavia": {
+      "owner": 4,
+      "armies": 27
+    },
+    "northern-europe": {
+      "owner": 4,
+      "armies": 27
+    },
+    "western-europe": {
+      "owner": 6,
+      "armies": 44
+    },
+    "southern-europe": {
+      "owner": 6,
+      "armies": 45
+    },
+    "ukraine": {
+      "owner": 6,
+      "armies": 43
+    },
+    "north-africa": {
+      "owner": 6,
+      "armies": 46
+    },
+    "egypt": {
+      "owner": 6,
+      "armies": 20
+    },
+    "east-africa": {
+      "owner": 6,
+      "armies": 48
+    },
+    "congo": {
+      "owner": 3,
+      "armies": 50
+    },
+    "south-africa": {
+      "owner": 3,
+      "armies": 49
+    },
+    "madagascar": {
+      "owner": 3,
+      "armies": 50
+    },
+    "ural": {
+      "owner": 6,
+      "armies": 30
+    },
+    "siberia": {
+      "owner": 5,
+      "armies": 9
+    },
+    "yakutsk": {
+      "owner": 4,
+      "armies": 26
+    },
+    "kamchatka": {
+      "owner": 4,
+      "armies": 23
+    },
+    "irkutsk": {
+      "owner": 5,
+      "armies": 11
+    },
+    "mongolia": {
+      "owner": 5,
+      "armies": 9
+    },
+    "japan": {
+      "owner": 2,
+      "armies": 10
+    },
+    "afghanistan": {
+      "owner": 6,
+      "armies": 45
+    },
+    "china": {
+      "owner": 6,
+      "armies": 29
+    },
+    "middle-east": {
+      "owner": 6,
+      "armies": 49
+    },
+    "india": {
+      "owner": 5,
+      "armies": 17
+    },
+    "siam": {
+      "owner": 5,
+      "armies": 9
+    },
+    "indonesia": {
+      "owner": 5,
+      "armies": 9
+    },
+    "new-guinea": {
+      "owner": 5,
+      "armies": 10
+    },
+    "western-australia": {
+      "owner": 5,
+      "armies": 7
+    },
+    "eastern-australia": {
+      "owner": 5,
+      "armies": 1
+    }
+  },
+  "generals": {
+    "1": {
+      "tokenId": 1,
+      "aggression": 0.85,
+      "eliminated": true,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "iceland",
+      "archetype": "loose"
+    },
+    "2": {
+      "tokenId": 2,
+      "aggression": 0.55,
+      "eliminated": false,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "ural",
+      "archetype": "balanced"
+    },
+    "3": {
+      "tokenId": 3,
+      "aggression": 0.55,
+      "eliminated": false,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "brazil",
+      "archetype": "balanced"
+    },
+    "4": {
+      "tokenId": 4,
+      "aggression": 0.25,
+      "eliminated": false,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "greenland",
+      "archetype": "tight"
+    },
+    "5": {
+      "tokenId": 5,
+      "aggression": 0.85,
+      "eliminated": false,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "siam",
+      "archetype": "loose"
+    },
+    "6": {
+      "tokenId": 6,
+      "aggression": 0.25,
+      "eliminated": false,
+      "spawnedAtTick": 0,
+      "spawnTerritory": "venezuela",
+      "archetype": "tight"
+    }
+  },
+  "finished": true
+}

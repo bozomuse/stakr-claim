@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPUDPREMACY — live map</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; background: #14100c; color: #f3ead9; }
+  h1 { margin: 0 0 4px; letter-spacing: 2px; }
+  .sub { color: #b8a888; margin-bottom: 16px; }
+  #winner { display: none; background: #7a4d00; border: 1px solid #ffb52e; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 700; }
+  .layout { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  #board { display: grid; grid-template-columns: repeat(7, 118px); gap: 6px; }
+  .terr { border: 1px solid #00000055; border-radius: 8px; padding: 6px; min-height: 52px; font-size: 11px; background: #3a3a3a; }
+  .terr b { display: block; font-size: 11px; }
+  .terr .armies { font-size: 16px; font-weight: 700; }
+  .terr.empty { background: #2a251f; color: #8d8271; }
+  table { border-collapse: collapse; }
+  th, td { padding: 4px 10px; border-bottom: 1px solid #3a3226; text-align: left; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .note { color: #8d8271; font-size: 12px; margin-top: 16px; max-width: 640px; }
+  #preseason { background: #2a251f; border: 1px solid #ffb52e; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>SPUDPREMACY</h1>
+<div id="preseason">Season 1 has not started. No generals are seated yet. This board is the showcase replay from testing. The live tick log appears here once a season starts.</div>
+<div class="sub" id="clock">Loading the public tick log…</div>
+<div id="winner"></div>
+<div class="layout">
+  <div id="board"></div>
+  <div>
+    <h3>Standings</h3>
+    <table id="standings"><thead><tr><th>General</th><th>Territories</th><th>Armies</th><th>Status</th></tr></thead><tbody></tbody></table>
+    <div class="note" id="hash"></div>
+    <h3>Latest tick</h3>
+    <div class="note" id="feed">—</div>
+  </div>
+</div>
+<p class="note">
+  Schematic node layout, not a geographic map: territories are grouped by continent
+  (North America, South America, Europe, Africa, Asia, Oceania) in canonical board order.
+  Season 1 has not started; this board shows the showcase replay from testing, not a
+  live season. The season resolves offchain and is spectated here from the
+  public tick log (<code>tick-log.json</code> next to this file, written by
+  <code>engine/simulate.js</code>): every signed order and every tick result, with
+  the board snapshot of each tick. The settlement (<code>settlement.json</code>)
+  carries the winner, the dividend splits, the revealed master seed, and the log
+  hash the escrow anchors at settle time. Serve over HTTP (for example
+  <code>python3 -m http.server</code> in this folder) because browsers block
+  fetch on file:// pages.
+</p>
+<script>
+const COLORS = { 1: '#e4572e', 2: '#2e9de4', 3: '#59c135', 4: '#b45fd9', 5: '#f2c230', 6: '#e05a8d' };
+const CONTINENT_ORDER = ['north-america', 'south-america', 'europe', 'africa', 'asia', 'oceania'];
+// Minimal map metadata duplicated for display (names + continent per territory).
+const NAMES = {"alaska":["Alaska","north-america"],"northwest-territory":["Northwest Territory","north-america"],"greenland":["Greenland","north-america"],"alberta":["Alberta","north-america"],"ontario":["Ontario","north-america"],"quebec":["Quebec","north-america"],"western-united-states":["Western United States","north-america"],"eastern-united-states":["Eastern United States","north-america"],"central-america":["Central America","north-america"],"venezuela":["Venezuela","south-america"],"peru":["Peru","south-america"],"brazil":["Brazil","south-america"],"argentina":["Argentina","south-america"],"iceland":["Iceland","europe"],"great-britain":["Great Britain","europe"],"scandinavia":["Scandinavia","europe"],"northern-europe":["Northern Europe","europe"],"western-europe":["Western Europe","europe"],"southern-europe":["Southern Europe","europe"],"ukraine":["Ukraine","europe"],"north-africa":["North Africa","africa"],"egypt":["Egypt","africa"],"east-africa":["East Africa","africa"],"congo":["Congo","africa"],"south-africa":["South Africa","africa"],"madagascar":["Madagascar","africa"],"ural":["Ural","asia"],"siberia":["Siberia","asia"],"yakutsk":["Yakutsk","asia"],"kamchatka":["Kamchatka","asia"],"irkutsk":["Irkutsk","asia"],"mongolia":["Mongolia","asia"],"japan":["Japan","asia"],"afghanistan":["Afghanistan","asia"],"china":["China","asia"],"middle-east":["Middle East","asia"],"india":["India","asia"],"siam":["Siam","asia"],"indonesia":["Indonesia","oceania"],"new-guinea":["New Guinea","oceania"],"western-australia":["Western Australia","oceania"],"eastern-australia":["Eastern Australia","oceania"]};
+
+// The map reads the PUBLIC TICK LOG (tick-log.json), not a state
+// snapshot and never onchain state. Each log entry carries its
+// tick's signed orders, events, state hash, and a compact board
+// snapshot [owner, armies] per territory, so the page renders any
+// tick's board straight from the log. The settlement file adds the
+// winner, the dividend splits, and the log hash. state.json is only
+// a fallback for a folder that has never had a log written.
+async function fetchJson(paths) {
+  for (const p of paths) {
+    try {
+      const res = await fetch(p, { cache: 'no-store' });
+      if (res.ok) return await res.json();
+    } catch (e) { /* try the next path */ }
+  }
+  return null;
+}
+
+async function load() {
+  const log = await fetchJson(['tick-log.json', '../engine/tick-log.json']);
+  if (!log || log.length === 0) {
+    const state = await fetchJson(['state.json', '../engine/state.json']);
+    if (!state) {
+      document.getElementById('clock').textContent = 'No tick log found. Run: node engine/simulate.js';
+      return;
+    }
+    renderFromState(state);
+    return;
+  }
+  const settlement = await fetchJson(['settlement.json', '../engine/settlement.json']);
+  renderFromLog(log, settlement);
+}
+
+function describeOrder(order) {
+  if (!order) return 'no order (hold)';
+  if (order.type === 'attack') return `attack ${order.from} → ${order.to} (${order.armies})`;
+  if (order.type === 'reinforce') return `reinforce ${order.territory}`;
+  return order.type || 'hold';
+}
+
+function renderFromLog(log, settlement) {
+  const last = log[log.length - 1];
+  const finished = last.events && last.events.some((e) => e.type === 'season-end');
+  const winner = finished && last.events.find((e) => e.type === 'season-end').winner;
+  const seasonId = (settlement && settlement.seasonId) || 'season';
+  document.getElementById('clock').textContent =
+    `${seasonId} · tick ${last.tick} of 168 (1 tick = 1 hour, 7 day season)` +
+    (finished ? ' · season finished' : ' · season running · live from the public tick log');
+  if (finished && winner != null) {
+    const w = document.getElementById('winner');
+    w.style.display = 'block';
+    let text = `🏆 General #${winner} wins SPUDPREMACY`;
+    if (settlement && settlement.payouts) {
+      const win = BigInt(settlement.payouts[winner] || 0n) / 10n ** 18n;
+      text += ` · takes ${win.toLocaleString()} STAKR (winner share + territory dividend)`;
+    }
+    w.textContent = text;
+  }
+  // Board from the latest log entry's snapshot.
+  renderBoard(last.board || {});
+  // Standings derived from the board: territories and armies per owner.
+  const byOwner = {};
+  for (const [id, [owner, armies]] of Object.entries(last.board || {})) {
+    if (owner == null) continue;
+    byOwner[owner] = byOwner[owner] || { tokenId: owner, territories: 0, armies: 0, eliminated: false };
+    byOwner[owner].territories += 1;
+    byOwner[owner].armies += armies;
+  }
+  const standings = Object.values(byOwner).sort((a, b) => b.territories - a.territories || b.armies - a.armies);
+  for (const s of standings) if (s.territories === 0) s.eliminated = true;
+  renderStandings(standings);
+  document.getElementById('hash').textContent =
+    `State hash: ${last.stateHash}` +
+    (settlement ? ` · log hash: ${settlement.logHash}` : '');
+  // Latest tick's feed: what each general ordered, and what happened.
+  const orders = Object.entries(last.orders || {})
+    .map(([tokenId, o]) => `GEN #${tokenId}: ${describeOrder(o)}`).join(' · ');
+  const events = (last.events || [])
+    .filter((e) => e.type === 'capture' || e.type === 'eliminated' || e.type === 'attack-repelled')
+    .map((e) => e.type === 'capture' ? `GEN #${e.tokenId} captured ${e.to} from ${e.from}` :
+      e.type === 'eliminated' ? `GEN #${e.tokenId} eliminated` :
+      `GEN #${e.tokenId} repelled at ${e.to}`).join(' · ');
+  document.getElementById('feed').textContent =
+    `Tick ${last.tick}: ${orders}` + (events ? ` — ${events}` : '');
+}
+
+function renderBoard(board) {
+  const ids = Object.keys(NAMES).sort((a, b) =>
+    CONTINENT_ORDER.indexOf(NAMES[a][1]) - CONTINENT_ORDER.indexOf(NAMES[b][1]));
+  const boardEl = document.getElementById('board');
+  boardEl.innerHTML = '';
+  for (const id of ids) {
+    const [owner, armies] = board[id] || [null, 0];
+    const div = document.createElement('div');
+    div.className = 'terr' + (owner == null ? ' empty' : '');
+    if (owner != null) div.style.background = COLORS[owner] || '#888';
+    div.innerHTML = `<b>${NAMES[id][0]}</b>` +
+      (owner == null ? 'unclaimed' : `<span class="armies">${armies}</span> · GEN #${owner}`);
+    boardEl.appendChild(div);
+  }
+}
+
+function renderStandings(standings) {
+  const tbody = document.querySelector('#standings tbody');
+  tbody.innerHTML = '';
+  for (const s of standings) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="swatch" style="background:${COLORS[s.tokenId] || '#888'}"></span>#${s.tokenId}</td>` +
+      `<td>${s.territories}</td><td>${s.armies}</td><td>${s.eliminated ? 'eliminated' : 'alive'}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function renderFromState(state) {
+  // Fallback for a folder with a state snapshot but no log yet.
+  document.getElementById('clock').textContent =
+    `${state.seasonId} · tick ${state.ticksPlayed} of 168 (1 tick = 1 hour, 7 day season)` +
+    (state.finished ? ' · season finished' : ' · season running');
+  if (state.finished && state.winner != null) {
+    const w = document.getElementById('winner');
+    w.style.display = 'block';
+    w.textContent = `🏆 General #${state.winner} wins SPUDPREMACY`;
+  }
+  const board = {};
+  for (const [id, t] of Object.entries(state.territories || {})) board[id] = [t.owner, t.armies];
+  renderBoard(board);
+  renderStandings(state.standings || []);
+  if (state.finalStateHash) {
+    document.getElementById('hash').textContent = `Final state hash: ${state.finalStateHash}`;
+  }
+}
+load();
+</script>
+</body>
+</html>
