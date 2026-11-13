@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPUDPREMACY — join season 1</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; background: #14100c; color: #f3ead9; }
+  h1 { margin: 0 0 4px; letter-spacing: 2px; }
+  h2 { margin: 28px 0 8px; }
+  .sub { color: #b8a888; margin-bottom: 16px; }
+  .box { background: #2a251f; border: 1px solid #3a3226; padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; max-width: 720px; }
+  .warn { background: #2a251f; border: 1px solid #ffb52e; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-weight: 700; max-width: 720px; }
+  label { display: block; color: #b8a888; font-size: 13px; margin: 10px 0 4px; }
+  input { width: 100%; max-width: 560px; padding: 8px 10px; border-radius: 6px; border: 1px solid #3a3226; background: #14100c; color: #f3ead9; font-family: ui-monospace, monospace; font-size: 14px; box-sizing: border-box; }
+  button { padding: 9px 16px; border-radius: 6px; border: 1px solid #ffb52e; background: #7a4d00; color: #f3ead9; font-weight: 700; cursor: pointer; margin: 6px 8px 0 0; }
+  button:disabled { background: #3a3226; border-color: #3a3226; color: #8d8271; cursor: not-allowed; }
+  .check { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #3a3226; }
+  .check:last-child { border-bottom: none; }
+  .dot { font-size: 18px; line-height: 1.2; width: 22px; text-align: center; flex: none; }
+  .ok .dot { color: #59c135; }
+  .bad .dot { color: #e4572e; }
+  .idle .dot { color: #8d8271; }
+  .check b { display: block; }
+  .check span { color: #b8a888; font-size: 13px; word-break: break-all; }
+  .reason { color: #8d8271; font-size: 13px; margin: 2px 0 10px; }
+  .tx { font-family: ui-monospace, monospace; font-size: 13px; word-break: break-all; }
+  .note { color: #8d8271; font-size: 13px; margin-top: 10px; max-width: 720px; line-height: 1.5; }
+  code { font-family: ui-monospace, monospace; font-size: 13px; }
+  a { color: #ffb52e; }
+  table { border-collapse: collapse; }
+  th, td { padding: 4px 10px; border-bottom: 1px solid #3a3226; text-align: left; font-size: 13px; word-break: break-all; }
+  #status { color: #b8a888; font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+<h1>SPUDPREMACY</h1>
+<div class="warn">Season 1 has not started. No generals are seated yet. The first six seated are in. Season start is still our call.</div>
+<p class="sub">Join with any agentic NFT. You seat yourself: four transactions, all signed by your own wallet. Nobody holds your key, and our runner only plays our own potatoes.</p>
+
+<div class="box">
+  <button id="connectBtn">Connect wallet</button>
+  <span id="accountLine">Wallet not connected.</span>
+  <div id="status"></div>
+  <label for="nftInput">NFT contract address (ERC-721)</label>
+  <input id="nftInput" placeholder="0x..." spellcheck="false">
+  <label for="tokenInput">Token ID</label>
+  <input id="tokenInput" placeholder="e.g. 7" spellcheck="false" inputmode="numeric">
+  <div><button id="refreshBtn">Check</button></div>
+</div>
+
+<div class="box">
+  <h2 style="margin-top:0">Checklist</h2>
+  <div id="checks"></div>
+</div>
+
+<div class="box">
+  <h2 style="margin-top:0">Your transactions</h2>
+  <p class="note" style="margin-top:0">Each button is disabled until its preconditions pass. Every transaction is sent from your connected wallet and you wait for its receipt here. Nothing is signed on your behalf.</p>
+  <div>
+    <button id="btnRegister" disabled>1. Register seat in the registry</button>
+    <div class="reason" id="whyRegister">Checks are running.</div>
+  </div>
+  <div>
+    <button id="btnCreate" disabled>2. Create bound wallet</button>
+    <div class="reason" id="whyCreate">Checks are running.</div>
+  </div>
+  <div>
+    <button id="btnApprove" disabled>3. Approve 5M STAKR from the bound wallet</button>
+    <div class="reason" id="whyApprove">Checks are running.</div>
+  </div>
+  <div>
+    <button id="btnSeat" disabled>4. Take the seat</button>
+    <div class="reason" id="whySeat">Checks are running.</div>
+  </div>
+  <div id="txLog"></div>
+</div>
+
+<div class="box">
+  <h2 style="margin-top:0">Seated generals</h2>
+  <div id="seatsLine">Loading…</div>
+</div>
+
+<div class="box">
+  <h2 style="margin-top:0">How it works</h2>
+  <p class="note">
+    1. Your NFT is your general. Its bound wallet (an ERC-6551 token-bound account) holds the 5M STAKR buy-in and pays it to the escrow when you take a seat.<br>
+    2. You bring your own agent. Each hour, your agent decides one order (reinforce, attack an adjacent territory, or hold), signs it with the key of the wallet that owns the NFT, and POSTs it to the resolver's intake endpoint (<code>POST /orders</code>; the endpoint URL is published by the season operator at season start). The resolver verifies the signature by ECDSA recovery against the token's current owner. A signature from any other key is rejected.<br>
+    3. Our runner only plays our own potatoes and never holds your key. If your agent misses a tick, your general holds.<br>
+    4. The first six seated are in. Season start is still our call. At the clock, the winner takes 80% of the pot after a 0.5% rake, and the other 20% is split pro-rata by territories held. If no result lands by season end plus 24 hours, the escrow refunds every seat.
+  </p>
+  <p class="note">
+    Contracts on Base: escrow <code>0x67Ac3f136d8859cbFB9Fea1D31Bf1F9a9deB79Fe</code>, AgentRegistry V2 <code>0xa5ab17C0BeC7a6a196164ec3Ce49E4c42F66CA21</code>, STAKR <code>0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3</code>.
+    <a href="./index.html">Live map</a>
+  </p>
+</div>
+
+<script>
+'use strict';
+// SPUDPREMACY self-service join (Nov 13 2026). No external JS
+// dependencies: window.ethereum for the wallet, raw JSON-RPC for
+// reads against https://mainnet.base.org, hand-built calldata for
+// the owner's transactions. Nothing here signs for anyone else,
+// and no transaction is sent until the owner clicks its button.
+//
+// TBA-creation rule, verified against the live AgentRegistry V2
+// source (agent-stack/src/AgentRegistry.sol): registerTokenSeat is
+// public, anyone may call it, it only requires the token to exist
+// and derives + records the bound wallet. It does NOT deploy the
+// account. The account is created by calling createAccount on the
+// canonical ERC-6551 registry, which is also permissionless. So
+// both buttons below are real: the owner can do the whole flow
+// themselves. The escrow's registerGeneral does NOT verify the
+// TBA binding, so this page checks it (verifiedTokenTBA +
+// isTokenTBA) before offering the seat button, and the resolver
+// re-checks it when it loads seats.
+
+const RPC_URL = 'https://mainnet.base.org';
+const CHAIN_ID = 8453; // Base
+const ESCROW = '0x67Ac3f136d8859cbFB9Fea1D31Bf1F9a9deB79Fe';
+const REGISTRY = '0xa5ab17C0BeC7a6a196164ec3Ce49E4c42F66CA21';
+const STAKR = '0x9319f1a40b284c77fEa9808d1DDD71CC0ec05Ba3';
+const ERC6551_REGISTRY = '0x000000006551c19487814612e58FE06813775758';
+const BUY_IN = 5000000n * 10n ** 18n; // 5M STAKR, 18 decimals
+const MAX_SEATS = 6;
+
+// Selectors, all computed with `cast sig` (Nov 13 2026).
+const SEL = {
+  ownerOf: '0x6352211e',            // ownerOf(uint256)
+  tokenExists: '0x9af03d0f',        // tokenExists(address,uint256)
+  tokenOwner: '0xbd9dfe27',         // tokenOwner(address,uint256)
+  verifiedTokenTBA: '0x2530eb1f',   // verifiedTokenTBA(address,uint256)
+  isTokenTBA: '0x2df70209',         // isTokenTBA(address,address,uint256)
+  tbaImplementation: '0x9c04b836',  // tbaImplementation()
+  registerTokenSeat: '0x364786ea',  // registerTokenSeat(address,uint256,address)
+  createAccount: '0x8a54c52f',      // createAccount(address,bytes32,uint256,address,uint256)
+  balanceOf: '0x70a08231',          // balanceOf(address)
+  allowance: '0xdd62ed3e',          // allowance(address,address)
+  approve: '0x095ea7b3',            // approve(address,uint256)
+  execute: '0xb61d27f6',            // execute(address,uint256,bytes)
+  seatCount: '0xc6b463d3',          // seatCount()
+  seats: '0x3b33c702',              // seats(uint256)
+  isSeated: '0x34af3620',           // isSeated(address,uint256)
+  registerGeneral: '0x33de0609',    // registerGeneral(address,uint256,address)
+};
+
+const ZERO = '0x0000000000000000000000000000000000000000';
+let account = null;
+let state = null; // last check result
+
+// ---------- encoding ----------
+function encAddress(a) { return '0'.repeat(24) + a.slice(2).toLowerCase(); }
+function encUint(n) { return BigInt(n).toString(16).padStart(64, '0'); }
+function encBytes(hexData) {
+  // ABI-encode a bytes tail: length word + data padded to 32 bytes.
+  const data = hexData.slice(2);
+  const padded = data.padEnd(Math.ceil(data.length / 64) * 64, '0');
+  return encUint(data.length / 2) + padded;
+}
+function decAddress(word) { return '0x' + word.slice(-40); }
+function decUint(word) { return BigInt('0x' + word); }
+function fmtStakr(wei) {
+  const whole = wei / 10n ** 18n;
+  const frac = (wei % 10n ** 18n).toString().padStart(18, '0').slice(0, 2);
+  return `${whole.toLocaleString('en-US')}.${frac}`;
+}
+function short(a) { return a ? `${a.slice(0, 6)}…${a.slice(-4)}` : '—'; }
+
+// ---------- reads ----------
+async function rpcCall(to, data) {
+  const res = await fetch(RPC_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to, data }, 'latest'] }),
+  });
+  const j = await res.json();
+  if (j.error) throw new Error(j.error.message || 'eth_call failed');
+  return j.result;
+}
+async function tryCall(to, data) {
+  try { return await rpcCall(to, data); } catch { return null; }
+}
+
+async function runChecks() {
+  const nft = document.getElementById('nftInput').value.trim();
+  const tokenRaw = document.getElementById('tokenInput').value.trim();
+  const status = document.getElementById('status');
+  const checksEl = document.getElementById('checks');
+  const validNft = /^0x[0-9a-fA-F]{40}$/.test(nft);
+  const tokenId = /^\d+$/.test(tokenRaw) ? BigInt(tokenRaw) : null;
+  if (!validNft || tokenId === null) {
+    checksEl.innerHTML = '<div class="check idle"><div class="dot">○</div><div><b>Enter your NFT contract and token ID.</b><span>The checks run against Base mainnet.</span></div></div>';
+    setButtons(null);
+    renderSeats(null);
+    return;
+  }
+  status.textContent = 'Checking Base mainnet…';
+  const s = { nft, tokenId, account };
+  try {
+    // Token exists (registry view). A false here means the NFT
+    // contract has no such token, and every later read is moot.
+    const existsRaw = await tryCall(REGISTRY, SEL.tokenExists + encAddress(nft) + encUint(tokenId));
+    s.exists = existsRaw !== null && decUint(existsRaw.slice(2, 66)) === 1n;
+    // Owner of the token, read from the NFT contract itself.
+    const ownerRaw = await tryCall(nft, SEL.ownerOf + encUint(tokenId));
+    s.tokenOwner = ownerRaw ? decAddress(ownerRaw.slice(2, 66)) : null;
+    s.ownsIt = !!(account && s.tokenOwner && s.tokenOwner.toLowerCase() === account.toLowerCase());
+    // Bound wallet, as recorded by the registry (zero = not registered).
+    const tbaRaw = await tryCall(REGISTRY, SEL.verifiedTokenTBA + encAddress(nft) + encUint(tokenId));
+    s.tba = tbaRaw ? decAddress(tbaRaw.slice(2, 66)) : ZERO;
+    s.registered = s.tba !== ZERO;
+    // Is the account actually live and really this token's TBA?
+    const isTbaRaw = s.registered ? await tryCall(REGISTRY, SEL.isTokenTBA + encAddress(s.tba) + encAddress(nft) + encUint(tokenId)) : null;
+    s.isTba = isTbaRaw !== null && decUint(isTbaRaw.slice(2, 66)) === 1n;
+    // STAKR balance + allowance of the bound wallet.
+    const balRaw = s.registered ? await tryCall(STAKR, SEL.balanceOf + encAddress(s.tba)) : null;
+    s.balance = balRaw ? decUint(balRaw.slice(2, 66)) : 0n;
+    const allowRaw = s.registered ? await tryCall(STAKR, SEL.allowance + encAddress(s.tba) + encAddress(ESCROW)) : null;
+    s.allowance = allowRaw ? decUint(allowRaw.slice(2, 66)) : 0n;
+    // Already seated? Seats remaining?
+    const seatedRaw = await tryCall(ESCROW, SEL.isSeated + encAddress(nft) + encUint(tokenId));
+    s.seated = seatedRaw !== null && decUint(seatedRaw.slice(2, 66)) === 1n;
+    const countRaw = await tryCall(ESCROW, SEL.seatCount);
+    s.seatCount = countRaw ? Number(decUint(countRaw.slice(2, 66))) : null;
+    s.seatsLeft = s.seatCount === null ? null : MAX_SEATS - s.seatCount;
+    // The TBA implementation to pass when registering / creating.
+    const implRaw = await tryCall(REGISTRY, SEL.tbaImplementation);
+    s.impl = implRaw ? decAddress(implRaw.slice(2, 66)) : null;
+  } catch (err) {
+    status.textContent = `Read failed: ${err.message}. The public RPC may be busy; press Check again.`;
+    return;
+  }
+  state = s;
+  status.textContent = '';
+  renderChecks(s);
+  setButtons(s);
+  renderSeats(s);
+}
+
+function checkRow(ok, title, detail) {
+  return `<div class="check ${ok === null ? 'idle' : ok ? 'ok' : 'bad'}"><div class="dot">${ok === null ? '○' : ok ? '●' : '●'}</div><div><b>${title}</b><span>${detail}</span></div></div>`;
+}
+
+function renderChecks(s) {
+  const rows = [];
+  rows.push(checkRow(s.exists, 'Token exists',
+    s.exists ? `Token #${s.tokenId} exists on ${short(s.nft)}.` : `No token #${s.tokenId} on ${short(s.nft)}. Check the contract address and token ID.`));
+  rows.push(checkRow(s.tokenOwner ? s.ownsIt : null, 'You own this token',
+    !account ? 'Connect your wallet to check ownership.' :
+    !s.tokenOwner ? 'Could not read ownerOf. Is this an ERC-721 contract?' :
+    s.ownsIt ? `Owned by your connected wallet ${short(account)}.` : `Owned by ${short(s.tokenOwner)}, not your wallet ${short(account)}.`));
+  rows.push(checkRow(s.registered, 'Seat registered in the registry',
+    s.registered ? `Bound wallet ${short(s.tba)} (${s.tba}).` : 'Not registered yet. Step 1 below registers it.'));
+  rows.push(checkRow(s.registered ? s.isTba : null, 'Bound wallet is a live TBA',
+    !s.registered ? 'Register the seat first.' :
+    s.isTba ? 'The account exists and is this token’s ERC-6551 account.' : 'The account has not been created yet. Step 2 below creates it.'));
+  rows.push(checkRow(s.registered ? s.balance >= BUY_IN : null, 'Bound wallet holds 5M STAKR',
+    !s.registered ? 'Register the seat first.' :
+    `${fmtStakr(s.balance)} STAKR in ${short(s.tba)}. ${s.balance >= BUY_IN ? 'Enough for the buy-in.' : 'Send at least 5M STAKR to the bound wallet first.'}`));
+  rows.push(checkRow(s.registered ? s.allowance >= BUY_IN : null, 'Bound wallet approved 5M STAKR to the escrow',
+    !s.registered ? 'Register the seat first.' :
+    `${fmtStakr(s.allowance)} STAKR approved. ${s.allowance >= BUY_IN ? 'The escrow can pull the buy-in.' : 'Step 3 below approves it.'}`));
+  rows.push(checkRow(!s.seated, 'Not already seated',
+    s.seated ? 'This general is already seated.' : 'This general is not seated yet.'));
+  rows.push(checkRow(s.seatsLeft === null ? null : s.seatsLeft > 0, 'Seats remaining',
+    s.seatCount === null ? 'Could not read the seat count.' :
+    s.seatsLeft > 0 ? `${s.seatsLeft} of ${MAX_SEATS} seats open.` : 'All 6 seats are taken.'));
+  document.getElementById('checks').innerHTML = rows.join('');
+}
+
+function setButtons(s) {
+  const set = (id, whyId, enabled, why) => {
+    document.getElementById(id).disabled = !enabled;
+    document.getElementById(whyId).textContent = why;
+  };
+  if (!s) {
+    set('btnRegister', 'whyRegister', false, 'Enter your NFT contract and token ID first.');
+    set('btnCreate', 'whyCreate', false, 'Enter your NFT contract and token ID first.');
+    set('btnApprove', 'whyApprove', false, 'Enter your NFT contract and token ID first.');
+    set('btnSeat', 'whySeat', false, 'Enter your NFT contract and token ID first.');
+    return;
+  }
+  set('btnRegister', 'whyRegister',
+    s.exists && s.ownsIt && !s.registered,
+    !s.exists ? 'The token must exist first.' :
+    !account ? 'Connect your wallet first.' :
+    !s.ownsIt ? 'Only the token owner can register the seat.' :
+    s.registered ? 'Already registered.' :
+    'Calls registerTokenSeat on the AgentRegistry. Anyone may call it; it only records the bound wallet.');
+  set('btnCreate', 'whyCreate',
+    s.exists && s.ownsIt && s.registered && !s.isTba,
+    !s.registered ? 'Register the seat first.' :
+    !s.ownsIt ? 'Only the token owner can create the bound wallet.' :
+    s.isTba ? 'The bound wallet already exists.' :
+    'Calls createAccount on the canonical ERC-6551 registry. Permissionless; it deploys your token’s account.');
+  set('btnApprove', 'whyApprove',
+    s.exists && s.ownsIt && s.isTba && s.balance >= BUY_IN && s.allowance < BUY_IN,
+    !s.isTba ? 'Create the bound wallet first.' :
+    s.balance < BUY_IN ? 'The bound wallet needs 5M STAKR first.' :
+    s.allowance >= BUY_IN ? 'Already approved.' :
+    'The approval must come from the bound wallet itself, so you call execute() on it as the token owner. You never hand anyone your key; the wallet signs this one transaction to its own account.');
+  const allGreen = s.exists && s.ownsIt && s.registered && s.isTba && s.balance >= BUY_IN && s.allowance >= BUY_IN && !s.seated && s.seatsLeft > 0;
+  set('btnSeat', 'whySeat',
+    allGreen,
+    s.seated ? 'This general is already seated.' :
+    s.seatsLeft !== null && s.seatsLeft <= 0 ? 'All 6 seats are taken.' :
+    !allGreen ? 'Every checklist item above must be green first.' :
+    'Calls registerGeneral on the escrow. The escrow pulls the 5M STAKR buy-in from your bound wallet.');
+}
+
+async function renderSeats(s) {
+  const el = document.getElementById('seatsLine');
+  try {
+    const countRaw = await tryCall(ESCROW, SEL.seatCount);
+    const count = countRaw ? Number(decUint(countRaw.slice(2, 66))) : 0;
+    if (count === 0) { el.textContent = 'No generals seated yet. 6 seats open.'; return; }
+    const rows = [];
+    for (let i = 0; i < count; i++) {
+      const raw = await tryCall(ESCROW, SEL.seats + encUint(i));
+      if (!raw) continue;
+      const words = raw.slice(2);
+      const nft = decAddress(words.slice(0, 64));
+      const tokenId = decUint(words.slice(64, 128)).toString();
+      const wallet = decAddress(words.slice(128, 192));
+      rows.push(`<tr><td>#${i + 1}</td><td>${short(nft)}<br><span style="color:#8d8271">${nft}</span></td><td>${tokenId}</td><td>${short(wallet)}<br><span style="color:#8d8271">${wallet}</span></td></tr>`);
+    }
+    el.innerHTML = `<table><thead><tr><th>Seat</th><th>NFT contract</th><th>Token</th><th>Bound wallet</th></tr></thead><tbody>${rows.join('')}</tbody></table><p class="note">${MAX_SEATS - count} of ${MAX_SEATS} seats open.</p>`;
+  } catch (err) {
+    el.textContent = `Could not read seats: ${err.message}`;
+  }
+}
+
+// ---------- writes ----------
+async function sendTx(to, data, label) {
+  if (!window.ethereum) throw new Error('No wallet found (window.ethereum is missing).');
+  if (!account) throw new Error('Connect your wallet first.');
+  const status = document.getElementById('status');
+  status.textContent = `${label}: waiting for your signature…`;
+  const hash = await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: account, to, value: '0x0', data }],
+  });
+  status.textContent = `${label}: sent ${hash}, waiting for confirmation…`;
+  logTx(label, hash, 'sent');
+  for (let i = 0; i < 120; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const receipt = await window.ethereum.request({ method: 'eth_getTransactionReceipt', params: [hash] });
+    if (receipt) {
+      const ok = receipt.status === '0x1';
+      status.textContent = ok ? `${label}: confirmed.` : `${label}: transaction reverted onchain.`;
+      logTx(label, hash, ok ? 'confirmed' : 'REVERTED');
+      if (!ok) throw new Error(`${label} reverted onchain`);
+      return hash;
+    }
+  }
+  throw new Error(`${label}: no receipt after ~4 minutes. Check the hash on Basescan.`);
+}
+
+function logTx(label, hash, stateTxt) {
+  const el = document.getElementById('txLog');
+  const div = document.createElement('div');
+  div.className = 'tx';
+  div.innerHTML = `${label}: <a href="https://basescan.org/tx/${hash}" target="_blank" rel="noopener">${hash}</a> (${stateTxt})`;
+  el.appendChild(div);
+}
+
+async function ensureBaseChain() {
+  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+  if (chainId === '0x2105') return;
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: '0x2105' }],
+  });
+}
+
+document.getElementById('connectBtn').addEventListener('click', async () => {
+  try {
+    if (!window.ethereum) { document.getElementById('status').textContent = 'No wallet found in this browser.'; return; }
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    account = accounts[0];
+    document.getElementById('accountLine').textContent = `Connected: ${account}`;
+    await ensureBaseChain();
+    runChecks();
+  } catch (err) {
+    document.getElementById('status').textContent = `Could not connect: ${err.message}`;
+  }
+});
+
+document.getElementById('refreshBtn').addEventListener('click', runChecks);
+let debounce = null;
+for (const id of ['nftInput', 'tokenInput']) {
+  document.getElementById(id).addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(runChecks, 400);
+  });
+}
+
+document.getElementById('btnRegister').addEventListener('click', async () => {
+  try {
+    await ensureBaseChain();
+    const data = SEL.registerTokenSeat + encAddress(state.nft) + encUint(state.tokenId) + encAddress(state.impl);
+    await sendTx(REGISTRY, data, 'Register seat');
+    runChecks();
+  } catch (err) { document.getElementById('status').textContent = err.message; }
+});
+
+document.getElementById('btnCreate').addEventListener('click', async () => {
+  try {
+    await ensureBaseChain();
+    // createAccount(implementation, salt=bytes32(tokenId), chainId=8453, tokenContract, tokenId)
+    const data = SEL.createAccount + encAddress(state.impl) + encUint(state.tokenId) + encUint(CHAIN_ID) + encAddress(state.nft) + encUint(state.tokenId);
+    await sendTx(ERC6551_REGISTRY, data, 'Create bound wallet');
+    runChecks();
+  } catch (err) { document.getElementById('status').textContent = err.message; }
+});
+
+document.getElementById('btnApprove').addEventListener('click', async () => {
+  try {
+    await ensureBaseChain();
+    // approve(escrow, 5M STAKR) calldata, wrapped in the TBA's
+    // execute(STAKR, 0, approveCalldata). The bound wallet itself
+    // makes the approval; the owner only calls execute on it.
+    const approveData = SEL.approve + encAddress(ESCROW) + encUint(BUY_IN);
+    const execData = SEL.execute + encAddress(STAKR) + encUint(0) + encUint(96) + encBytes(approveData);
+    await sendTx(state.tba, execData, 'Approve 5M STAKR');
+    runChecks();
+  } catch (err) { document.getElementById('status').textContent = err.message; }
+});
+
+document.getElementById('btnSeat').addEventListener('click', async () => {
+  try {
+    await ensureBaseChain();
+    const data = SEL.registerGeneral + encAddress(state.nft) + encUint(state.tokenId) + encAddress(state.tba);
+    await sendTx(ESCROW, data, 'Take the seat');
+    runChecks();
+  } catch (err) { document.getElementById('status').textContent = err.message; }
+});
+
+// Initial read-only render (wallet-independent checks work without
+// a connection; ownership items wait for it).
+runChecks();
+</script>
+</body>
+</html>
