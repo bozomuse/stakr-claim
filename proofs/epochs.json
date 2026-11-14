@@ -20,6 +20,13 @@
       "demo": false,
       "distributed": "28317060561466325443169",
       "holders": 7
+    },
+    {
+      "id": 3,
+      "file": "epoch-3.json",
+      "demo": false,
+      "distributed": "10834849229770882540217",
+      "holders": 7
     }
   ]
 }
